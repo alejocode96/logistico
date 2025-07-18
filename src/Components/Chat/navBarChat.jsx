@@ -6,8 +6,8 @@ import { NavLink } from 'react-router-dom';
 
 // Contexto
 import { LogisticoContext } from '../../Context';
-import logoblue from './assets/logoblue.png';
-import usermen from './assets/user_men.png';
+import logoblue from '../../../assets/logoblue.png';
+import usermen from '../../../assets/user_men.png';
 
 // Iconos
 import {

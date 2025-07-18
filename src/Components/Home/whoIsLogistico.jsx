@@ -3,8 +3,8 @@ import { useState } from 'react'
 import React from 'react'
 //contexto
 import { LogisticoContext } from '../../Context';
-import page_dark from './assets/page_dark.jpg';
-import page from './assets/page.jpg';
+import page_dark from '../../../assets/page_dark.jpg';
+import page from '../../../assets/page.jpg';
 //componente
 import ParticleBackground from './ParticleBackground';
 

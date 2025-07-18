@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 // Contexto
 import { LogisticoContext } from '../../Context';
 
-import logoblue from './assets/logoblue.png';
+import logoblue from '../../../assets/logoblue.png';
 // Iconos
 import { Sun, Moon } from 'lucide-react';
 
