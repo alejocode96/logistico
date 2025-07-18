@@ -15,7 +15,7 @@ function InitialChat() {
 
             <div className="flex flex-col items-center justify-center mx-auto pt-8  max-w-4xl">
                 {/* titulo */}
-                <div className="flex flex-col w-[92%] lg:w-[85%]">
+                <div className="flex flex-col w-[90%] lg:w-[85%]">
                     <p className="m-0 text-zinc-400 text-3xl font-extralight leading-none p-0">
                         Buenas tardes,
                     </p>
@@ -25,7 +25,7 @@ function InitialChat() {
                 </div>
 
                 {/* mensaje */}
-                <div className="bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-40 w-[92%] lg:w-[85%] rounded-2xl flex flex-col mb-6">
+                <div className="bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-40 w-[90%] lg:w-[85%] rounded-2xl flex flex-col mb-6">
                     <div className="w-full h-30 p-4">
                         <textarea
                             className="w-full h-full resize-none outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent"
@@ -47,7 +47,7 @@ function InitialChat() {
                 </div>
 
                 {/* slider */}
-                <div className="w-[92%] lg:w-[85%]  ">
+                <div className="w-[90%] lg:w-[85%]  ">
                    <Carrusel></Carrusel>
                 </div>
             </div>

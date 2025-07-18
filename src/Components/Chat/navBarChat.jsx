@@ -55,7 +55,7 @@ function NavBarChat() {
 
                     <div className="flex items-center p-1 rounded-md group cursor-pointer transition-all duration-200 w-fit" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                         <img src={logoblue} alt="Logo" className="w-10 h-10 object-contain lg:hidden" />
-                        <h1 className={`pl-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500  sm:text-2xl text-3xl origin-left lg:hidden`}>
+                        <h1 className={`pl-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500  sm:text-md text-3xl origin-left lg:hidden`}>
                             LOGISTICO
                         </h1>
                         {/* <span className="text-white text-md lg:text-xl font-extralight hidden lg:block">{chatName}</span>
