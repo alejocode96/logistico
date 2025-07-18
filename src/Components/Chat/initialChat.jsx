@@ -47,9 +47,9 @@ function InitialChat() {
                 </div>
 
                 {/* slider */}
-                <div className="w-[90%] lg:w-[85%]  ">
+                {/* <div className="w-[90%] lg:w-[85%]  ">
                    <Carrusel></Carrusel>
-                </div>
+                </div> */}
             </div>
         </>
     );
