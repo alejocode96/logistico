@@ -19,7 +19,7 @@ function InitialChat() {
                     <p className="m-0 text-zinc-400 text-3xl font-extralight leading-none p-0">
                         Buenas tardes,
                     </p>
-                    <p className="m-0 h-[80px] bg-gradient-to-br line-height from-gray-600 to-gray-900 bg-clip-text text-5xl font-bold tracking-tight text-transparent md:text-6xl dark:from-white dark:to-zinc-500 leading-none p-0">
+                    <p className="m-0 h-[80px] bg-gradient-to-br line-height from-gray-600 to-gray-900 bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-6xl dark:from-white dark:to-zinc-500 leading-none p-0">
                         Alejandro Galeano!
                     </p>
                 </div>

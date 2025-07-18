@@ -7,7 +7,8 @@ import { DatabaseZap, ShieldCheck, MessagesSquare, ChartLine } from 'lucide-reac
 
 //contexto
 import { LogisticoContext } from '../../Context';
-
+import medellinnegro from '../../assets/medellin_negro.png';
+import medellinblanco from '../../assets/medellinblanco.png';
 //componentes
 import AnimatedAreaChart from './AnimatedAreaChart';
 import ChatExample from './chatExample';
@@ -33,8 +34,8 @@ function ToDoLogistico() {
                         <div className="relative w-full  h-full rounded-xl bg-white dark:bg-zinc-900 shadow-[0_0_5px_0_rgba(0,0,0,0.1),_0_0_1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_0_5px_0_rgba(255,255,255,0.06),_0_0_1px_0_rgba(255,255,255,0.04)]  overflow-hidden flex flex-col">
                             {/* Parte superior con imagen de fondo */}
                             <div className="relative w-full h-[100px]">
-                                {isDark ? <img src="/medellin_negro.jpg" alt="Map" className="w-full h-full object-cover opacity-55 " /> :
-                                    <img src="/medellin blanco.jpg" alt="Map" className="w-full h-full object-cover opacity-55 " />}
+                                {isDark ? <img src={medellinnegro} alt="Map" className="w-full h-full object-cover opacity-55 " /> :
+                                    <img src={medellinblanco} alt="Map" className="w-full h-full object-cover opacity-55 " />}
                                 <div className="absolute inset-0 bg-gradient-to-b from-white/0 to-white dark:from-zinc-900/0 dark:to-zinc-900" />
                                 <div className="absolute inset-0 bg-gradient-to-r from-white to-white/0 dark:from-zinc-900 dark:to-zinc-900/0" />
 
@@ -58,8 +59,8 @@ function ToDoLogistico() {
                             {/* Parte superior con imagen de fondo */}
                             <div className="relative w-full h-[100px]">
                                 {isDark ?
-                                    <img src="/medellin_negro.jpg" alt="Map" className="w-full h-full object-cover opacity-55" /> :
-                                    <img src="/medellin blanco.jpg" alt="Map" className="w-full h-full object-cover opacity-55" />
+                                    <img src={medellinnegro} alt="Map" className="w-full h-full object-cover opacity-55" /> :
+                                    <img src={medellinblanco} alt="Map" className="w-full h-full object-cover opacity-55" />
                                 }
                                 <div className="absolute inset-0 bg-gradient-to-b from-white/0 to-white dark:from-zinc-900/0 dark:to-zinc-900" />
                                 <div className="absolute inset-0 bg-gradient-to-r from-white to-white/0 dark:from-zinc-900 dark:to-zinc-900/0" />
@@ -106,8 +107,8 @@ function ToDoLogistico() {
                         <div className="relative w-full  h-full rounded-xl bg-white dark:bg-zinc-900 shadow-[0_0_5px_0_rgba(0,0,0,0.1),_0_0_1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_0_5px_0_rgba(255,255,255,0.06),_0_0_1px_0_rgba(255,255,255,0.04)]  overflow-hidden flex flex-col">
                             {/* Parte superior con imagen de fondo */}
                             <div className="relative w-full h-[100px]">
-                                {isDark ? <img src="/medellin_negro.jpg" alt="Map" className="w-full h-full object-cover opacity-55 " /> :
-                                    <img src="/medellin blanco.jpg" alt="Map" className="w-full h-full object-cover opacity-55 " />}
+                                {isDark ? <img src={medellinnegro} alt="Map" className="w-full h-full object-cover opacity-55 " /> :
+                                    <img src={medellinblanco} alt="Map" className="w-full h-full object-cover opacity-55 " />}
                                 <div className="absolute inset-0 bg-gradient-to-b from-white/0 to-white dark:from-zinc-900/0 dark:to-zinc-900" />
                                 <div className="absolute inset-0 bg-gradient-to-r from-white to-white/0 dark:from-zinc-900 dark:to-zinc-900/0" />
 
@@ -142,8 +143,8 @@ function ToDoLogistico() {
                         <div className="relative w-full  h-full rounded-xl bg-white dark:bg-zinc-900 shadow-[0_0_5px_0_rgba(0,0,0,0.1),_0_0_1px_0_rgba(0,0,0,0.1)] dark:shadow-[0_0_5px_0_rgba(255,255,255,0.06),_0_0_1px_0_rgba(255,255,255,0.04)] overflow-hidden flex flex-col">
                             {/* Parte superior con imagen de fondo */}
                             <div className="relative w-full h-[100px]">
-                                {isDark ? <img src="/medellin_negro.jpg" alt="Map" className="w-full h-full object-cover opacity-55 " /> :
-                                    <img src="/medellin blanco.jpg" alt="Map" className="w-full h-full object-cover opacity-55 " />}
+                                {isDark ? <img src={medellinnegro} alt="Map" className="w-full h-full object-cover opacity-55 " /> :
+                                    <img src={medellinblanco} alt="Map" className="w-full h-full object-cover opacity-55 " />}
                                 <div className="absolute inset-0 bg-gradient-to-b from-white/0 to-white dark:from-zinc-900/0 dark:to-zinc-900" />
                                 <div className="absolute inset-0 bg-gradient-to-r from-white to-white/0 dark:from-zinc-900 dark:to-zinc-900/0" />
 
