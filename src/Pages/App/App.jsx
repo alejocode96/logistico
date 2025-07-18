@@ -3,7 +3,7 @@ import React from 'react';
 import { useState } from 'react'
 
 //Rutas
-import { useRoutes, BrowserRouter } from 'react-router-dom';
+import { useRoutes, HashRouter } from 'react-router-dom';
 
 //pages
 import Home from '../Home';
@@ -30,9 +30,9 @@ function App() {
 
   return (
     <LogisticoProvider>
-      <BrowserRouter>
-        <AppRoutes></AppRoutes>
-      </BrowserRouter>
+      <HashRouter>
+  <AppRoutes />
+</HashRouter>
     </LogisticoProvider>
   )
 }
