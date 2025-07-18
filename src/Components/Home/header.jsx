@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 // Contexto
 import { LogisticoContext } from '../../Context';
 
-
+import logoblue from './assets/logoblue.png';
 // Iconos
 import { Sun, Moon } from 'lucide-react';
 
@@ -21,7 +21,7 @@ function Header() {
 
                 {/* Logo y Título */}
                 <div className="flex items-center">
-                    <img src="../public/logoblue.png" alt="Logo" className="w-10 mr-2 " />
+                    <img src={logoblue} alt="Logo" className="w-10 mr-2 " />
                     <span className='text-3xl font-bold text-gray-800 dark:text-gray-300'>LOGISTICO<span className="text-gray-500 dark:text-gray-400">.AI</span></span>
 
                 </div>

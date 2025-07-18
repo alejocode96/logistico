@@ -6,7 +6,8 @@ import { NavLink } from 'react-router-dom';
 
 // Contexto
 import { LogisticoContext } from '../../Context';
-
+import logoblue from './assets/logoblue.png';
+import usermen from './assets/user_men.png';
 //iconos 
 import {
     ChevronsRight,
@@ -43,7 +44,7 @@ function SideBarChart() {
 
                 {/* logo sidebar */}
                 <div className="w-[100%] items-center  mb-4 flex select-none ">
-                    <img src="../public/logoblue.png" alt="Logo" className="w-12 h-12 object-contain cursor-pointer" />
+                    <img src={logoblue} alt="Logo" className="w-12 h-12 object-contain cursor-pointer" />
                     <h1 className={` transition-all duration-300 ease-in-out whitespace-nowrap pl-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-3xl origin-left  ${isOpenSideBar ? "opacity-100" : "opacity-0"}`}>
                         LOGISTICO
                     </h1>
@@ -129,7 +130,7 @@ function SideBarChart() {
                         <hr className="text-zinc-300 dark:text-zinc-800 mb-4"></hr>
                         <li className=" h-14 relative flex items-center rounded-md cursor-pointer hover:bg-zinc-300 hover:dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 hover:dark:text-white  dark:text-zinc-400 transition-all ease-in-out duration-500 group " >
                             <div className="w-10 h-10 mx-1 rounded-full overflow-hidden flex justify-center items-center bg-blue-900">
-                                <img src="../public/user_men.png" alt="Perfil" className="w-full h-full object-cover" />
+                                <img src={usermen} alt="Perfil" className="w-full h-full object-cover" />
                             </div>
 
                             {/* Texto */}

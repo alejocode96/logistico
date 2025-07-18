@@ -3,7 +3,8 @@ import { useState } from 'react'
 import React from 'react'
 //contexto
 import { LogisticoContext } from '../../Context';
-
+import page_dark from './assets/page_dark.jpg';
+import page from './assets/page.jpg';
 //componente
 import ParticleBackground from './ParticleBackground';
 
@@ -41,8 +42,8 @@ function WhoIsLogistico() {
                         </div>
                         <div className="rounded-md bg-zinc-950 ring-1 ring-zinc-200 dark:ring-white/10 lg:rounded-2xl" data-aos="fade-up">
                             <div className="" style={{ opacity: 1 }}>
-                                {isDark ? <img alt="App screenshot" fetchPriority="high" width="4200" height="2490" decoding="async" data-nimg="1" className="rounded-md lg:rounded-2xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" src="../public/page_dark.jpg"  /> :
-                                    <img alt="App screenshot" fetchPriority="high" width="4200" height="2490" decoding="async" data-nimg="1" className="rounded-md lg:rounded-2xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" src="../public/page.jpg" />}
+                                {isDark ? <img alt="App screenshot" fetchPriority="high" width="4200" height="2490" decoding="async" data-nimg="1" className="rounded-md lg:rounded-2xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" src={page_dark} /> :
+                                    <img alt="App screenshot" fetchPriority="high" width="4200" height="2490" decoding="async" data-nimg="1" className="rounded-md lg:rounded-2xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw" src={page} />}
                             </div>
                         </div>
                         <div className="absolute -bottom-[7px] left-20 h-2 w-60 [mask-image:linear-gradient(to_right,rgba(217,217,217,0)_0%,#d9d9d9_25%,#d9d9d9_75%,rgba(217,217,217,0)_100%)] md:w-32 lg:w-64">
