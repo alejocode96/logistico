@@ -7,8 +7,8 @@ import { DatabaseZap, ShieldCheck, MessagesSquare, ChartLine } from 'lucide-reac
 
 //contexto
 import { LogisticoContext } from '../../Context';
-import medellinnegro from '../../assets/medellin_negro.png';
-import medellinblanco from '../../assets/medellinblanco.png';
+import medellinnegro from '../../assets/medellin_negro.jpg';
+import medellinblanco from '../../assets/medellinblanco.jpg';
 //componentes
 import AnimatedAreaChart from './AnimatedAreaChart';
 import ChatExample from './chatExample';
