@@ -4,6 +4,7 @@ import React from 'react';
 //componentes
 import Header from '../../Components/Home/header';
 import WhoIsLogistico from '../../Components/Home/whoIsLogistico';
+import ToDoLogistico from '../../Components/Home/toDoLogistico';
 
 function Home() {
 
@@ -54,8 +55,9 @@ function Home() {
 
 
                 {/* Conece a logistico */}
-                <WhoIsLogistico/>
-
+                <WhoIsLogistico />
+                {/* lo que puedes hacer con  logistico */}
+                <ToDoLogistico/>
 
             </main>
 
