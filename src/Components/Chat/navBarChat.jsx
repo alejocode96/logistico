@@ -50,21 +50,21 @@ function NavBarChat() {
     return (
         <>
             {/* Navbar Principal - Altura fija y responsive */}
-            <div className="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
-                <div className="h-16 flex items-center justify-between px-3 sm:px-4 lg:px-6 max-w-full">
+            <div className="fixed top-0 left-0 right-0 z-40 pt-2">
+                <div className="h-16 flex items-center justify-between lg:justify-end px-3 sm:px-4 lg:px-6 max-w-full">
                     
-                    {/* Logo y título - Responsive */}
-                    <div className="flex items-center min-w-0 flex-shrink-0" ref={dropdownRef}>
+                    {/* Logo y título - Solo visible en pantallas medianas y pequeñas */}
+                    <div className="flex items-center min-w-0 flex-shrink-0 lg:hidden" ref={dropdownRef}>
                         <div className="flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                             <img src={logo} alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-                            <h1 className="ml-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-lg sm:text-2xl lg:text-3xl truncate">
+                            <h1 className="ml-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-lg sm:text-2xl truncate">
                                 LOGISTICO
                             </h1>
                         </div>
                     </div>
 
-                    {/* Controles - Siempre visibles y responsive */}
-                    <div className="flex items-center bg-zinc-100 dark:bg-[#101014] ring-1 ring-zinc-300 dark:ring-zinc-900/70 rounded-xl shadow-sm px-2 py-1.5 ml-2 flex-shrink-0">
+                    {/* Controles - Siempre visibles y responsive, centrados en pantallas grandes */}
+                    <div className="flex items-center bg-zinc-100 dark:bg-[#101014] ring-1 ring-zinc-300 dark:ring-zinc-900/70 rounded-xl shadow-sm px-2 py-1 ml-2 lg:ml-0 flex-shrink-0">
                         <div className="flex items-center gap-1 sm:gap-2">
                             
                             {/* Configuración */}
