@@ -93,7 +93,9 @@ function Login() {
                                 </div>
                             </div>
                             <div className="mt-10 mx-10">
-                                <button className="w-full bg-[#E4E4E7] h-10 rounded-md text-gray-800 transition-all duration-300 hover:bg-zinc-300 hover:shadow-md hover:translate-y-px hover:text-black">INICIAR SESIÓN</button>
+                                <NavLink to='/chat'>
+                                    <div className="w-full bg-[#E4E4E7] h-10 rounded-md text-gray-800 transition-all duration-300 hover:bg-zinc-300 hover:shadow-md hover:translate-y-px hover:text-black">INICIAR SESIÓN</div>
+                                </NavLink>
                             </div>
                             <div className="mt-2 mx-10">
                                 <p className="text-center text-gray-500">¿Olvido su contraseña? recupérala <span className="text-blue-900"><a className="cursor-pointer">aquí</a></span></p>
