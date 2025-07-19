@@ -16,7 +16,7 @@ function Login() {
     const { isDark, toggleDarkMode, showPassword, setShowPassword } = React.useContext(LogisticoContext);
     return (
         <>
-            <div className='bg-zinc-100 dark:bg-[#09090B] relative w-full min-h-screen '>
+            <div className='bg-zinc-100 dark:bg-[#09090B] relative w-full max-h-screen '>
                 {/* svg a cuadros */}
                 <div className="absolute inset-0 z-0">
                     {/* svg a cuadros */}

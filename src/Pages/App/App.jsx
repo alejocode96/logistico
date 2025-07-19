@@ -5,6 +5,7 @@ import { BrowserRouter, useRoutes } from 'react-router-dom'; // Asegúrate de im
 // Pages
 import Home from '../Home';
 import Login from '../Login';
+import Chat from '../Chat';
 // Animaciones
 import { useAos } from '../../hooks/useAos';
 
@@ -16,7 +17,7 @@ const AppRoutes = () => {
   let routes = useRoutes([
     { path: '/', element: <Home /> },
     { path: '/login', element: <Login /> },
-    // { path: '/chat', element: <Chat /> },
+    { path: '/chat', element: <Chat /> },
     { path: '*', element: <div>Página no encontrada</div> } // Ruta comodín para 404
   ]);
 
