@@ -1,1 +1,16 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+
+}
+
+html,
+body {
+  @apply bg-white dark:bg-[#09090B];
+}

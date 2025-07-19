@@ -3,6 +3,7 @@ import React from 'react';
 
 //componentes
 import Header from '../../Components/Home/header';
+import WhoIsLogistico from '../../Components/Home/whoIsLogistico';
 
 function Home() {
 
@@ -12,7 +13,7 @@ function Home() {
             <main className='bg-white dark:bg-[#09090B]'>
                 {/* Header */}
                 <Header />
-                
+
                 {/* fondo azul */}
                 <div className="h-[200%] absolute inset-0 z-10 bg-[image:radial-gradient(80%_50%_at_50%_-20%,hsl(206,81.9%,65.3%,0.5),rgba(255,255,255,0))]"></div>
                 {/* svg a cuadros */}
@@ -51,6 +52,9 @@ function Home() {
                     <rect width="100%" height="100%" fill="url(#grid)" mask="url(#fadeMask)" />
                 </svg>
 
+
+                {/* Conece a logistico */}
+                <WhoIsLogistico/>
 
 
             </main>
