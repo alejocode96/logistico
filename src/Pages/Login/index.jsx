@@ -62,7 +62,7 @@ function Login() {
                     }}></div>
                 </div>
                 {/* Contenedor del Login centrado y encima de todo */}
-                <div className='absolute inset-0 z-40 w-full min-h-[600px] flex flex-col lg:flex-row items-center lg:items-start lg:justify-start justify-center '>
+                <div className='absolute inset-0 z-40 w-full min-h-[650px] flex flex-col lg:flex-row items-center lg:items-start lg:justify-start justify-center '>
                     <div id="selectform" className="w-[90%] lg:w-[50%] ml-0 lg:ml-10  h-[450px] lg:h-[100%] bg-[rgba(255,255,255,0.3)] dark:bg-[rgba(47,51,51,0.3)] backdrop-blur-md rounded-md shadow-xl flex justify-center  items-center  order-2 lg:order-1 ">
                         <div className="w-full justify-center">
                             <p className="mt-10 text-zinc-700 dark:text-zinc-300 text-3xl font-extralight text-center">INICIO DE SESIÓN</p>
