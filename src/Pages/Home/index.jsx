@@ -5,6 +5,7 @@ import React from 'react';
 import Header from '../../Components/Home/header';
 import WhoIsLogistico from '../../Components/Home/whoIsLogistico';
 import ToDoLogistico from '../../Components/Home/toDoLogistico';
+import HowToAsk from '../../Components/Home/howToAsk';
 
 function Home() {
 
@@ -56,9 +57,12 @@ function Home() {
 
                 {/* Conece a logistico */}
                 <WhoIsLogistico />
+
                 {/* lo que puedes hacer con  logistico */}
                 <ToDoLogistico/>
 
+
+                <HowToAsk />
             </main>
 
         </>

@@ -22,10 +22,10 @@ function ToDoLogistico() {
         <section className='pt-16 pb-16 w-[90%] mx-auto' data-aos="fade-up">
             <div className='lg:flex items-center justify-between'>
                 <div className='flex lg:flex-1 w-[100%] lg:w-[90%]'>
-                    <div className='font-bold text-4xl/[1.07] md:text-5xl/[1.07] tracking-tight'>
+                    <div className='font-bold text-5xl/[1.07] md:text-6xl/[1.07] tracking-tight'>
                         <p className='pr-4 bg-clip-text bg-gradient-to-br from-gray-600 to-gray-900 text-transparent
                                      font-bold tracking-tight dark:from-white dark:to-zinc-500'>
-                            ¿TODO LO QUE PUEDES HACER CON<br />LOGISTICO?
+                            ¿TODO LO QUE PUEDES HACER CON LOGISTICO?
                         </p>
                     </div>
                 </div>
