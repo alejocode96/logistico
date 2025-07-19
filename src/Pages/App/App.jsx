@@ -15,7 +15,7 @@ import { LogisticoProvider } from '../../Context';
 // Definición de las rutas
 const AppRoutes = () => {
   let routes = useRoutes([
-    { path: '/', element: <Chat /> },
+    { path: '/', element: <Home /> },
     { path: '/login', element: <Login /> },
     { path: '/chat', element: <Chat /> },
     { path: '*', element: <div>Página no encontrada</div> } // Ruta comodín para 404

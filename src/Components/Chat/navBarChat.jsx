@@ -9,11 +9,9 @@ import { LogisticoContext } from '../../Context';
 
 // Iconos
 import {
-    ChevronDown, Settings, Bell, Moon, Sun, Edit3, Trash2, CircleX,
+    Settings, Bell, Moon, Sun, Edit3, Trash2, CircleX,
     MessageCirclePlus, Search, MessagesSquare, FileChartPie, User, LogOut, FileDown, Logs,
 } from 'lucide-react';
-import logo from '../../../public/logo.png'
-import user from '../../../public/user_men.png'
 
 function NavBarChat() {
 
@@ -54,14 +52,27 @@ function NavBarChat() {
                 <div className="relative flex-1 " ref={dropdownRef}>
 
                     <div className="flex items-center p-1 rounded-md group cursor-pointer transition-all duration-200 w-fit" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                        <img src={logo} alt="Logo" className="w-10 h-10 object-contain lg:hidden" />
+                        <img src="../public/logoblue.png" alt="Logo" className="w-10 h-10 object-contain lg:hidden" />
                         <h1 className={`pl-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500  text-3xl origin-left lg:hidden`}>
                             LOGISTICO
                         </h1>
-                     
+                        {/* <span className="text-white text-md lg:text-xl font-extralight hidden lg:block">{chatName}</span>
+                        <ChevronDown className={`text-white ml-[3px] mt-[5px] transform transition-transform duration-300 ease-in-out hidden lg:block`}
+                            strokeWidth={0.5} /> */}
                     </div>
 
-                   
+                    {/* {isDropdownOpen && (
+                        <div className="hidden lg:block absolute top-full left-0 mt-1 w-46 bg-zinc-900 border border-zinc-800 rounded-lg shadow-lg z-50 py-1">
+                            <button className="w-full px-3 sm:px-4 py-2 text-left text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors duration-200 flex items-center gap-2">
+                                <Edit3 size={14} className="sm:w-4 sm:h-4" strokeWidth={1.5} />
+                                <span>Renombrar chat</span>
+                            </button>
+                            <button className="w-full px-3 sm:px-4 py-2 text-left text-zinc-300 hover:bg-red-600 hover:text-white transition-colors duration-200 flex items-center gap-2">
+                                <Trash2 size={14} className="sm:w-4 sm:h-4" strokeWidth={1.5} />
+                                <span className="">Eliminar</span>
+                            </button>
+                        </div>
+                    )} */}
                 </div>
 
                 {/* Contenedor de iconos */}
@@ -175,104 +186,113 @@ function NavBarChat() {
             {/* Modal Sidebar siempre presente con transición */}
             <div className={`fixed inset-0 z-50 bg-zinc-300/40 dark:bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${isModalSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} `}
                 onClick={handleOverlayClick}  >
-                <div className={`fixed top-0 left-0 h-full min-h-screen flex flex-col bg-zinc-100 dark:bg-zinc-900/95 backdrop-blur-md border-r border-zinc-300 dark:border-zinc-700/50 w-68 transform transition-transform duration-300 ease-in-out ${isModalSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    
-                    {/* Header del sidebar */}
-                    <div className="flex-shrink-0 p-4 pt-6">
-                        <div className="w-full items-center mb-4 flex cursor-pointer">
-                            <img src={logo}  alt="Logo" className="w-10 h-10 object-contain" />
-                            <h1 className={`transition-all duration-300 ease-in-out whitespace-nowrap pl-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-3xl origin-left`}>
-                                LOGISTICO
-                            </h1>
-                            <button className="ml-4 mt-1 rounded-md transition-all duration-200 hover:scale-110 hover:bg-red-600 p-1 text-zinc-500 hover:text-zinc-100" aria-label="Cerrar" onClick={() => setIsModalSidebarOpen(!isModalSidebarOpen)}>
-                                <CircleX size={20} strokeWidth={2} />
-                            </button>
-                        </div>
+                <div className={`h-screen flex flex-col bg-zinc-100 dark:bg-zinc-900/95 backdrop-blur-md border-r border-zinc-300 dark:border-zinc-700/50 pt-4 w-68 p-4 transform transition-transform duration-300 ease-in-out ${isModalSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    {/* logo sidebar */}
+                    <div className="w-[100%] items-center  mb-4 flex cursor-pointer">
+                        <img src="../public/logoblue.png" alt="Logo" className="w-10 h-10 object-contain" />
+                        <h1 className={` transition-all duration-300 ease-in-out whitespace-nowrap pl-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-3xl origin-left`}>
+                            LOGISTICO
+                        </h1>
+                        <button className="ml-4 mt-1 rounded-md transition-all duration-200 hover:scale-110 hover:bg-red-600 p-1 text-zinc-500 hover:text-zinc-100" aria-label="Configuración" onClick={() => setIsModalSidebarOpen(!isModalSidebarOpen)}>
+                            <CircleX size={20} strokeWidth={2} />
+                        </button>
                     </div>
 
-                    {/* Contenido scrolleable del menu */}
-                    <div className="flex-1 flex flex-col justify-between px-4 pb-4 overflow-y-auto">
-                        <div className="flex-1">
-                            <ul className="space-y-2">
-                                <li className="h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
-                                    <div className="w-10 h-full flex justify-center items-center">
-                                        <MessageCirclePlus size={28} strokeWidth={1} />
-                                    </div>
-                                    <div className="relative flex-1">
-                                        <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
-                                            Nuevo chat
-                                        </p>
-                                    </div>
-                                </li>
+                    {/* menu */}
+                    <div className="flex flex-col justify-between flex-1 mt-4">
+                        <ul className="space-y-2">
+                            <li className=" h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
+                                <div className="w-10 h-full flex justify-center items-center">
+                                    <MessageCirclePlus size={28} strokeWidth={1} />
+                                </div>
+                                {/* Texto */}
+                                <div className="relative flex-1">
+                                    <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
+                                        Nuevo chat
+                                    </p>
+                                </div>
 
-                                <li className="h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
-                                    <div className="w-10 h-full flex justify-center items-center">
-                                        <Search size={28} strokeWidth={1} />
-                                    </div>
-                                    <div className="relative flex-1">
-                                        <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
-                                            Buscar chat
-                                        </p>
-                                    </div>
-                                </li>
+                            </li>
 
-                                <li className="h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
-                                    <div className="w-10 h-full flex justify-center items-center">
-                                        <MessagesSquare size={28} strokeWidth={1} />
-                                    </div>
-                                    <div className="relative flex-1">
-                                        <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
-                                            Mis chats
-                                        </p>
-                                    </div>
-                                </li>
+                            <li className=" h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
+                                <div className="w-10 h-full flex justify-center items-center">
+                                    <Search size={28} strokeWidth={1} />
+                                </div>
+                                {/* Texto */}
+                                <div className="relative flex-1">
+                                    <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
+                                        Buscar chat
+                                    </p>
+                                </div>
 
-                                <li className="h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
-                                    <div className="w-10 h-full flex justify-center items-center">
-                                        <FileChartPie size={28} strokeWidth={1} />
-                                    </div>
-                                    <div className="relative flex-1">
-                                        <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
-                                            Informes
-                                        </p>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                            </li>
 
-                        {/* Footer del sidebar */}
-                        <div className="flex-shrink-0">
-                            <ul className="space-y-4">
-                                <hr className="text-zinc-400 dark:text-zinc-800 mb-4" />
-                                
-                                <li className="h-14 relative flex items-center rounded-md cursor-pointer hover:bg-zinc-300 hover:dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 hover:dark:text-white dark:text-zinc-400 transition-all ease-in-out duration-500 group">
-                                    <div className="w-8 h-8 mx-1 rounded-full overflow-hidden flex justify-center items-center bg-blue-900">
-                                        <img src={user} alt="Perfil" className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="relative flex-1 ml-2">
-                                        <p className={`absolute flex flex-col left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap`}>
-                                            <span className="text-base font-semibold leading-tight">
-                                                Alejandro Galeano
-                                            </span>
-                                            <span className="text-sm leading-tight">
-                                                alejog@gmail.com
-                                            </span>
-                                        </p>
-                                    </div>
-                                </li>
+                            <li className=" h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
+                                <div className="w-10 h-full flex justify-center items-center">
+                                    <MessagesSquare size={28} strokeWidth={1} />
+                                </div>
+                                {/* Texto */}
+                                <div className="relative flex-1">
+                                    <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
+                                        Mis chats
+                                    </p>
+                                </div>
 
-                                <li className="h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
-                                    <div className="w-10 h-full flex justify-center items-center">
-                                        <LogOut size={28} strokeWidth={1} />
-                                    </div>
-                                    <div className="relative flex-1">
-                                        <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
-                                            Cerrar sesión
-                                        </p>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                            </li>
+
+                            <li className=" h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
+                                <div className="w-10 h-full flex justify-center items-center">
+                                    <FileChartPie size={28} strokeWidth={1} />
+                                </div>
+                                {/* Texto */}
+                                <div className="relative flex-1">
+                                    <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
+                                        Informes
+                                    </p>
+                                </div>
+
+                            </li>
+                        </ul>
+
+                        <ul className="space-y-4">
+                            <hr className="text-zinc-400 dark:text-zinc-800 mb-4"></hr>
+                            
+
+                            <li className=" h-14 relative flex items-center rounded-md cursor-pointer hover:bg-zinc-300 hover:dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 hover:dark:text-white  dark:text-zinc-400 transition-all ease-in-out duration-500 group " >
+                                <div className="w-8 h-8 mx-1 rounded-full overflow-hidden flex justify-center items-center bg-blue-900">
+                                    <img src="../public/user_men.png" alt="Perfil" className="w-full h-full object-cover" />
+                                </div>
+
+                                {/* Texto */}
+                                <div className="relative flex-1 ml-2">
+                                    <p className={` absolute flex flex-col left-0 top-1/2 -translate-y-1/2  transition-all duration-300 ease-in-out whitespace-nowrap`}  >
+                                        <span className="text-base font-semibold leading-tight">
+                                            Alejandro Galeano
+                                        </span>
+                                        <span className="text-sm leading-tight">
+                                            alejog@gmail.com
+                                        </span>
+                                    </p>
+                                </div>
+                            </li>
+
+
+
+                            <li className=" h-10 relative flex items-center justify-center rounded-md cursor-pointer hover:text-zinc-600 hover:dark:text-white text-zinc-400 hover:bg-zinc-300 hover:dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
+                                <div className="w-10 h-full flex justify-center items-center">
+                                    <LogOut size={28} strokeWidth={1} />
+                                </div>
+                                {/* Texto */}
+                                <div className="relative flex-1">
+                                    <p className={`absolute left-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out whitespace-nowrap `}>
+                                        Cerrar sesión
+                                    </p>
+                                </div>
+
+                            </li>
+
+
+                        </ul>
                     </div>
                 </div>
             </div>
