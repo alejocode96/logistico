@@ -14,3 +14,134 @@ html,
 body {
   @apply bg-white dark:bg-[#09090B];
 }
+
+
+/* background */
+/* .bg-wg_ligth {
+  background: #ECE9E6, #FFFFFF;
+  background: -webkit-linear-gradient(180deg, #ECE9E6, #FFFFFF);
+  background: linear-gradient(180deg, #ECE9E6, #FFFFFF);
+}
+
+.bg-wg_dark {
+  --tw-bg-opacity: 1;
+  background-color: rgb(9 9 11 / var(--tw-bg-opacity));
+} */
+
+/* efecto en icono */
+@keyframes slow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.slow-spin {
+  animation: slow-spin 10s linear infinite;
+}
+
+/* efecto en texto */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+/*borde imagen*/
+@keyframes starlight-left {
+  0% {
+    transform: translate(100%)
+  }
+
+  50%,
+  to {
+    transform: translate(-100%)
+  }
+}
+
+.animate-starlight-left {
+  animation: starlight-left 4s cubic-bezier(.6, .6, 0, 1) 2s infinite
+}
+
+
+
+@keyframes starlight-right {
+  0% {
+    transform: translate(-100%)
+  }
+
+  50%,
+  to {
+    transform: translate(100%)
+  }
+}
+
+.animate-starlight-right {
+  animation: starlight-right 4s cubic-bezier(.6, .6, 0, 1) infinite
+}
+
+/* estilos mensaje */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out;
+}
+
+.animate-slide-out {
+  animation: slide-out 0.5s ease-out forwards;
+}
+
+
+
+.shadow-glow:hover {
+  --tw-shadow: 0px 1px 20px rgba(94, 176, 239, .3);
+  --tw-shadow-colored: 0px 1px 20px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+/* //boton contraseña */
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear,
+input[type='password']::-webkit-credentials-auto-fill-button,
+input[type='password']::-webkit-reveal-button {
+  display: none !important;
+}
+
+

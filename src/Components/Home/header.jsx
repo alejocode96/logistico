@@ -64,7 +64,7 @@ function Header() {
                 </div>
             </nav>
 
-            <div className=" relative w-full h-screen flex items-center justify-center text-center" data-aos="fade-up">
+            <div className=" relative w-full h-[600px] flex items-center justify-center text-center pt-4" data-aos="fade-up">
                 <div className='w-[90%] max-w-6xl flex flex-col items-center'>
                     <div className=''>
                         <h1 className='text-6xl  md:text-7xl lg:text-8xl font-black text-gray-800 leading-none mb-2 float-animation'>
