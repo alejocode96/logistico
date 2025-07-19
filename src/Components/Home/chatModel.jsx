@@ -78,8 +78,8 @@ function ChatModel() {
                 </div>
                 <div className='relative flex h-full w-full flex-col items-center justify-end px-4 pb-12 sm:px-8 lg:pb-16'>
 
-                    <div class="rounded-xl bg-cyan-400/10 p-2 mt-14">
-                        <div class="select-none rounded-md bg-cyan-600 px-3 py-2 text-sm font-medium text-zinc-200 shadow-[inset_0px_1px_1px_theme(colors.white/30%),0px_1px_3px_theme(colors.cyan.500/35%),0px_0px_0px_1px_theme(colors.cyan.500)]">
+                    <div className="rounded-xl bg-cyan-400/10 p-2 mt-14">
+                        <div className="select-none rounded-md bg-cyan-600 px-3 py-2 text-sm font-medium text-zinc-200 shadow-[inset_0px_1px_1px_theme(colors.white/30%),0px_1px_3px_theme(colors.cyan.500/35%),0px_0px_0px_1px_theme(colors.cyan.500)] text-center">
                             Hola! Soy LOGISTICO en que puedo ayudarte?
                         </div>
                     </div>

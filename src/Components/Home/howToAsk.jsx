@@ -234,7 +234,7 @@ function HowToAsk() {
             <div className={`pt-6 h-auto relative `} data-aos="fade-up">
                 <div className='relative mx-auto mt-16 max-w-full p-6 pb-12 pt-20 lg:px-8 '>
                     {/* Línea superior fina */}
-                    <div aria-hidden="true" class="user-select-none center pointer-events-none absolute -top-0.5 left-1/2 h-px w-4/5 max-w-[500px] -translate-x-1/2 -translate-y-1/2 transform-gpu [background:linear-gradient(90deg,rgba(0,0,0,0)_0%,rgba(2,132,199,0.65)_50%,rgba(0,0,0,0)_100%)]"></div>
+                    <div aria-hidden="true" className="user-select-none center pointer-events-none absolute -top-0.5 left-1/2 h-px w-4/5 max-w-[500px] -translate-x-1/2 -translate-y-1/2 transform-gpu [background:linear-gradient(90deg,rgba(0,0,0,0)_0%,rgba(2,132,199,0.65)_50%,rgba(0,0,0,0)_100%)]"></div>
 
                     {/* efecto linea */}
                     <div aria-hidden="true" className="user-select-none center pointer-events-none absolute -top-1 left-1/2 h-[200px] w-full max-w-[300px] -translate-x-1/2 -translate-y-1/2 transform-gpu bg-[conic-gradient(from_90deg_at_50%_50%,#52525b00_50%,white_50%),radial-gradient(rgba(82,82,91,0.06)_0%,transparent_70%)]  dark:[background:conic-gradient(from_90deg_at_50%_50%,#00000000_50%,#09090b_50%),radial-gradient(rgba(200,200,200,0.05)_0%,transparent_70%)] md:max-w-[600px]"></div>
@@ -276,14 +276,14 @@ function HowToAsk() {
                             {/* Botón */}
                             <div className="mt-12 flex items-center justify-center">
                                 <button className=" group relative rounded-full p-px text-sm/6 shadow-glow text-zinc-500 duration-300 hover:text-zinc-800 dark:hover:text-zinc-100 hover:shadow-glow">
-                                    <span class="absolute inset-0 overflow-hidden rounded-full"><span class="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span></span>
+                                    <span className="absolute inset-0 overflow-hidden rounded-full"><span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span></span>
                                     <NavLink to='/login'>
                                         <div className="relative  rounded-full bg-zinc-200 dark:bg-black bg-opacity-20 backdrop-blur-xl px-4 py-1.5 ring-1 ring-zinc-300 dark:ring-white/10">
                                             Iniciar sesión
                                         </div>
                                     </NavLink>
 
-                                    <span class="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-cyan-400/0 via-cyan-400/90 to-cyan-400/0 transition-opacity duration-500 group-hover:opacity-40"></span>
+                                    <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-cyan-400/0 via-cyan-400/90 to-cyan-400/0 transition-opacity duration-500 group-hover:opacity-40"></span>
                                 </button>
                             </div>
                         </div>
