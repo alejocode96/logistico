@@ -94,7 +94,7 @@ function Login() {
                             </div>
                             <div className="mt-10 mx-10">
                                 <NavLink to='/chat'>
-                                    <div className="w-full bg-[#E4E4E7] h-10 rounded-md text-gray-800 transition-all duration-300 hover:bg-zinc-300 hover:shadow-md hover:translate-y-px hover:text-black">INICIAR SESIÓN</div>
+                                    <button className="w-full bg-[#E4E4E7] h-10 rounded-md text-gray-800 transition-all duration-300 hover:bg-zinc-300 hover:shadow-md hover:translate-y-px hover:text-black">INICIAR SESIÓN</button>
                                 </NavLink>
                             </div>
                             <div className="mt-2 mx-10">
