@@ -34,8 +34,8 @@ function WhoIsLogistico() {
                         {/* Columna derecha */}
                         <div className="w-full lg:w-1/2 pt-4 lg:pt-0">
                             <p className="text-justify text-zinc-600 pb-4 dark:text-zinc-400">
-                                <span className="font-semibold">Logístico</span>
-                                es nuestro asistente virtual especializado en procesos logísticos. Está diseñado para brindarte información precisa, en tiempo real y basada en datos operativos confiables.
+                                <span className="font-semibold">Logístico </span>
+                                <span>es nuestro asistente virtual especializado en procesos logísticos. Está diseñado para brindarte información precisa, en tiempo real y basada en datos operativos confiables.</span>
                             </p>
                             <p className="text-justify text-zinc-600 pb-4 dark:text-zinc-400">
                                 Conectado directamente a nuestros sistemas, te ofrece respuestas inmediatas que te ayudan a tomar decisiones más ágiles, seguras y eficientes.
