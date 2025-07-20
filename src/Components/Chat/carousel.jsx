@@ -3,7 +3,7 @@ import { useRef } from 'react';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { A11y, Autoplay } from 'swiper/modules';
+import { A11y, Autoplay, Pagination } from 'swiper/modules';
 
 // Import Swiper styles
 import 'swiper/swiper-bundle.css';
@@ -38,7 +38,7 @@ const ActiveSlider = () => {
     <div className="w-full mx-auto">
       <Swiper
         className="w-full"
-        modules={[A11y, Autoplay]}
+        modules={[A11y, Autoplay, Pagination]}
         spaceBetween={20}
         slidesPerView={1} // Por defecto 1 slide en móviles
         breakpoints={{
@@ -50,6 +50,10 @@ const ActiveSlider = () => {
         autoplay={{
           delay: 4000,
           disableOnInteraction: false,
+        }}
+        pagination={{
+          clickable: true,
+          el: '.custom-pagination',
         }}
         loop={true} // Loop habilitado
         centeredSlides={false}
@@ -65,7 +69,7 @@ const ActiveSlider = () => {
                     {pr.icon}
                   </div>
                 </div>
-                
+                                
                 {/* Texto */}
                 <div className="w-4/5 flex flex-col pl-3 justify-center">
                   <p className="text-sm text-zinc-400 font-medium leading-none group-hover:text-blue-100 transition-colors duration-200">
@@ -80,6 +84,9 @@ const ActiveSlider = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+      
+      {/* Paginación personalizada */}
+      <div className="custom-pagination flex justify-center mt-4"></div>
     </div>
   );
 };
