@@ -207,7 +207,7 @@ function NavBarChat() {
                     {/* Header del sidebar */}
                     <div className="flex items-center justify-between mb-6 pt-2">
                         <div className="flex items-center">
-                            <img src="../public/logoblue.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+                            <img src={logo} alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
                             <h1 className="ml-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-2xl sm:text-3xl">
                                 LOGISTICO
                             </h1>
