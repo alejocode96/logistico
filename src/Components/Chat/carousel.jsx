@@ -8,7 +8,7 @@ import { A11y, Autoplay } from 'swiper/modules';
 // Import Swiper styles
 import 'swiper/swiper-bundle.css';
 
-import { Clock } from 'lucide-react';
+import { Clock,Medal,TrendingUpDown  } from 'lucide-react';
 
 const questions = [
   {
@@ -20,13 +20,13 @@ const questions = [
   {
     id: 2,
     title: "Ranking de tiempos críticos",
-    icon: <Clock className="text-blue-700 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 group-hover:text-white" />,
+    icon: <Medal className="text-blue-700 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 group-hover:text-white" />,
     description: "Preguntas que permiten analizar rankings críticos de tiempos de permanencia de los vehículos, segmentados por tipo de vehículo, zona, región y periodos definidos."
   },
   {
     id: 3,
     title: "Tendencias y Cumplimiento",
-    icon: <Clock className="text-blue-700 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 group-hover:text-white" />,
+    icon: <TrendingUpDown  className="text-blue-700 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 group-hover:text-white" />,
     description: "Preguntas enfocadas en analizar la evolución del comportamiento operativo y el cumplimiento de tiempos por región, zona o vehículo, a lo largo de distintos periodos."
   },
 ];
