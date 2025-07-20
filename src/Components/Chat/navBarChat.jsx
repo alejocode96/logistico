@@ -78,7 +78,7 @@ function NavBarChat() {
                                 </button>
                                 
                                 {isDropdownConfigOpen && (
-                                    <div className="absolute top-full right-0 mt-2 w-44 sm:w-48 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 py-1">
+                                    <div className="absolute top-full left-0 mt-2 w-44 sm:w-48 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 py-1">
                                         <button className="w-full px-3 py-2 text-left text-zinc-500 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-600 dark:hover:text-white transition-colors duration-200 flex items-center gap-2 text-sm">
                                             <FileDown size={14} strokeWidth={1.5} />
                                             <span>Descargar</span>
@@ -109,7 +109,7 @@ function NavBarChat() {
                                 </button>
                                 
                                 {isNotificationOpen && (
-                                    <div className="absolute top-full right-0 mt-2 w-64 sm:w-72 md:w-80 max-w-[90vw] bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 py-2">
+                                    <div className="absolute top-full -right-20 mt-2 w-64 sm:w-72 md:w-80 max-w-[90vw] bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 py-2">
                                         <div className="px-3 py-2 border-b border-zinc-300 dark:border-zinc-800 flex justify-between items-center">
                                             <h3 className="text-zinc-500 dark:text-white font-medium text-sm">Notificaciones</h3>
                                             {notifications.length > 0 && (
