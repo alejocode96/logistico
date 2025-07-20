@@ -5,7 +5,7 @@ import React from 'react'
 //componentes
 import SideBarChart from '../../Components/Chat/sideBarChat'
 import NavBarChat from '../../Components/Chat/NavBarChat'
-
+import InitialChat from '../../Components/Chat/initialChat'
 
 
 //contexto
@@ -76,7 +76,7 @@ function Chat() {
                 {/* CONTENIDO */}
                 <div className="relative z-20 h-screen flex-1 w-[98%] mx-auto">
                     <NavBarChat />
-                    
+                    <InitialChat/>
                 </div>
             </main>
         </>
