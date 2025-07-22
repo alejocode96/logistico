@@ -6,7 +6,7 @@ import React from 'react'
 import SideBarChart from '../../Components/Chat/sideBarChat'
 import NavBarChat from '../../Components/Chat/NavBarChat'
 import InitialChat from '../../Components/Chat/initialChat'
-
+import ModalFaq from '../../Components/Chat/modalFAQ'
 
 //contexto
 import { LogisticoContext } from '../../Context'
@@ -14,7 +14,7 @@ import { LogisticoContext } from '../../Context'
 import { NavLink } from 'react-router-dom'
 
 function Chat() {
-    const { isDark } = React.useContext(LogisticoContext);
+    const { isDark, isOpenFAQ, setIsOpenFAQ } = React.useContext(LogisticoContext);
 
     return (
         <>
@@ -68,6 +68,7 @@ function Chat() {
 
                 }
 
+                
                 {/* SIDEBAR */}
                 <div className="relative z-20 flex">
                     <SideBarChart />
@@ -76,9 +77,11 @@ function Chat() {
                 {/* CONTENIDO */}
                 <div className="relative z-20 h-screen flex-1 w-[98%] mx-auto">
                     <NavBarChat />
-                    <InitialChat/>
+                    <InitialChat />
                 </div>
             </main>
+
+            <ModalFaq />
         </>
     );
 }

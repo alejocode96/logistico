@@ -1,7 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import ActiveSlider from "./carousel";
 
+//contexto
+import { LogisticoContext } from '../../Context'
+
 function InitialChat() {
+
+    const { isDark, isOpenFAQ, setIsOpenFAQ } = React.useContext(LogisticoContext);
+
     return (
         <div className="flex items-center justify-center p-4 pt-20" style={{ minHeight: 'calc(100vh - 80px)' }}>
             <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto">
@@ -24,7 +30,7 @@ function InitialChat() {
                         ></textarea>
                     </div>
                     <div className="flex justify-end pr-2 pb-2">
-                        <button className="flex mr-2 text-sm text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 p-2 rounded-md transition-all duration-500 hover:bg-zinc-200 hover:text-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-300">
+                        <button onClick={() => setIsOpenFAQ(true)} className="cursor-pointer flex mr-2 text-sm text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 p-2 rounded-md transition-all duration-500 hover:bg-zinc-200 hover:text-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-question-mark-icon lucide-shield-question-mark">
                                 <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
                                 <path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3" />
@@ -40,10 +46,10 @@ function InitialChat() {
                         </button>
                     </div>
                 </div>
-
+               
                 {/* slider */}
                 <div className="w-full">
-                   <ActiveSlider />
+                    <ActiveSlider />
                 </div>
             </div>
         </div>
