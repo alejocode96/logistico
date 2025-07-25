@@ -54,7 +54,7 @@ const ModalFaq = () => {
                 <div className="p-4 sm:p-6 overflow-y-auto max-h-[75vh]">
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         <div className="space-y-6">
-                            <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+                            <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
                                         <ShieldQuestionMark  className="w-5 h-5 text-blue-600 dark:text-blue-300" />
@@ -93,7 +93,7 @@ const ModalFaq = () => {
                                 )}
                             </div>
 
-                            <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+                            <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-10 h-10 bg-indigo-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
                                         <FunnelPlus className="w-5 h-5 text-blue-600 dark:text-blue-300" />
@@ -230,7 +230,7 @@ const ModalFaq = () => {
 
 
                         {/* Sección de Cobertura - Mantiene el mismo estilo */}
-                        <div className="flex-1  bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+                        <div className="flex-1  bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm">
 
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 bg-blue-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
