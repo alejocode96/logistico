@@ -7,7 +7,7 @@ import { Clock, Medal, TrendingUp } from 'lucide-react';
 
 function LogisticoProvider({ children }) {
     //estado para el dark mode
-    const [isDark, setIsDark] = useState(false);
+    const [isDark, setIsDark] = useState(true);
     const toggleDarkMode = () => { setIsDark(!isDark); };
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme'); // Lee la preferencia guardada en localStorage
@@ -120,7 +120,7 @@ function LogisticoProvider({ children }) {
             description: "Preguntas que permiten analizar rankings críticos de tiempos de permanencia de los vehículos, segmentados por tipo de vehículo, zona, región y periodos definidos.",
             detailedInfo: "Genera rankings de rendimiento basados en tiempos críticos de permanencia. Identifica las zonas y vehículos con mejor y peor desempeño, estableciendo benchmarks para optimización operativa.",
             formFields: [
-                { name: "periodo", label: "Periodo de Análisis", type: "select", options: ["Último mes", "Últimos 3 meses", "Último año"], required: true },
+                { cobertura: "periodo", label: "Periodo de Análisis", type: "select", options: ["Último mes", "Últimos 3 meses", "Último año"], required: true },
                 { name: "criterio_ranking", label: "Criterio de Ranking", type: "select", options: ["Tiempo promedio", "Tiempo máximo", "Frecuencia de incidencias"], required: true },
                 { name: "limite_resultados", label: "Límite de Resultados", type: "number", placeholder: "10", required: false },
                 { name: "incluir_historicos", label: "Incluir Datos Históricos", type: "checkbox", required: false }
@@ -142,11 +142,10 @@ function LogisticoProvider({ children }) {
     ];
     const [isOpenFAQ, setIsOpenFAQ] = useState(false);
     const [selectedFAQ, setSelectedFAQ] = useState(1);
-    const [formData, setFormData] = useState({});
     const handleSlideClick = (questionId) => {
         setSelectedFAQ(questionId);  // Establece la pregunta seleccionada
         setIsOpenFAQ(true);              // Abre el modal
-        setFormData({});                 // Limpia el formulario
+
     };
 
 
@@ -168,7 +167,7 @@ function LogisticoProvider({ children }) {
 
             isModalSidebarOpen, setIsModalSidebarOpen, handleOverlayClick, handleToggleModalSidebar,
 
-            questions,isOpenFAQ, setIsOpenFAQ, selectedFAQ, setSelectedFAQ, formData, setFormData, handleSlideClick
+            questions, isOpenFAQ, setIsOpenFAQ, selectedFAQ, setSelectedFAQ, handleSlideClick
         }}>
             {children}
         </LogisticoContext.Provider>

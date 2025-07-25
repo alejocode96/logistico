@@ -50,7 +50,7 @@ const ActiveSlider = () => {
       >
         {[...questions, ...questions].map((pr, index) => (
           <SwiperSlide key={index}>
-            <div className="cursor-pointer w-[99%] bg-zinc-100 dark:bg-[#0f0f10] rounded-2xl px-4 py-5 m-1 shadow-md group hover:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200"
+            <div className="cursor-pointer w-[99%] bg-zinc-100 dark:bg-[#1a1a1c] rounded-2xl px-4 py-5 m-1 shadow-md group hover:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200"
                  onClick={() => handleSlideClick(pr.id)}>
               <div className="flex items-center w-full text-left">
                 {/* Icono */}
