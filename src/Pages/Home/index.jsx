@@ -12,7 +12,7 @@ function Home() {
     return (
         <>
 
-            <main className='bg-white dark:bg-[#09090B]'>
+            <main className='bg-white dark:bg-[#09090B] w-full'>
                 {/* Header */}
                 <Header />
 
@@ -65,7 +65,7 @@ function Home() {
                 <HowToAsk />
             </main>
             {/* footer */}
-            <footer className="isolate mx-auto max-w-7xl p-6 pb-12 pt-16 lg:px-8 " data-aos="fade-up">
+            <footer className="w-full isolate mx-auto max-w-7xl p-6 pb-12 pt-16 lg:px-8 " data-aos="fade-up">
                 <div className="border-t border-zinc-300 dark:border-white/10 pt-4 md:flex md:items-center md:justify-between">
                     {/* <div className="flex justify-center space-x-6 md:order-2">
                         <a target="_blank" rel="noopener noreferrer" aria-label="Follow on X (formerly Twitter)" className="group flex h-6 w-6 items-center justify-center text-zinc-700  dark:text-zinc-400 transition dark:hover:text-zinc-300 hover:text-zinc-900" href="https://twitter.com/joincobalt">
