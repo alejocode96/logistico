@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Globe, TrendingUp } from 'lucide-react';
+import { X, MapPin, Globe, TrendingUp, ShieldQuestionMark,FunnelPlus,TextCursorInput   } from 'lucide-react';
 
 // Contexto
 import { LogisticoContext } from '../../Context';
@@ -57,7 +57,7 @@ const ModalFaq = () => {
                             <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
-                                        <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                                        <ShieldQuestionMark  className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                                     </div>
                                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                                         Selección de Consulta
@@ -96,7 +96,7 @@ const ModalFaq = () => {
                             <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-10 h-10 bg-indigo-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
-                                        <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                                        <FunnelPlus className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
@@ -230,15 +230,18 @@ const ModalFaq = () => {
 
 
                         {/* Sección de Cobertura - Mantiene el mismo estilo */}
-                        <div className="flex-1 p-6 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
-                            <div>
-                                <p className="text-gray-600 dark:text-gray-300 mb-4">Seleccione la cobertura (solo una opción):</p>
-                                <div className="flex gap-3">
-                                    <div className="grid grid-cols-3 gap-2">
+                        <div className="flex-1  bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
 
-                                    </div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
+                                    <TextCursorInput  className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                                 </div>
+                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                                    Formulación de la pregunta
+                                </h3>
+
                             </div>
+
                         </div>
                     </div>
                 </div>
