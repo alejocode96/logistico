@@ -191,7 +191,7 @@ const ModalFaq = () => {
                                             <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
                                                 <button
                                                     onClick={() => handleCheckboxChange('tipoOperacion')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${advanceChecks.tipoOperacion
+                                                    className={`flex-1 px-4 py-2 text-xs md:text-sm rounded-md transition-all ${advanceChecks.tipoOperacion
                                                         ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
                                                         : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
                                                         }`}
@@ -200,7 +200,7 @@ const ModalFaq = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => handleCheckboxChange('operacion')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${advanceChecks.operacion
+                                                    className={`flex-1 px-4 py-2 text-xs md:text-sm rounded-md transition-all ${advanceChecks.operacion
                                                         ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
                                                         : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
                                                         }`}
@@ -209,7 +209,7 @@ const ModalFaq = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => handleCheckboxChange('tipoVehiculo')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${advanceChecks.tipoVehiculo
+                                                    className={`flex-1 px-4 py-2 text-xs md:text-sm rounded-md transition-all ${advanceChecks.tipoVehiculo
                                                         ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
                                                         : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
                                                         }`}
