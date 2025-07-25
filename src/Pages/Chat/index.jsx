@@ -18,7 +18,7 @@ function Chat() {
 
     return (
         <>
-            <main className="relative bg-white dark:bg-[#09090B] w-full max-h-screen flex ">
+            <main className="relative bg-white dark:bg-[#09090B] w-full h-screen flex overflow-hidden">
                 {/* BACKGROUND DENTRO DEL MAIN */}
                 {isDark ?
                     <div
@@ -64,20 +64,21 @@ function Chat() {
                             filter: "blur(0px)"
                         }} />
                     </div>
+                  }
 
-
-                }
-
-                
                 {/* SIDEBAR */}
-                <div className="relative z-20 flex">
+                <div className="relative z-20 flex flex-shrink-0">
                     <SideBarChart />
                 </div>
 
                 {/* CONTENIDO */}
-                <div className="relative z-20 h-screen flex-1 w-[98%] mx-auto">
-                    <NavBarChat />
-                    <InitialChat />
+                <div className="relative z-20 flex-1 w-[98%] mx-auto flex flex-col overflow-hidden">
+                    <div className="flex-shrink-0">
+                        <NavBarChat />
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                        <InitialChat />
+                    </div>
                 </div>
             </main>
 

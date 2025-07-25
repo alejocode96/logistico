@@ -9,10 +9,10 @@ function InitialChat() {
     const { isDark, isOpenFAQ, setIsOpenFAQ } = React.useContext(LogisticoContext);
 
     return (
-        <div className="flex items-center justify-center p-4 pt-20" style={{ minHeight: 'calc(100vh - 80px)' }}>
-            <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto">
+        <div className="flex items-center justify-center p-4 overflow-hidden h-full">
+            <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-6">
                 {/* titulo */}
-                <div className="flex flex-col w-full mb-2">
+                <div className="flex flex-col w-full flex-shrink-0">
                     <p className="m-0 text-zinc-400 text-3xl font-extralight leading-none p-0 text-left -mb-4">
                         Buenas tardes,
                     </p>
@@ -22,14 +22,14 @@ function InitialChat() {
                 </div>
 
                 {/* mensaje */}
-                <div className="bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-40 w-full rounded-2xl flex flex-col mb-6">
-                    <div className="w-full h-30 p-4">
+                <div className="bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-40 w-full rounded-2xl flex flex-col flex-shrink-0">
+                    <div className="w-full flex-1 p-4">
                         <textarea
                             className="w-full h-full resize-none outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent"
                             placeholder="¿Cómo puedo ayudarte hoy?"
                         ></textarea>
                     </div>
-                    <div className="flex justify-end pr-2 pb-2">
+                    <div className="flex justify-end pr-2 pb-2 flex-shrink-0">
                         <button onClick={() => setIsOpenFAQ(true)} className="cursor-pointer flex mr-2 text-sm text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 p-2 rounded-md transition-all duration-500 hover:bg-zinc-200 hover:text-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-question-mark-icon lucide-shield-question-mark">
                                 <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
@@ -48,7 +48,7 @@ function InitialChat() {
                 </div>
                
                 {/* slider */}
-                <div className="w-full">
+                <div className="w-full flex-1 min-h-0">
                     <ActiveSlider />
                 </div>
             </div>

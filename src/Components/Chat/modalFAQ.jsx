@@ -25,20 +25,18 @@ const ModalFaq = () => {
     const [busquedaCliente, setBusquedaCliente] = useState('');
     const [busquedaPlanta, setBusquedaPlanta] = useState('');
     const [mostrarDropdownClientes, setMostrarDropdownClientes] = useState(false);
-    const [mostrarDropdownPreguntas, setMostrarDropdownPreguntas] = useState(false);
     const [mostrarDropdownPlantas, setMostrarDropdownPlantas] = useState(false);
-    const [mostrarDropdownZonas, setMostrarDropdownZonas] = useState(false); // ESTADO FALTANTE AGREGADO
 
     // Datos de ejemplo
     const zonas = ['Norte', 'Centro', 'Noroccidente', 'Suroccidente'];
     const clientes = ['Cliente 1', 'Cliente 2', 'Cliente 3', 'Cliente 4', 'Cliente 5'];
     const plantas = ['Planta 1', 'Planta 2', 'Planta 3', 'Planta 4', 'Planta 5'];
 
-    const clientesFiltrados = clientes.filter(cliente => 
+    const clientesFiltrados = clientes.filter(cliente =>
         cliente.toLowerCase().includes(busquedaCliente.toLowerCase())
     );
 
-    const plantasFiltradas = plantas.filter(planta => 
+    const plantasFiltradas = plantas.filter(planta =>
         planta.toLowerCase().includes(busquedaPlanta.toLowerCase())
     );
 
@@ -59,16 +57,16 @@ const ModalFaq = () => {
     };
 
     const handleClienteChange = (cliente) => {
-        setClientesSeleccionados(prev => 
-            prev.includes(cliente) 
+        setClientesSeleccionados(prev =>
+            prev.includes(cliente)
                 ? prev.filter(c => c !== cliente)
                 : [...prev, cliente]
         );
     };
 
     const handlePlantaChange = (planta) => {
-        setPlantasSeleccionadas(prev => 
-            prev.includes(planta) 
+        setPlantasSeleccionadas(prev =>
+            prev.includes(planta)
                 ? prev.filter(p => p !== planta)
                 : [...prev, planta]
         );
@@ -83,9 +81,6 @@ const ModalFaq = () => {
         setBusquedaPlanta('');
         setMostrarDropdownClientes(false);
         setMostrarDropdownPlantas(false);
-        setMostrarDropdownPreguntas(false);
-        setMostrarDropdownZonas(false); 
-        setMostrarDropdownZonas(false);
     };
 
     const handlePuntoInteresChange = (value) => {
@@ -114,6 +109,7 @@ const ModalFaq = () => {
                 <div className="p-4 sm:p-6 overflow-y-auto max-h-[75vh]">
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         <div className="space-y-6">
+                            {/* Seleccionar pregunta */}
                             <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
@@ -124,49 +120,17 @@ const ModalFaq = () => {
                                     </h3>
                                 </div>
                                 <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+                                    <label htmlFor="question-select" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Selecciona una pregunta:
                                     </label>
-                                    <div className="relative">
-                                        <div 
-                                            onClick={() => setMostrarDropdownPreguntas(!mostrarDropdownPreguntas)}
-                                            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
-                                        >
-                                            <span>
-                                                {selectedFAQ 
-                                                    ? questions.find(q => q.id.toString() === selectedFAQ.toString())?.title || '-- Selecciona una opción --'
-                                                    : '-- Selecciona una opción --'
-                                                }
-                                            </span>
-                                            <ChevronDown className="w-4 h-4" />
-                                        </div>
-                                        
-                                        {mostrarDropdownPreguntas && (
-                                            <div className="absolute z-10 w-full mt-1 bg-gray-50 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                                <div 
-                                                    onClick={() => {
-                                                        setSelectedFAQ('');
-                                                        setMostrarDropdownPreguntas(false);
-                                                    }}
-                                                    className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer text-zinc-600 dark:text-zinc-300"
-                                                >
-                                                    -- Selecciona una opción --
-                                                </div>
-                                                {questions.map((question) => (
-                                                    <div 
-                                                        key={question.id}
-                                                        onClick={() => {
-                                                            setSelectedFAQ(question.id);
-                                                            setMostrarDropdownPreguntas(false);
-                                                        }}
-                                                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer text-zinc-600 dark:text-zinc-300"
-                                                    >
-                                                        {question.title}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                                    <select id="question-select" value={selectedFAQ} onChange={handleQuestionChange} className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white " >
+                                        <option value="">-- Selecciona una opción --</option>
+                                        {questions.map((question) => (
+                                            <option key={question.id} value={question.id}>
+                                                {question.title}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 {selectedFAQ && (
@@ -183,6 +147,7 @@ const ModalFaq = () => {
                                 )}
                             </div>
 
+                            {/* Filtros */}
                             <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-10 h-10 bg-indigo-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
@@ -197,7 +162,7 @@ const ModalFaq = () => {
                                         </p>
                                     </div>
                                 </div>
-                                {/* selecionar preguntas */}
+
                                 <div className="flex-1 ">
                                     <div className="mt-6">
                                         <div className="space-y-0">
@@ -345,43 +310,18 @@ const ModalFaq = () => {
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Seleccione una Zona
                                         </label>
-                                        <div className="relative">
-                                            <div 
-                                                onClick={() => setMostrarDropdownZonas(!mostrarDropdownZonas)}
-                                                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
-                                            >
-                                                <span>
-                                                    {zonaSeleccionada || 'Seleccione una zona'}
-                                                </span>
-                                                <ChevronDown className="w-4 h-4" />
-                                            </div>
-                                            
-                                            {mostrarDropdownZonas && (
-                                                <div className="absolute z-10 w-full mt-1 bg-gray-50 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg">
-                                                    <div 
-                                                        onClick={() => {
-                                                            setZonaSeleccionada('');
-                                                            setMostrarDropdownZonas(false);
-                                                        }}
-                                                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer text-zinc-600 dark:text-zinc-300"
-                                                    >
-                                                        Seleccione una zona
-                                                    </div>
-                                                    {zonas.map((zona) => (
-                                                        <div 
-                                                            key={zona}
-                                                            onClick={() => {
-                                                                setZonaSeleccionada(zona);
-                                                                setMostrarDropdownZonas(false);
-                                                            }}
-                                                            className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer text-zinc-600 dark:text-zinc-300"
-                                                        >
-                                                            {zona}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
+                                        <select
+                                            value={zonaSeleccionada}
+                                            onChange={(e) => setZonaSeleccionada(e.target.value)}
+                                            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white "
+                                        >
+                                            <option value="">Seleccione una zona</option>
+                                            {zonas.map((zona) => (
+                                                <option key={zona} value={zona}>
+                                                    {zona}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                 )}
 
@@ -421,19 +361,19 @@ const ModalFaq = () => {
                                                     Seleccionar Clientes
                                                 </label>
                                                 <div className="relative">
-                                                    <div 
+                                                    <div
                                                         onClick={() => setMostrarDropdownClientes(!mostrarDropdownClientes)}
                                                         className="w-full p-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
                                                     >
                                                         <span>
-                                                            {clientesSeleccionados.length > 0 
+                                                            {clientesSeleccionados.length > 0
                                                                 ? `${clientesSeleccionados.length} cliente(s) seleccionado(s)`
                                                                 : 'Seleccionar clientes'
                                                             }
                                                         </span>
                                                         <ChevronDown className="w-4 h-4" />
                                                     </div>
-                                                    
+
                                                     {mostrarDropdownClientes && (
                                                         <div className="absolute z-10 w-full mt-1 bg-gray-50 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg">
                                                             <div className="p-3 border-b border-gray-300 dark:border-zinc-700">
@@ -476,19 +416,19 @@ const ModalFaq = () => {
                                                     Seleccionar Plantas
                                                 </label>
                                                 <div className="relative">
-                                                    <div 
+                                                    <div
                                                         onClick={() => setMostrarDropdownPlantas(!mostrarDropdownPlantas)}
                                                         className="w-full p-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
                                                     >
                                                         <span>
-                                                            {plantasSeleccionadas.length > 0 
+                                                            {plantasSeleccionadas.length > 0
                                                                 ? `${plantasSeleccionadas.length} planta(s) seleccionada(s)`
                                                                 : 'Seleccionar plantas'
                                                             }
                                                         </span>
                                                         <ChevronDown className="w-4 h-4" />
                                                     </div>
-                                                    
+
                                                     {mostrarDropdownPlantas && (
                                                         <div className="absolute z-10 w-full mt-1 bg-gray-50 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg">
                                                             <div className="p-3 border-b border-gray-300 dark:border-zinc-700">
