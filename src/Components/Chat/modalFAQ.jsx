@@ -27,6 +27,15 @@ const ModalFaq = () => {
     const [mostrarDropdownClientes, setMostrarDropdownClientes] = useState(false);
     const [mostrarDropdownPlantas, setMostrarDropdownPlantas] = useState(false);
 
+    const [fechaUnica, setFechaUnica] = useState('');
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
+
+
+    const [tipoOperacionSelect, setTipoOperacionSelect] = useState('');
+    const [operacionSelect, setOperacionSelect] = useState('');
+    const [tipoVehiculoSelect, setTipoVehiculoSelect] = useState('');
+
     // Datos de ejemplo
     const zonas = ['Norte', 'Centro', 'Noroccidente', 'Suroccidente'];
     const clientes = ['Cliente 1', 'Cliente 2', 'Cliente 3', 'Cliente 4', 'Cliente 5'];
@@ -81,6 +90,10 @@ const ModalFaq = () => {
         setBusquedaPlanta('');
         setMostrarDropdownClientes(false);
         setMostrarDropdownPlantas(false);
+        setTipoOperacionSelect([]);
+        setOperacionSelect([]);
+        setTipoVehiculoSelect([]);
+
     };
 
     const handlePuntoInteresChange = (value) => {
@@ -463,9 +476,127 @@ const ModalFaq = () => {
                                                 </div>
                                             </div>
                                         )}
+
+
+
                                     </div>
                                 )}
                             </div>
+
+                            {/* Filtros Temporales */}
+                            <div className='mt-3'>
+
+                                {filtroTemporal === 'unico' ? (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Fecha
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={fechaUnica}
+                                            onChange={(e) => setFechaUnica(e.target.value)}
+                                            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                        />
+                                    </div>
+
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Fecha Inicio
+                                            </label>
+                                            <input
+                                                type="datetime-local"
+                                                value={fechaInicio}
+                                                onChange={(e) => setFechaInicio(e.target.value)}
+                                                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Fecha Fin
+                                            </label>
+                                            <input
+                                                type="datetime-local"
+                                                value={fechaFin}
+                                                onChange={(e) => setFechaFin(e.target.value)}
+                                                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <div className='mt-3'>
+                                {/* Segmentación Avanzada - Selects */}
+                                {(advanceChecks.tipoOperacion || advanceChecks.operacion || advanceChecks.tipoVehiculo) && (
+                                    <div className="space-y-4">
+
+                                        {/* Tipo de Operación Select */}
+                                        {advanceChecks.tipoOperacion && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Tipo de Operación
+                                                </label>
+                                                <select
+                                                    value={tipoOperacionSelect}
+                                                    onChange={(e) => setTipoOperacionSelect(e.target.value)}
+                                                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                >
+                                                    <option value="">Seleccione tipo de operación</option>
+                                                    <option value="1">Tipo de Operación 1</option>
+                                                    <option value="2">Tipo de Operación 2</option>
+                                                    <option value="3">Tipo de Operación 3</option>
+                                                    <option value="4">Tipo de Operación 4</option>
+                                                    <option value="5">Tipo de Operación 5</option>
+                                                </select>
+                                            </div>
+                                        )}
+
+                                        {/* Operación Select */}
+                                        {advanceChecks.operacion && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Operación
+                                                </label>
+                                                <select
+                                                    value={operacionSelect}
+                                                    onChange={(e) => setOperacionSelect(e.target.value)}
+                                                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                >
+                                                    <option value="">Seleccione operación</option>
+                                                    <option value="1">Operación 1</option>
+                                                    <option value="2">Operación 2</option>
+                                                    <option value="3">Operación 3</option>
+                                                    <option value="4">Operación 4</option>
+                                                    <option value="5">Operación 5</option>
+                                                </select>
+                                            </div>
+                                        )}
+
+                                        {/* Tipo de Vehículo Select */}
+                                        {advanceChecks.tipoVehiculo && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Tipo de Vehículo
+                                                </label>
+                                                <select
+                                                    value={tipoVehiculoSelect}
+                                                    onChange={(e) => setTipoVehiculoSelect(e.target.value)}
+                                                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                >
+                                                    <option value="">Seleccione tipo de vehículo</option>
+                                                    <option value="1">Tipo de Vehículo 1</option>
+                                                    <option value="2">Tipo de Vehículo 2</option>
+                                                    <option value="3">Tipo de Vehículo 3</option>
+                                                    <option value="4">Tipo de Vehículo 4</option>
+                                                    <option value="5">Tipo de Vehículo 5</option>
+                                                </select>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
                         </div>
                     </div>
                 </div>

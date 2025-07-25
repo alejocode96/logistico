@@ -9,7 +9,7 @@ function InitialChat() {
     const { isDark, isOpenFAQ, setIsOpenFAQ } = React.useContext(LogisticoContext);
 
     return (
-        <div className="flex items-center justify-center p-4 overflow-hidden h-full">
+        <div className="flex items-center justify-center p-4 overflow-hidden h-full ">
             <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-6">
                 {/* titulo */}
                 <div className="flex flex-col w-full flex-shrink-0">
