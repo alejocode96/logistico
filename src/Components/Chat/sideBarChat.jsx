@@ -25,29 +25,38 @@ function SideBarChart() {
 
     return (
         <>
-            <div className={`z-10 h-screen hidden lg:flex flex-col bg-zinc-100 dark:bg-[#101014] pt-4 relative ${isOpenSideBar ? 'w-62 p-4' : 'w-18 p-4'} transition-all duration-300 ease-in-out ring-1 ring-zinc-200 dark:ring-zinc-900`}>
-
-                {/* boton sidebar */}
-
-                <button className="cursor-pointer absolute top-12 -right-3 z-50 flex justify-center items-center w-[1.6rem] h-[1.6rem] rounded-md bg-zinc-200 dark:bg-zinc-900/90 text-zinc-400 dark:text-zinc-500 duration-300 ease-in-out hover:text-zinc-600 hover:dark:text-zinc-100 before:absolute before:inset-0 before:w-full before:h-full before:bg-transparent before:cursor-pointer"
-                    onClick={() => setIsOpenSideBar(!isOpenSideBar)}  >
-
-                    {isOpenSideBar ? (
-                        <ChevronsLeft className="pointer-events-none" size={25} />
-                    ) : (
-                        <ChevronsRight className="pointer-events-none" size={25} />
-                    )}
-                </button>
-
-
+            <div className={`z-100 h-screen hidden lg:flex flex-col bg-zinc-100 dark:bg-[#101014] pt-4 relative ${isOpenSideBar ? 'w-62 p-4' : 'w-18 p-4'} transition-all duration-300 ease-in-out ring-1 ring-zinc-200 dark:ring-zinc-900`}>
 
 
                 {/* logo sidebar */}
-                <div className="w-[100%] items-center  mb-4 flex select-none ">
-                    <img src={logo} alt="Logo" className="w-12 h-12 object-contain cursor-pointer" />
-                    <h1 className={` transition-all duration-300 ease-in-out whitespace-nowrap pl-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-3xl origin-left  ${isOpenSideBar ? "opacity-100" : "opacity-0"}`}>
-                        LOGISTICO
-                    </h1>
+                <div className="w-[100%] items-center mb-4 flex select-none">
+                    <div className="relative w-12 h-12 cursor-pointer group flex">
+                        {/* Imagen original */}
+                        <img
+                            src={logo}
+                            alt="Logo"
+                            className="w-12 h-12 object-contain transition-all duration-500 group-hover:scale-0 group-hover:rotate-90"
+                        />
+                        {/* Icono de reemplazo */}
+                        <button onClick={() => setIsOpenSideBar(!isOpenSideBar)} className="absolute inset-0 flex items-center justify-center scale-0 group-hover:scale-110 transition-all duration-500 -rotate-90 group-hover:rotate-0">
+                            {isOpenSideBar ? (
+                               
+                                 <div className="w-8 h-8 rounded-md flex justify-center items-center hover:text-zinc-600 hover:dark:text-white text-zinc-400 bg-zinc-300 dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
+                                   <ChevronsLeft className="pointer-events-none" size={25} />
+                                </div>
+
+                            ) : (
+                                <div className="w-8 h-8 rounded-md flex justify-center items-center hover:text-zinc-600 hover:dark:text-white text-zinc-400 bg-zinc-300 dark:bg-zinc-800 transition-all ease-in-out duration-500 group">
+                                    <ChevronsRight className="pointer-events-none" size={25} />
+                                </div>
+
+                            )}
+                        </button>
+                        <h1 className={` transition-all duration-300 ease-in-out whitespace-nowrap pl-2 pt-2 bg-gradient-to-br from-gray-600 to-gray-900 bg-clip-text font-bold tracking-tight text-transparent dark:from-white dark:to-zinc-500 text-3xl origin-left  ${isOpenSideBar ? "opacity-100" : "opacity-0"}`}>
+                            LOGISTICO
+                        </h1>
+                    </div>
+
                 </div>
 
                 {/* menu */}

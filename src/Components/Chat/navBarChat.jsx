@@ -20,7 +20,7 @@ function NavBarChat() {
         isDark, toggleDarkMode, chatName, isDropdownOpen, setIsDropdownOpen, isNotificationOpen, setIsNotificationOpen,
         notifications, unreadNotifications, hasNotifications, handleNotificationClick, clearAllNotifications,
         markAsRead, isDropdownConfigOpen, setIsDropdownConfigOpen, isModalSidebarOpen, setIsModalSidebarOpen,
-        handleOverlayClick, handleToggleModalSidebar
+        handleOverlayClick, handleToggleModalSidebar, isOpenSideBar
     } = React.useContext(LogisticoContext);
 
     const dropdownRef = useRef(null);
@@ -49,8 +49,12 @@ function NavBarChat() {
 
     return (
         <>
-            {/* Navbar Principal - Altura fija y responsive */}
-            <div className="fixed top-0 left-0 right-0 z-40 pt-2">
+            {/* Navbar Principal - Altura fija y responsive, ajustado para no superponerse al sidebar */}
+            <div className={`fixed top-0 right-0 pt-2 transition-all duration-300 ease-in-out ${
+                // En desktop, ajustar el left según el estado del sidebar
+                // En móvil y tablet, usar left-0 para ocupar todo el ancho
+                `lg:left-${isOpenSideBar ? '62' : '18'} left-0`
+            }`}>
                 <div className="h-16 flex items-center justify-between lg:justify-end px-3 sm:px-4 lg:px-6 max-w-full">
                     
                     {/* Logo y título - Solo visible en pantallas medianas y pequeñas */}

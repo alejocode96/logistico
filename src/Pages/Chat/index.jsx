@@ -4,7 +4,7 @@ import React from 'react'
 
 //componentes
 import SideBarChart from '../../Components/Chat/sideBarChat'
-import NavBarChat from '../../Components/Chat/NavBarChat'
+import NavBarChat from '../../Components/Chat/navBarChat'
 import InitialChat from '../../Components/Chat/initialChat'
 import ModalFaq from '../../Components/Chat/modalFAQ'
 
@@ -67,7 +67,7 @@ function Chat() {
                   }
 
                 {/* SIDEBAR */}
-                <div className="relative z-20 flex flex-shrink-0">
+                <div className="relative z-30 flex flex-shrink-0">
                     <SideBarChart />
                 </div>
 

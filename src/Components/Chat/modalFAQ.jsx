@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Globe, TrendingUp, ShieldQuestionMark, FunnelPlus, TextCursorInput, Search, ChevronDown } from 'lucide-react';
+import {
+    X, MapPin, Globe, TrendingUp, ShieldQuestionMark, FunnelPlus, TextCursorInput, Search, ChevronDown,
+    Calendar, CalendarDays
+} from 'lucide-react';
 
 // Contexto
 import { LogisticoContext } from '../../Context';
@@ -10,7 +13,7 @@ const ModalFaq = () => {
     } = React.useContext(LogisticoContext);
 
     const [puntoInteres, setPuntoInteres] = useState('ninguno');
-    const [filtroTemporal, setFiltroTemporal] = useState('unico');
+    const [filtroTemporal, setFiltroTemporal] = useState('ninguno');
     const [advanceChecks, setAdvanceChecks] = useState({
         operacion: false,
         tipoOperacion: false,
@@ -228,6 +231,15 @@ const ModalFaq = () => {
                                                 Filtro temporal
                                             </label>
                                             <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
+                                                <button
+                                                    onClick={() => setFiltroTemporal('ninguno')}
+                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${filtroTemporal === 'ninguno'
+                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
+                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
+                                                        }`}
+                                                >
+                                                    Ninguno
+                                                </button>
                                                 <button
                                                     onClick={() => setFiltroTemporal('unico')}
                                                     className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${filtroTemporal === 'unico'
@@ -483,49 +495,86 @@ const ModalFaq = () => {
                                 )}
                             </div>
 
-                            {/* Filtros Temporales */}
                             <div className='mt-3'>
-
-                                {filtroTemporal === 'unico' ? (
+                                {filtroTemporal === 'ninguno' ? (
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Fecha
                                         </label>
-                                        <input
-                                            type="date"
-                                            value={fechaUnica}
-                                            onChange={(e) => setFechaUnica(e.target.value)}
-                                            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                disabled
+                                                value="Filtro deshabilitado"
+                                                className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-900 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed opacity-60"
+                                            />
+                                            <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-zinc-500" />
+                                        </div>
                                     </div>
-
+                                ) : filtroTemporal === 'unico' ? (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Fecha
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                value={fechaUnica}
+                                                onChange={(e) => setFechaUnica(e.target.value)}
+                                                className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                            />
+                                            <Calendar
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                onClick={() => document.querySelector('input[type="date"]').showPicker?.()}
+                                            />
+                                        </div>
+                                    </div>
                                 ) : (
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Inicio
                                             </label>
-                                            <input
-                                                type="datetime-local"
-                                                value={fechaInicio}
-                                                onChange={(e) => setFechaInicio(e.target.value)}
-                                                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
-                                            />
+                                            <div className="relative">
+                                                <input
+                                                    type="datetime-local"
+                                                    value={fechaInicio}
+                                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                                    className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                />
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const input = document.querySelector('input[type="datetime-local"]');
+                                                        input?.showPicker?.();
+                                                    }}
+                                                />
+                                            </div>
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Fin
                                             </label>
-                                            <input
-                                                type="datetime-local"
-                                                value={fechaFin}
-                                                onChange={(e) => setFechaFin(e.target.value)}
-                                                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
-                                            />
+                                            <div className="relative">
+                                                <input
+                                                    type="datetime-local"
+                                                    value={fechaFin}
+                                                    onChange={(e) => setFechaFin(e.target.value)}
+                                                    className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                />
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const inputs = document.querySelectorAll('input[type="datetime-local"]');
+                                                        inputs[1]?.showPicker?.();
+                                                    }}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 )}
                             </div>
+
                             <div className='mt-3'>
                                 {/* Segmentación Avanzada - Selects */}
                                 {(advanceChecks.tipoOperacion || advanceChecks.operacion || advanceChecks.tipoVehiculo) && (
@@ -597,6 +646,24 @@ const ModalFaq = () => {
                                 )}
                             </div>
 
+                            <div className="mt-3 bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-24 w-full rounded-2xl flex flex-col flex-shrink-0">
+                                <div className="w-full flex-1 p-2">
+                                    <textarea
+                                        className="w-full h-full resize-none outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent text-sm"
+                                        placeholder="Escribe tu mensaje..."
+                                    ></textarea>
+                                </div>
+                                <div className="flex justify-end px-2 pb-2 flex-shrink-0">
+                                    <button
+                                        type="submit"
+                                        className="bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-700 hover:to-blue-500 text-white rounded-lg p-1.5 transition-all duration-300 hover:scale-105 active:scale-95"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 512 512">
+                                            <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
