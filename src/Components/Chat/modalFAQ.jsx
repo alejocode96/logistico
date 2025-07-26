@@ -104,6 +104,94 @@ const ModalFaq = () => {
         resetSelections();
     };
 
+    // Estado para la pregunta formulada
+    const [preguntaFormulada, setPreguntaFormulada] = useState('');
+
+    const formularPregunta = () => {
+        const preguntaSeleccionada = getSelectedQuestion();
+
+        // Solo formular si hay una pregunta seleccionada y es "tiempos de espera y permanencia"
+        if (!preguntaSeleccionada || !preguntaSeleccionada.title.toLowerCase().includes('tiempo')) {
+            setPreguntaFormulada('');
+            return;
+        }
+
+        let pregunta = '¿Cuál es el tiempo de permanencia';
+
+        // Agregar punto de interés geográfico
+        if (puntoInteres === 'zona' && zonaSeleccionada) {
+            pregunta += ` en la zona ${zonaSeleccionada}`;
+        } else if (puntoInteres === 'region') {
+            if (tipoRegion === 'clientes' && clientesSeleccionados.length > 0) {
+                if (clientesSeleccionados.length === 1) {
+                    pregunta += ` en la región  ${clientesSeleccionados[0]}`;
+                } else {
+                    pregunta += ` en las regiónes  ${clientesSeleccionados.join(', ')}`;
+                }
+            } else if (tipoRegion === 'plantas' && plantasSeleccionadas.length > 0) {
+                if (plantasSeleccionadas.length === 1) {
+                    pregunta += ` en la región  ${plantasSeleccionadas[0]}`;
+                } else {
+                    pregunta += ` en las regiónes  ${plantasSeleccionadas.join(', ')}`;
+                }
+            }
+        }
+
+        // Agregar filtro temporal
+        if (filtroTemporal === 'unico' && fechaUnica) {
+            const fecha = new Date(fechaUnica).toLocaleDateString('es-ES');
+            pregunta += ` en la fecha ${fecha}`;
+        } else if (filtroTemporal === 'segmentacion' && fechaInicio && fechaFin) {
+            const fechaInicioFormateada = new Date(fechaInicio).toLocaleDateString('es-ES');
+            const fechaFinFormateada = new Date(fechaFin).toLocaleDateString('es-ES');
+            pregunta += ` desde ${fechaInicioFormateada} hasta ${fechaFinFormateada}`;
+        }
+
+        // Agregar segmentación avanzada
+        const segmentaciones = [];
+
+        if (advanceChecks.tipoOperacion && tipoOperacionSelect) {
+            const tipoOperacionTexto = document.querySelector(`option[value="${tipoOperacionSelect}"]`)?.textContent || tipoOperacionSelect;
+            segmentaciones.push(`tipo de operación ${tipoOperacionTexto}`);
+        }
+
+        if (advanceChecks.operacion && operacionSelect) {
+            const operacionTexto = document.querySelector(`select[value="${operacionSelect}"] option:checked`)?.textContent || operacionSelect;
+            segmentaciones.push(`operación ${operacionTexto}`);
+        }
+
+        if (advanceChecks.tipoVehiculo && tipoVehiculoSelect) {
+            const tipoVehiculoTexto = document.querySelector(`select[value="${tipoVehiculoSelect}"] option:checked`)?.textContent || tipoVehiculoSelect;
+            segmentaciones.push(`tipo de vehículo ${tipoVehiculoTexto}`);
+        }
+
+        if (segmentaciones.length > 0) {
+            pregunta += ` para ${segmentaciones.join(', ')}`;
+        }
+
+        pregunta += '?';
+        setPreguntaFormulada(pregunta);
+    };
+
+    useEffect(() => {
+        formularPregunta();
+    }, [
+        getSelectedQuestion, // si es una función, asegúrate que esté memoizada o usa su resultado
+        puntoInteres,
+        zonaSeleccionada,
+        tipoRegion,
+        clientesSeleccionados,
+        plantasSeleccionadas,
+        filtroTemporal,
+        fechaUnica,
+        fechaInicio,
+        fechaFin,
+        advanceChecks,
+        tipoOperacionSelect,
+        operacionSelect,
+        tipoVehiculoSelect
+    ]);
+
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isOpenFAQ ? "opacity-100 visible backdrop-blur-sm" : "opacity-0 invisible"}`}
             style={{ backgroundColor: isOpenFAQ ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0)", }}>
@@ -494,51 +582,85 @@ const ModalFaq = () => {
                                     </div>
                                 )}
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-full px-4">
-                                {/* Fecha de Inicio */}
-                                <div className="min-w-0 w-full">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Fecha Inicio
-                                    </label>
-                                    <div className="relative w-full">
-                                        <input
-                                            type="datetime-local"
-                                            value={fechaInicio}
-                                            onChange={(e) => setFechaInicio(e.target.value)}
-                                            className="w-full min-w-0 p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0"
-                                        />
-                                        <CalendarDays
-                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                            onClick={() => {
-                                                const input = document.querySelector('input[type="datetime-local"]');
-                                                input?.showPicker?.();
-                                            }}
-                                        />
+                            {/* Contenido dinámico basado en fechas */}
+                            <div className='mt-3'>
+                                {filtroTemporal === 'ninguno' ? (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Fecha
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                disabled
+                                                value="Filtro deshabilitado"
+                                                className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-900 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed opacity-60"
+                                            />
+                                            <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-zinc-500" />
+                                        </div>
                                     </div>
-                                </div>
-
-                                {/* Fecha de Fin */}
-                                <div className="min-w-0 w-full">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Fecha Fin
-                                    </label>
-                                    <div className="relative w-full">
-                                        <input
-                                            type="datetime-local"
-                                            value={fechaFin}
-                                            onChange={(e) => setFechaFin(e.target.value)}
-                                            className="w-full min-w-0 p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0"
-                                        />
-                                        <CalendarDays
-                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                            onClick={() => {
-                                                const input = document.querySelectorAll('input[type="datetime-local"]')[1];
-                                                input?.showPicker?.();
-                                            }}
-                                        />
+                                ) : filtroTemporal === 'unico' ? (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Fecha
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                value={fechaUnica}
+                                                onChange={(e) => setFechaUnica(e.target.value)}
+                                                className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm sm:text-base"
+                                            />
+                                            <Calendar
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                onClick={() => document.querySelector('input[type="date"]').showPicker?.()}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 gap-3 sm:gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Fecha Inicio
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="datetime-local"
+                                                    value={fechaInicio}
+                                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                                    className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-xs sm:text-sm md:text-base min-w-0"
+                                                />
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const input = document.querySelector('input[type="datetime-local"]');
+                                                        input?.showPicker?.();
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Fecha Fin
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="datetime-local"
+                                                    value={fechaFin}
+                                                    onChange={(e) => setFechaFin(e.target.value)}
+                                                    className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-xs sm:text-sm md:text-base min-w-0"
+                                                />
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const inputs = document.querySelectorAll('input[type="datetime-local"]');
+                                                        inputs[1]?.showPicker?.();
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
 
@@ -617,7 +739,8 @@ const ModalFaq = () => {
                                 <div className="w-full flex-1 p-2">
                                     <textarea
                                         className="w-full h-full resize-none outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent text-sm"
-                                        placeholder="Escribe tu mensaje..."
+                                        value={preguntaFormulada}
+                                        readOnly
                                     ></textarea>
                                 </div>
                                 <div className="flex justify-end px-2 pb-2 flex-shrink-0">
