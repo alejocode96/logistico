@@ -162,19 +162,29 @@ input[type='password']::-webkit-reveal-button {
   /* zinc-800 */
 }
 
+/* Estilos para inputs de fecha y datetime-local */
+.datetime-input {
+  font-size: 14px !important;
+  min-width: 0;
+  overflow: hidden;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 .datetime-input::-webkit-datetime-edit {
   padding: 0;
-  margin: 0;
+  width: 100%;
+  display: block;
 }
 
 .datetime-input::-webkit-datetime-edit-fields-wrapper {
   padding: 0;
-  margin: 0;
+  width: 100%;
+  display: block;
 }
 
 .datetime-input::-webkit-datetime-edit-text {
   padding: 0 2px;
-  color: inherit;
 }
 
 .datetime-input::-webkit-datetime-edit-month-field,
@@ -182,13 +192,24 @@ input[type='password']::-webkit-reveal-button {
 .datetime-input::-webkit-datetime-edit-year-field,
 .datetime-input::-webkit-datetime-edit-hour-field,
 .datetime-input::-webkit-datetime-edit-minute-field {
-  padding: 0 1px;
-  color: inherit;
+  padding: 0;
 }
 
-/* Mejora la alineación en móviles */
+/* Estilos responsive */
 @media (max-width: 640px) {
   .datetime-input {
-    font-size: 16px !important;
-    /* Evita zoom en iOS */
-  }}
+    font-size: 13px !important;
+  }
+}
+
+/* Opcional: Si necesitas estilos adicionales para mejor compatibilidad */
+.datetime-input::-webkit-inner-spin-button,
+.datetime-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.datetime-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}

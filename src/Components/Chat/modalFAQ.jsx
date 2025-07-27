@@ -590,39 +590,32 @@ const ModalFaq = () => {
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Fecha
                                         </label>
-                                        <div className="relative">
+                                        <div className="relative w-full">
                                             <input
                                                 type="text"
                                                 disabled
                                                 value="Filtro deshabilitado"
-                                                className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-900 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed opacity-60"
+                                                className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-900 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed opacity-60 text-sm"
                                             />
                                             <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-zinc-500" />
                                         </div>
                                     </div>
                                 ) : filtroTemporal === 'unico' ? (
-                                    <div className='space-y-3'>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Fecha
-                                            </label>
-                                            <div className="relative">
-                                                <input
-                                                    type="date"
-                                                    value={fechaUnica}
-                                                    onChange={(e) => setFechaUnica(e.target.value)}
-                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm"
-                                                    style={{
-                                                        minWidth: 0,
-                                                        maxWidth: '100%',
-                                                        textAlign: 'left'
-                                                    }}
-                                                />
-                                                <Calendar
-                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                    onClick={() => document.querySelector('input[type="date"]').showPicker?.()}
-                                                />
-                                            </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Fecha
+                                        </label>
+                                        <div className="relative w-full">
+                                            <input
+                                                type="date"
+                                                value={fechaUnica}
+                                                onChange={(e) => setFechaUnica(e.target.value)}
+                                                className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
+                                            />
+                                            <Calendar
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                onClick={() => document.querySelector('input[type="date"]')?.showPicker?.()}
+                                            />
                                         </div>
                                     </div>
                                 ) : (
@@ -631,17 +624,12 @@ const ModalFaq = () => {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Inicio
                                             </label>
-                                            <div className="relative">
+                                            <div className="relative w-full">
                                                 <input
                                                     type="datetime-local"
                                                     value={fechaInicio}
                                                     onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
-                                                    style={{
-                                                        minWidth: 0,
-                                                        maxWidth: '100%',
-                                                        textAlign: 'left'
-                                                    }}
+                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -656,17 +644,12 @@ const ModalFaq = () => {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Fin
                                             </label>
-                                            <div className="relative">
+                                            <div className="relative w-full">
                                                 <input
                                                     type="datetime-local"
                                                     value={fechaFin}
                                                     onChange={(e) => setFechaFin(e.target.value)}
-                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
-                                                    style={{
-                                                        minWidth: 0,
-                                                        maxWidth: '100%',
-                                                        textAlign: 'left'
-                                                    }}
+                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
