@@ -611,7 +611,12 @@ const ModalFaq = () => {
                                                     type="date"
                                                     value={fechaUnica}
                                                     onChange={(e) => setFechaUnica(e.target.value)}
-                                                    className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm sm:text-base datetime-input"
+                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm"
+                                                    style={{
+                                                        minWidth: 0,
+                                                        maxWidth: '100%',
+                                                        textAlign: 'left'
+                                                    }}
                                                 />
                                                 <Calendar
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -620,7 +625,6 @@ const ModalFaq = () => {
                                             </div>
                                         </div>
                                     </div>
-
                                 ) : (
                                     <div className="space-y-3">
                                         <div>
@@ -632,8 +636,12 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaInicio}
                                                     onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm overflow-hidden datetime-input"
-                                                    style={{ minWidth: 0 }}
+                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
+                                                    style={{
+                                                        minWidth: 0,
+                                                        maxWidth: '100%',
+                                                        textAlign: 'left'
+                                                    }}
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -653,8 +661,12 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaFin}
                                                     onChange={(e) => setFechaFin(e.target.value)}
-                                                    className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm overflow-hidden datetime-input"
-                                                    style={{ minWidth: 0 }}
+                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
+                                                    style={{
+                                                        minWidth: 0,
+                                                        maxWidth: '100%',
+                                                        textAlign: 'left'
+                                                    }}
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -668,6 +680,7 @@ const ModalFaq = () => {
                                     </div>
                                 )}
                             </div>
+
 
 
                             <div className='mt-3'>

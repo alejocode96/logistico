@@ -139,38 +139,56 @@ input[type='password']::-webkit-reveal-button {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #a1a1aa; /* zinc-400 */
+  background: #a1a1aa;
+  /* zinc-400 */
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #e4e4e7; /* zinc-100 */
+  background: #e4e4e7;
+  /* zinc-100 */
 }
 
 /* Dark mode */
 .dark ::-webkit-scrollbar-thumb {
-  background: #52525b; /* zinc-600 */
-}
-.dark ::-webkit-scrollbar-track {
-  background: #27272a; /* zinc-800 */
+  background: #52525b;
+  /* zinc-600 */
 }
 
-.datetime-input {
-    font-size: 14px !important;
-    min-width: 0;
-    overflow: hidden;
-  }
-  
-  .datetime-input::-webkit-datetime-edit {
-    padding: 0;
-  }
-  
-  .datetime-input::-webkit-datetime-edit-fields-wrapper {
-    padding: 0;
-  }
-  
-  @media (max-width: 640px) {
-    .datetime-input {
-      font-size: 13px !important;
-    }
-  }
+.dark ::-webkit-scrollbar-track {
+  background: #27272a;
+  /* zinc-800 */
+}
+
+.datetime-input::-webkit-datetime-edit {
+  padding: 0;
+  margin: 0;
+}
+
+.datetime-input::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+  margin: 0;
+}
+
+.datetime-input::-webkit-datetime-edit-text {
+  padding: 0 2px;
+  color: inherit;
+}
+
+.datetime-input::-webkit-datetime-edit-month-field,
+.datetime-input::-webkit-datetime-edit-day-field,
+.datetime-input::-webkit-datetime-edit-year-field,
+.datetime-input::-webkit-datetime-edit-hour-field,
+.datetime-input::-webkit-datetime-edit-minute-field {
+  padding: 0 1px;
+  color: inherit;
+}
+
+/* Mejora la alineación en móviles */
+@media (max-width: 640px) {
+  .datetime-input {
+    font-size: 16px !important;
+    /* Evita zoom en iOS */
+  }}
