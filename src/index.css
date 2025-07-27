@@ -154,3 +154,23 @@ input[type='password']::-webkit-reveal-button {
 .dark ::-webkit-scrollbar-track {
   background: #27272a; /* zinc-800 */
 }
+
+.datetime-input {
+    font-size: 14px !important;
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+  .datetime-input::-webkit-datetime-edit {
+    padding: 0;
+  }
+  
+  .datetime-input::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  
+  @media (max-width: 640px) {
+    .datetime-input {
+      font-size: 13px !important;
+    }
+  }
