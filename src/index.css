@@ -162,8 +162,36 @@ input[type='password']::-webkit-reveal-button {
   /* zinc-800 */
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none;
+input[type="date"],
+input[type="datetime-local"] {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  width: 100% !important;
+}
+
+/* Solución más específica para iOS Safari */
+@supports (-webkit-touch-callout: none) {
+
+  input[type="date"],
+  input[type="datetime-local"] {
+    -webkit-appearance: none;
+    max-width: 100%;
+    min-width: 0;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+}
+
+/* Si necesitas ser muy específico con las clases de Tailwind */
+input[type="date"].w-full,
+input[type="datetime-local"].w-full {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  max-width: 100% !important;
   min-width: 0 !important;
-  max-width: '100%' !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
 }
