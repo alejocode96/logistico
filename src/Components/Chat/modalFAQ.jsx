@@ -607,7 +607,7 @@ const ModalFaq = () => {
                                                 Fecha
                                             </label>
                                             <div className="relative">
-                                                <input   type="date"  value={fechaUnica}  onChange={(e) => setFechaUnica(e.target.value)} className='w-full max-w-[100%]  p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white max-w[100%]'>
+                                                <input   type="date"  value={fechaUnica}  onChange={(e) => setFechaUnica(e.target.value)} className='w-full max-w-[580px]  p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white max-w[100%]'>
                                                 </input>
                                                
                                             </div>
