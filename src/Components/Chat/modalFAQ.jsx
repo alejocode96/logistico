@@ -426,7 +426,7 @@ const ModalFaq = () => {
                                         <select
                                             value={zonaSeleccionada}
                                             onChange={(e) => setZonaSeleccionada(e.target.value)}
-                                            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white "
+                                            className="w-full  p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white "
                                         >
                                             <option value="">Seleccione una zona</option>
                                             {zonas.map((zona) => (
@@ -607,7 +607,7 @@ const ModalFaq = () => {
                                                 Fecha
                                             </label>
                                             <div className="relative">
-                                                <input   type="date"  value={fechaUnica}  onChange={(e) => setFechaUnica(e.target.value)} className='w-full  p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white'>
+                                                <input   type="date"  value={fechaUnica}  onChange={(e) => setFechaUnica(e.target.value)} className='w-full max-w-[100%]  p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white max-w[100%]'>
                                                 </input>
                                                
                                             </div>
