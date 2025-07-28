@@ -410,7 +410,7 @@ const ModalFaq = () => {
                                         </label>
                                         <select
                                             disabled
-                                            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white cursor-not-allowed opacity-50"
+                                            className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white cursor-not-allowed opacity-50"
                                         >
                                             <option>Punto de interés geográfico sin definir</option>
                                         </select>
@@ -426,7 +426,7 @@ const ModalFaq = () => {
                                         <select
                                             value={zonaSeleccionada}
                                             onChange={(e) => setZonaSeleccionada(e.target.value)}
-                                            className="w-full  p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white "
+                                            className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
                                         >
                                             <option value="">Seleccione una zona</option>
                                             {zonas.map((zona) => (
@@ -442,13 +442,13 @@ const ModalFaq = () => {
                                 {puntoInteres === 'region' && (
                                     <div className="space-y-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Tipo de Región
                                             </label>
-                                            <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
+                                            <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700 h-12">
                                                 <button
                                                     onClick={() => setTipoRegion('clientes')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${tipoRegion === 'clientes'
+                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all h-full flex items-center justify-center ${tipoRegion === 'clientes'
                                                         ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
                                                         : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
                                                         }`}
@@ -457,7 +457,7 @@ const ModalFaq = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => setTipoRegion('plantas')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${tipoRegion === 'plantas'
+                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all h-full flex items-center justify-center ${tipoRegion === 'plantas'
                                                         ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
                                                         : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
                                                         }`}
@@ -476,15 +476,15 @@ const ModalFaq = () => {
                                                 <div className="relative">
                                                     <div
                                                         onClick={() => setMostrarDropdownClientes(!mostrarDropdownClientes)}
-                                                        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
+                                                        className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
                                                     >
-                                                        <span>
+                                                        <span className="text-sm">
                                                             {clientesSeleccionados.length > 0
                                                                 ? `${clientesSeleccionados.length} cliente(s) seleccionado(s)`
                                                                 : 'Seleccionar clientes'
                                                             }
                                                         </span>
-                                                        <ChevronDown className="w-4 h-4" />
+                                                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
                                                     </div>
 
                                                     {mostrarDropdownClientes && (
@@ -497,18 +497,18 @@ const ModalFaq = () => {
                                                                         placeholder="Buscar por nombre..."
                                                                         value={busquedaCliente}
                                                                         onChange={(e) => setBusquedaCliente(e.target.value)}
-                                                                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                                        className="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-md focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                                                     />
                                                                 </div>
                                                             </div>
                                                             <div className="max-h-40 overflow-y-auto">
                                                                 {clientesFiltrados.map((cliente) => (
-                                                                    <label key={cliente} className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer">
+                                                                    <label key={cliente} className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer min-h-10">
                                                                         <input
                                                                             type="checkbox"
                                                                             checked={clientesSeleccionados.includes(cliente)}
                                                                             onChange={() => handleClienteChange(cliente)}
-                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 flex-shrink-0"
                                                                         />
                                                                         <span className="ml-2 text-sm text-zinc-600 dark:text-zinc-300">
                                                                             {cliente}
@@ -531,15 +531,15 @@ const ModalFaq = () => {
                                                 <div className="relative">
                                                     <div
                                                         onClick={() => setMostrarDropdownPlantas(!mostrarDropdownPlantas)}
-                                                        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
+                                                        className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
                                                     >
-                                                        <span>
+                                                        <span className="text-sm">
                                                             {plantasSeleccionadas.length > 0
                                                                 ? `${plantasSeleccionadas.length} planta(s) seleccionada(s)`
                                                                 : 'Seleccionar plantas'
                                                             }
                                                         </span>
-                                                        <ChevronDown className="w-4 h-4" />
+                                                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
                                                     </div>
 
                                                     {mostrarDropdownPlantas && (
@@ -552,18 +552,18 @@ const ModalFaq = () => {
                                                                         placeholder="Buscar por nombre..."
                                                                         value={busquedaPlanta}
                                                                         onChange={(e) => setBusquedaPlanta(e.target.value)}
-                                                                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                                        className="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-md focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                                                     />
                                                                 </div>
                                                             </div>
                                                             <div className="max-h-40 overflow-y-auto">
                                                                 {plantasFiltradas.map((planta) => (
-                                                                    <label key={planta} className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer">
+                                                                    <label key={planta} className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer min-h-10">
                                                                         <input
                                                                             type="checkbox"
                                                                             checked={plantasSeleccionadas.includes(planta)}
                                                                             onChange={() => handlePlantaChange(planta)}
-                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 flex-shrink-0"
                                                                         />
                                                                         <span className="ml-2 text-sm text-zinc-600 dark:text-zinc-300">
                                                                             {planta}
@@ -576,15 +576,12 @@ const ModalFaq = () => {
                                                 </div>
                                             </div>
                                         )}
-
-
-
                                     </div>
                                 )}
                             </div>
 
                             {/* Contenido dinámico basado en fechas */}
-                            <div className='mt-3'>
+                            <div className='mt-6'>
                                 {filtroTemporal === 'ninguno' ? (
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -595,7 +592,7 @@ const ModalFaq = () => {
                                                 type="text"
                                                 disabled
                                                 value="Filtro deshabilitado"
-                                                className="w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-900 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed opacity-60"
+                                                className="w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-900 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed opacity-60 text-sm"
                                             />
                                             <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-zinc-500" />
                                         </div>
@@ -607,14 +604,17 @@ const ModalFaq = () => {
                                                 Fecha
                                             </label>
                                             <div className="relative">
-                                                <input   type="date"  value={fechaUnica}  onChange={(e) => setFechaUnica(e.target.value)} className='w-full max-w-[580px]  p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white max-w[100%]'>
-                                                </input>
-                                               
+                                                <input
+                                                    type="date"
+                                                    value={fechaUnica}
+                                                    onChange={(e) => setFechaUnica(e.target.value)}
+                                                    className='w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm'
+                                                />
                                             </div>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="space-y-3">
+                                    <div className="space-y-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Inicio
@@ -624,7 +624,7 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaInicio}
                                                     onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className=" w-[100%] max-w[100%] p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white  text-sm overflow-hidden"
+                                                    className="w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -644,12 +644,7 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaFin}
                                                     onChange={(e) => setFechaFin(e.target.value)}
-                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
-                                                    style={{
-                                                        minWidth: 0,
-                                                        maxWidth: '100%',
-                                                        textAlign: 'left'
-                                                    }}
+                                                    className="w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -664,9 +659,7 @@ const ModalFaq = () => {
                                 )}
                             </div>
 
-
-
-                            <div className='mt-3'>
+                            <div className='mt-6'>
                                 {/* Segmentación Avanzada - Selects */}
                                 {(advanceChecks.tipoOperacion || advanceChecks.operacion || advanceChecks.tipoVehiculo) && (
                                     <div className="space-y-4">
@@ -680,7 +673,7 @@ const ModalFaq = () => {
                                                 <select
                                                     value={tipoOperacionSelect}
                                                     onChange={(e) => setTipoOperacionSelect(e.target.value)}
-                                                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                    className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                                 >
                                                     <option value="">Seleccione tipo de operación</option>
                                                     <option value="1">Tipo de Operación 1</option>
@@ -701,7 +694,7 @@ const ModalFaq = () => {
                                                 <select
                                                     value={operacionSelect}
                                                     onChange={(e) => setOperacionSelect(e.target.value)}
-                                                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                    className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                                 >
                                                     <option value="">Seleccione operación</option>
                                                     <option value="1">Operación 1</option>
@@ -722,7 +715,7 @@ const ModalFaq = () => {
                                                 <select
                                                     value={tipoVehiculoSelect}
                                                     onChange={(e) => setTipoVehiculoSelect(e.target.value)}
-                                                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                                    className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                                 >
                                                     <option value="">Seleccione tipo de vehículo</option>
                                                     <option value="1">Tipo de Vehículo 1</option>
