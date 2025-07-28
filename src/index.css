@@ -164,4 +164,6 @@ input[type='password']::-webkit-reveal-button {
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
+  min-width: 0 !important;
+  max-width: '100%' !important;
 }
