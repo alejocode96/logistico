@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     X, MapPin, Globe, TrendingUp, ShieldQuestionMark, FunnelPlus, TextCursorInput, Search, ChevronDown,
-    Calendar, CalendarDays
+    Calendar, CalendarDays, ChevronRight
 } from 'lucide-react';
 
 // Contexto
@@ -9,194 +9,735 @@ import { LogisticoContext } from '../../Context';
 
 const ModalFaq = () => {
     const {
-        isOpenFAQ, setIsOpenFAQ, selectedFAQ, setSelectedFAQ, handleSlideClick, questions
+        isOpenFAQ, setIsOpenFAQ, selectedFAQ, setSelectedFAQ, handleSlideClick, questions, selectedQuestionOption, setSelectedQuestionOption
     } = React.useContext(LogisticoContext);
-
-    const [puntoInteres, setPuntoInteres] = useState('ninguno');
-    const [filtroTemporal, setFiltroTemporal] = useState('ninguno');
-    const [advanceChecks, setAdvanceChecks] = useState({
-        operacion: false,
-        tipoOperacion: false,
-        tipoVehiculo: false
-    });
-
-    // Estados para la formulación de pregunta
-    const [zonaSeleccionada, setZonaSeleccionada] = useState('');
-    const [tipoRegion, setTipoRegion] = useState('');
-    const [clientesSeleccionados, setClientesSeleccionados] = useState([]);
-    const [plantasSeleccionadas, setPlantasSeleccionadas] = useState([]);
-    const [busquedaCliente, setBusquedaCliente] = useState('');
-    const [busquedaPlanta, setBusquedaPlanta] = useState('');
-    const [mostrarDropdownClientes, setMostrarDropdownClientes] = useState(false);
-    const [mostrarDropdownPlantas, setMostrarDropdownPlantas] = useState(false);
-
-    const [fechaUnica, setFechaUnica] = useState('');
-    const [fechaInicio, setFechaInicio] = useState('');
-    const [fechaFin, setFechaFin] = useState('');
-
-
-    const [tipoOperacionSelect, setTipoOperacionSelect] = useState('');
-    const [operacionSelect, setOperacionSelect] = useState('');
-    const [tipoVehiculoSelect, setTipoVehiculoSelect] = useState('');
 
     // Datos de ejemplo
     const zonas = ['Norte', 'Centro', 'Noroccidente', 'Suroccidente'];
     const clientes = ['Cliente 1', 'Cliente 2', 'Cliente 3', 'Cliente 4', 'Cliente 5'];
     const plantas = ['Planta 1', 'Planta 2', 'Planta 3', 'Planta 4', 'Planta 5'];
+    const vehiculos = ['XXX111', 'XXX222', 'XXX333', 'XXX444', 'XXX555'];
+    const regiones = ['Región 1', 'Región 2', 'Región 3', 'Región 4'];
 
-    const clientesFiltrados = clientes.filter(cliente =>
-        cliente.toLowerCase().includes(busquedaCliente.toLowerCase())
-    );
+    // Estado para los valores del formulario
+    const [formValues, setFormValues] = useState({});
 
-    const plantasFiltradas = plantas.filter(planta =>
-        planta.toLowerCase().includes(busquedaPlanta.toLowerCase())
-    );
+    // Estado para errores de validación
+    const [errors, setErrors] = useState({});
+
+    // Estados adicionales para el select múltiple
+    const [searchTerms, setSearchTerms] = useState({});
+    const [dropdownOpen, setDropdownOpen] = useState({});
 
     // Obtener la pregunta seleccionada
-    const handleQuestionChange = (e) => {
-        setSelectedFAQ(e.target.value);
-    };
-
     const getSelectedQuestion = () => {
-        return questions.find(q => q.id.toString() === selectedFAQ.toString());
+        return questions.find(q => q.id === selectedFAQ);
     };
 
-    const handleCheckboxChange = (key) => {
-        setAdvanceChecks(prev => ({
-            ...prev,
-            [key]: !prev[key]
-        }));
-    };
-
-    const handleClienteChange = (cliente) => {
-        setClientesSeleccionados(prev =>
-            prev.includes(cliente)
-                ? prev.filter(c => c !== cliente)
-                : [...prev, cliente]
-        );
-    };
-
-    const handlePlantaChange = (planta) => {
-        setPlantasSeleccionadas(prev =>
-            prev.includes(planta)
-                ? prev.filter(p => p !== planta)
-                : [...prev, planta]
-        );
-    };
-
-    const resetSelections = () => {
-        setZonaSeleccionada('');
-        setTipoRegion('');
-        setClientesSeleccionados([]);
-        setPlantasSeleccionadas([]);
-        setBusquedaCliente('');
-        setBusquedaPlanta('');
-        setMostrarDropdownClientes(false);
-        setMostrarDropdownPlantas(false);
-        setTipoOperacionSelect([]);
-        setOperacionSelect([]);
-        setTipoVehiculoSelect([]);
-
-    };
-
-    const handlePuntoInteresChange = (value) => {
-        setPuntoInteres(value);
-        resetSelections();
-    };
+    const selectedQuestion = getSelectedQuestion();
 
     // Estado para la pregunta formulada
     const [preguntaFormulada, setPreguntaFormulada] = useState('');
 
+    // Manejar cambios en los inputs del formulario
+    const handleInputChange = (fieldName, value) => {
+        setFormValues(prev => ({
+            ...prev,
+            [fieldName]: value
+        }));
+
+        // Limpiar error si el campo ahora tiene valor
+        if (value && errors[fieldName]) {
+            setErrors(prev => ({
+                ...prev,
+                [fieldName]: null
+            }));
+        }
+    };
+
+    // Función para manejar la búsqueda en selects múltiples
+    const handleSearchChange = (fieldName, searchTerm) => {
+        setSearchTerms(prev => ({
+            ...prev,
+            [fieldName]: searchTerm
+        }));
+    };
+
+    // Función para filtrar opciones basado en el término de búsqueda
+    const filterOptions = (options, searchTerm) => {
+        if (!searchTerm) return options;
+        return options.filter(option =>
+            option.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    };
+
+    // Función para manejar selección múltiple
+    const handleMultiSelectChange = (fieldName, value, checked) => {
+        const currentValues = formValues[fieldName] || [];
+
+        if (value === 'all') {
+            // Seleccionar/deseleccionar todas las opciones
+            const fieldOptions = getFieldOptions(fieldName,
+                selectedQuestion?.questioOptions[selectedQuestionOption]?.formFields
+                    .find(f => f.name === fieldName)?.options
+            );
+
+            if (checked) {
+                handleInputChange(fieldName, fieldOptions);
+            } else {
+                handleInputChange(fieldName, []);
+            }
+        } else {
+            // Seleccionar/deseleccionar opción individual
+            let newValues;
+            if (checked) {
+                newValues = [...currentValues, value];
+            } else {
+                newValues = currentValues.filter(v => v !== value);
+            }
+            handleInputChange(fieldName, newValues);
+        }
+    };
+
+    // Función para toggle del dropdown
+    const toggleDropdown = (fieldName) => {
+        setDropdownOpen(prev => ({
+            ...prev,
+            [fieldName]: !prev[fieldName]
+        }));
+    };
+
+    // Obtener opciones para campos select
+    const getFieldOptions = (fieldName, predefinedOptions) => {
+        if (predefinedOptions && predefinedOptions.length > 0) {
+            return predefinedOptions;
+        }
+
+        switch (fieldName) {
+            case 'zona':
+                return zonas;
+            case 'region':
+                return regiones;
+            case 'vehiculo':
+                return vehiculos;
+            case 'cliente':
+                return clientes;
+            case 'planta':
+                return plantas;
+            default:
+                return [];
+        }
+    };
+
+    // Validar formulario y enviar datos
+    const handleSubmit = () => {
+        if (!selectedQuestion || selectedQuestionOption === null) {
+            alert('Por favor selecciona una pregunta y opción');
+            return;
+        }
+
+        const selectedOption = selectedQuestion.questioOptions[selectedQuestionOption];
+        const requiredFields = selectedOption.formFields.filter(field => field.required);
+        const newErrors = {};
+
+        // Validar campos requeridos
+        requiredFields.forEach(field => {
+            const fieldValue = formValues[field.name];
+            const isEmpty =
+                fieldValue === undefined ||
+                fieldValue === null ||
+                (typeof fieldValue === 'string' && fieldValue.trim() === '') ||
+                (Array.isArray(fieldValue) && fieldValue.length === 0 && field.required);
+
+
+            if (isEmpty) {
+                newErrors[field.name] = `${field.label} es requerido`;
+            }
+        });
+
+
+        // Si hay errores, mostrarlos y no enviar
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        // Limpiar errores si todo está bien
+        setErrors({});
+
+        // Preparar datos para envío
+        const dataToSend = {
+            questionId: selectedFAQ,
+            questionTitle: selectedQuestion.title,
+            optionIndex: selectedQuestionOption,
+            optionTitle: selectedOption.titleQuestion,
+            formData: formValues,
+            generatedQuery: preguntaFormulada
+        };
+
+        // Por el momento mostrar en consola y alert
+        console.log('Datos a enviar:', dataToSend);
+        alert(`Consulta enviada:\n${preguntaFormulada}\n\nDatos: ${JSON.stringify(formValues, null, 2)}`);
+    };
+
+    const formatearFecha = (fechaISO) => {
+        if (!fechaISO) return '';
+        const fecha = new Date(fechaISO);
+        const fechaFormateada = fecha.toLocaleString('es-CO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        return fechaFormateada.replace(',', '');
+    };
+
+
     const formularPregunta = () => {
         const preguntaSeleccionada = getSelectedQuestion();
 
-        // Solo formular si hay una pregunta seleccionada y es "tiempos de espera y permanencia"
-        if (!preguntaSeleccionada || !preguntaSeleccionada.title.toLowerCase().includes('tiempo')) {
+        if (!preguntaSeleccionada || selectedQuestionOption === null) {
             setPreguntaFormulada('');
             return;
         }
 
-        let pregunta = '¿Cuál es el tiempo de permanencia';
+        const selectedOption = preguntaSeleccionada.questioOptions[selectedQuestionOption];
+        if (!selectedOption) {
+            setPreguntaFormulada('');
+            return;
+        }
 
-        // Agregar punto de interés geográfico
-        if (puntoInteres === 'zona' && zonaSeleccionada) {
-            pregunta += ` en la zona ${zonaSeleccionada}`;
-        } else if (puntoInteres === 'region') {
-            if (tipoRegion === 'clientes' && clientesSeleccionados.length > 0) {
-                if (clientesSeleccionados.length === 1) {
-                    pregunta += ` en la región  ${clientesSeleccionados[0]}`;
+        if (preguntaSeleccionada.id === 1) {
+            let pregunta = '¿Cuál es el tiempo promedio de permanencia de ';
+
+            // Buscar el campo principal (zona, región o vehículo)
+            const campoZona = selectedOption.formFields.find(field => field.name === 'zona');
+            const campoRegion = selectedOption.formFields.find(field => field.name === 'region');
+            const campoVehiculo = selectedOption.formFields.find(field => field.name === 'vehiculo');
+
+            let campoPrincipal = null;
+            let valorCampo = null;
+
+            if (campoZona) {
+                campoPrincipal = 'zona';
+                valorCampo = formValues['zona'];
+            } else if (campoRegion) {
+                campoPrincipal = 'region';
+                valorCampo = formValues['region'];
+            } else if (campoVehiculo) {
+                campoPrincipal = 'vehiculo';
+                valorCampo = formValues['vehiculo'];
+            }
+
+            if (campoPrincipal && valorCampo) {
+                if (Array.isArray(valorCampo)) {
+                    // Si es un array (selección múltiple)
+                    const fieldOptions = getFieldOptions(campoPrincipal,
+                        selectedOption.formFields.find(f => f.name === campoPrincipal)?.options
+                    );
+
+                    if (valorCampo.length === fieldOptions.length) {
+                        // Todas las opciones seleccionadas
+                        if (campoPrincipal === 'zona') {
+                            pregunta += 'todas las zonas';
+                        } else if (campoPrincipal === 'region') {
+                            pregunta += 'todas las regiones';
+                        } else if (campoPrincipal === 'vehiculo') {
+                            pregunta += 'todos los vehículos';
+                        }
+                    } else if (valorCampo.length > 1) {
+                        // Múltiples opciones pero no todas
+                        if (campoPrincipal === 'zona') {
+                            pregunta += `las zonas ${valorCampo.join(', ')}`;
+                        } else if (campoPrincipal === 'region') {
+                            pregunta += `las regiones ${valorCampo.join(', ')}`;
+                        } else if (campoPrincipal === 'vehiculo') {
+                            pregunta += `los vehículos ${valorCampo.join(', ')}`;
+                        }
+                    } else if (valorCampo.length === 1) {
+                        // Una sola opción
+                        if (campoPrincipal === 'zona') {
+                            pregunta += `la zona ${valorCampo[0]}`;
+                        } else if (campoPrincipal === 'region') {
+                            pregunta += `la región ${valorCampo[0]}`;
+                        } else if (campoPrincipal === 'vehiculo') {
+                            pregunta += `el vehículo ${valorCampo[0]}`;
+                        }
+                    }
                 } else {
-                    pregunta += ` en las regiónes  ${clientesSeleccionados.join(', ')}`;
+                    // Si es un string (selección única)
+                    if (campoPrincipal === 'zona') {
+                        pregunta += `la zona ${valorCampo}`;
+                    } else if (campoPrincipal === 'region') {
+                        pregunta += `la región ${valorCampo}`;
+                    } else if (campoPrincipal === 'vehiculo') {
+                        pregunta += `el vehículo ${valorCampo}`;
+                    }
                 }
-            } else if (tipoRegion === 'plantas' && plantasSeleccionadas.length > 0) {
-                if (plantasSeleccionadas.length === 1) {
-                    pregunta += ` en la región  ${plantasSeleccionadas[0]}`;
-                } else {
-                    pregunta += ` en las regiónes  ${plantasSeleccionadas.join(', ')}`;
+
+                // Agregar filtros de fecha si existen
+                const fechaInicio = formValues['fecha_inicio'];
+                const fechaFin = formValues['fecha_fin'];
+
+                if (fechaInicio && fechaFin) {
+                    pregunta += ` entre el ${formatearFecha(fechaInicio)} y el ${formatearFecha(fechaFin)}`;
+                } else if (fechaInicio) {
+                    pregunta += ` el ${formatearFecha(fechaInicio)}`;
+                } else if (fechaFin) {
+                    pregunta += ` hasta el ${formatearFecha(fechaFin)}`;
                 }
             }
+
+            pregunta += '?';
+            setPreguntaFormulada(pregunta);
+        } else if (preguntaSeleccionada.id === 2) {
+            // Buscar el campo principal (zona, región o vehículo)
+            const campoZona = selectedOption.formFields.find(field => field.name === 'zona');
+            const campoRegion = selectedOption.formFields.find(field => field.name === 'region');
+
+
+            let pregunta = '¿Top  ';
+            pregunta += formValues['Top'] || 0;
+            if (selectedOption.id === 1) {
+                pregunta += ' de regiones con el mayor tiempo promedio de permanencia en '
+
+            } else if (selectedOption.id === 2) {
+                pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en '
+
+            } else {
+                pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en '
+
+            }
+
+
+            let campoPrincipal = null;
+            let valorCampo = null;
+
+            if (campoZona) {
+                campoPrincipal = 'zona';
+                valorCampo = formValues['zona'];
+            } else if (campoRegion) {
+                campoPrincipal = 'region';
+                valorCampo = formValues['region'];
+            }
+
+            if (campoPrincipal && valorCampo) {
+                if (Array.isArray(valorCampo)) {
+                    // Si es un array (selección múltiple)
+                    const fieldOptions = getFieldOptions(campoPrincipal,
+                        selectedOption.formFields.find(f => f.name === campoPrincipal)?.options
+                    );
+
+                    if (valorCampo.length === fieldOptions.length) {
+                        // Todas las opciones seleccionadas
+                        if (campoPrincipal === 'zona') {
+                            pregunta += 'todas las zonas';
+                        } else if (campoPrincipal === 'region') {
+                            pregunta += 'todas las regiones';
+                        }
+                    } else if (valorCampo.length > 1) {
+                        // Múltiples opciones pero no todas
+                        if (campoPrincipal === 'zona') {
+                            pregunta += `las zonas ${valorCampo.join(', ')}`;
+                        } else if (campoPrincipal === 'region') {
+                            pregunta += `las regiones ${valorCampo.join(', ')}`;
+                        }
+                    } else if (valorCampo.length === 1) {
+                        // Una sola opción
+                        if (campoPrincipal === 'zona') {
+                            pregunta += `la zona ${valorCampo[0]}`;
+                        } else if (campoPrincipal === 'region') {
+                            pregunta += `la región ${valorCampo[0]}`;
+                        }
+                    }
+                } else {
+                    // Si es un string (selección única)
+                    if (campoPrincipal === 'zona') {
+                        pregunta += ` zona ${valorCampo}`;
+                    } else if (campoPrincipal === 'region') {
+                        pregunta += `la región ${valorCampo}`;
+                    }
+                }
+
+                // Agregar filtros de fecha si existen
+                const fechaInicio = formValues['fecha_inicio'];
+                const fechaFin = formValues['fecha_fin'];
+
+                if (fechaInicio && fechaFin) {
+                    pregunta += ` entre el ${formatearFecha(fechaInicio)} y el ${formatearFecha(fechaFin)}`;
+                } else if (fechaInicio) {
+                    pregunta += ` el ${formatearFecha(fechaInicio)}`;
+                } else if (fechaFin) {
+                    pregunta += ` hasta el ${formatearFecha(fechaFin)}`;
+                }
+            }
+
+            pregunta += '?';
+            setPreguntaFormulada(pregunta);
         }
-
-        // Agregar filtro temporal
-        if (filtroTemporal === 'unico' && fechaUnica) {
-            const fecha = new Date(fechaUnica).toLocaleDateString('es-ES');
-            pregunta += ` en la fecha ${fecha}`;
-        } else if (filtroTemporal === 'segmentacion' && fechaInicio && fechaFin) {
-            const fechaInicioFormateada = new Date(fechaInicio).toLocaleDateString('es-ES');
-            const fechaFinFormateada = new Date(fechaFin).toLocaleDateString('es-ES');
-            pregunta += ` desde ${fechaInicioFormateada} hasta ${fechaFinFormateada}`;
-        }
-
-        // Agregar segmentación avanzada
-        const segmentaciones = [];
-
-        if (advanceChecks.tipoOperacion && tipoOperacionSelect) {
-            const tipoOperacionTexto = document.querySelector(`option[value="${tipoOperacionSelect}"]`)?.textContent || tipoOperacionSelect;
-            segmentaciones.push(`tipo de operación ${tipoOperacionTexto}`);
-        }
-
-        if (advanceChecks.operacion && operacionSelect) {
-            const operacionTexto = document.querySelector(`select[value="${operacionSelect}"] option:checked`)?.textContent || operacionSelect;
-            segmentaciones.push(`operación ${operacionTexto}`);
-        }
-
-        if (advanceChecks.tipoVehiculo && tipoVehiculoSelect) {
-            const tipoVehiculoTexto = document.querySelector(`select[value="${tipoVehiculoSelect}"] option:checked`)?.textContent || tipoVehiculoSelect;
-            segmentaciones.push(`tipo de vehículo ${tipoVehiculoTexto}`);
-        }
-
-        if (segmentaciones.length > 0) {
-            pregunta += ` para ${segmentaciones.join(', ')}`;
-        }
-
-        pregunta += '?';
-        setPreguntaFormulada(pregunta);
     };
+
 
     useEffect(() => {
         formularPregunta();
-    }, [
-        getSelectedQuestion, // si es una función, asegúrate que esté memoizada o usa su resultado
-        puntoInteres,
-        zonaSeleccionada,
-        tipoRegion,
-        clientesSeleccionados,
-        plantasSeleccionadas,
-        filtroTemporal,
-        fechaUnica,
-        fechaInicio,
-        fechaFin,
-        advanceChecks,
-        tipoOperacionSelect,
-        operacionSelect,
-        tipoVehiculoSelect
-    ]);
+    }, [selectedFAQ, selectedQuestionOption, formValues]);
+
+    // Limpiar valores del formulario cuando cambie la selección
+    useEffect(() => {
+        const defaults = {};
+
+        // Si la opción seleccionada requiere un campo 'Top', le ponemos un valor por defecto (ej. 3)
+        const selectedOption = selectedQuestion?.questioOptions?.[selectedQuestionOption];
+        const topField = selectedOption?.formFields?.find(f => f.name === 'Top');
+        if (topField) {
+            defaults['Top'] = 0;
+        }
+
+        setFormValues({});
+        setErrors({});
+        setSearchTerms({});
+        setDropdownOpen({});
+    }, [selectedFAQ, selectedQuestionOption]);
+
+    // Auto-seleccionar la primera opción cuando se selecciona una pregunta
+    useEffect(() => {
+        if (selectedFAQ && selectedQuestion && selectedQuestion.questioOptions.length > 0 && selectedQuestionOption === null) {
+            setSelectedQuestionOption(0);
+        }
+    }, [selectedFAQ, selectedQuestion, selectedQuestionOption, setSelectedQuestionOption]);
+
+    // Cerrar dropdowns cuando se hace clic fuera
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Cerrar todos los dropdowns si se hace clic fuera
+            if (!event.target.closest('.dropdown-container')) {
+                setDropdownOpen({});
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Renderizar campo del formulario
+    const renderFormField = (field) => {
+        const { name, label, type, required, options, unique } = field;
+        const fieldOptions = getFieldOptions(name, options);
+        const hasError = errors[name];
+        const searchTerm = searchTerms[name] || '';
+        const isDropdownOpen = dropdownOpen[name] || false;
+
+        switch (type) {
+            case 'date':
+                return (
+                    <div className="space-y-2">
+                        <label htmlFor={name} className={`block text-sm font-medium ${hasError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                            {label} {required && <span className="text-red-500">*</span>}
+                        </label>
+                        <div className="relative w-full">
+                            <input
+                                type='datetime-local'
+                                id={name}
+                                name={name}
+                                value={formValues[name] || ''}
+                                onChange={(e) => handleInputChange(name, e.target.value)}
+                                required={required}
+                                className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${hasError
+                                    ? 'border-red-500 dark:border-red-400'
+                                    : 'border-gray-300 dark:border-zinc-700'
+                                    }`}
+                                style={{
+                                    WebkitAppearance: 'none',
+                                    MozAppearance: 'textfield'
+                                }}
+                            />
+                            <Calendar
+                                className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${hasError ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                    }`}
+                                onClick={() => document.getElementById(name).showPicker?.()}
+                            />
+                        </div>
+                        {hasError && (
+                            <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <span className="font-medium">⚠</span>
+                                {hasError}
+                            </p>
+                        )}
+                    </div>
+                );
+
+            case 'select':
+                // Select único (comportamiento normal)
+                if (unique === true || unique === undefined) {
+                    return (
+                        <div className="space-y-2">
+                            <label htmlFor={name} className={`block text-sm font-medium ${hasError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                {label} {required && <span className="text-red-500">*</span>}
+                            </label>
+                            <div className="relative w-full">
+                                <select
+                                    id={name}
+                                    name={name}
+                                    value={formValues[name] || ''}
+                                    onChange={(e) => handleInputChange(name, e.target.value)}
+                                    required={required}
+                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white appearance-none transition-all duration-200 ${hasError
+                                        ? 'border-red-500 dark:border-red-400'
+                                        : 'border-gray-300 dark:border-zinc-700'
+                                        }`}
+                                >
+                                    <option value="">-- Selecciona una opción --</option>
+                                    {fieldOptions.map((option, index) => (
+                                        <option key={index} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown
+                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none ${hasError ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                        }`}
+                                />
+
+                            </div>
+                            {hasError && (
+                                <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                    <span className="font-medium">⚠</span>
+                                    {hasError}
+                                </p>
+                            )}
+                        </div>
+                    );
+                }
+
+                // Select múltiple con checkboxes (cuando unique es false)
+                const currentValues = formValues[name] || [];
+                const filteredOptions = filterOptions(fieldOptions, searchTerm);
+                const allSelected = fieldOptions.length > 0 && currentValues.length === fieldOptions.length;
+                const someSelected = currentValues.length > 0 && currentValues.length < fieldOptions.length;
+
+                return (
+                    <div className="space-y-2">
+                        <label className={`block text-sm font-medium ${hasError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                            {label} {required && <span className="text-red-500">*</span>}
+                        </label>
+
+                        <div className="relative dropdown-container">
+                            {/* Campo de selección múltiple */}
+                            <div
+                                onClick={() => toggleDropdown(name)}
+                                className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm cursor-pointer bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 flex items-center justify-between ${hasError
+                                    ? 'border-red-500 dark:border-red-400'
+                                    : 'border-gray-300 dark:border-zinc-700'
+                                    }`}
+                            >
+                                <span className="truncate">
+                                    {currentValues.length === 0
+                                        ? "-- Selecciona opciones --"
+                                        : `${currentValues.length} opción${currentValues.length !== 1 ? 'es' : ''} seleccionada${currentValues.length !== 1 ? 's' : ''}`
+                                    }
+                                </span>
+                                <ChevronDown
+                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none ${hasError ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                        }`}
+                                />
+
+                            </div>
+
+                            {/* Dropdown con opciones */}
+                            {isDropdownOpen && (
+                                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg max-h-64 overflow-hidden">
+                                    {/* Buscador */}
+                                    <div className="p-3 border-b border-gray-200 dark:border-zinc-700">
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-zinc-500" />
+                                            <input
+                                                type="text"
+                                                placeholder="Buscar opciones..."
+                                                value={searchTerm}
+                                                onChange={(e) => handleSearchChange(name, e.target.value)}
+                                                className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md text-sm bg-gray-50 dark:bg-zinc-700 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Lista de opciones */}
+                                    <div className="max-h-48 overflow-y-auto">
+                                        {/* Opción "Seleccionar todas" */}
+                                        <div
+                                            className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer border-b border-gray-100 dark:border-zinc-700"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleMultiSelectChange(name, 'all', !allSelected);
+                                            }}
+                                        >
+                                            <div className="relative">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={allSelected}
+                                                    ref={(input) => {
+                                                        if (input) input.indeterminate = someSelected;
+                                                    }}
+                                                    onChange={() => { }} // Manejado por el onClick del div
+                                                    className="w-4 h-4 text-blue-600 border-gray-300 dark:border-zinc-600 rounded focus:ring-blue-500"
+                                                />
+                                            </div>
+                                            <span className="ml-3 text-sm font-medium text-gray-700 dark:text-white">
+                                                Seleccionar todas
+                                            </span>
+                                        </div>
+
+                                        {/* Opciones individuales */}
+                                        {filteredOptions.length > 0 ? (
+                                            filteredOptions.map((option, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleMultiSelectChange(name, option, !currentValues.includes(option));
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={currentValues.includes(option)}
+                                                        onChange={() => { }} // Manejado por el onClick del div
+                                                        className="w-4 h-4 text-blue-600 border-gray-300 dark:border-zinc-600 rounded focus:ring-blue-500"
+                                                    />
+                                                    <span className="ml-3 text-sm text-gray-700 dark:text-white">
+                                                        {option}
+                                                    </span>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="px-3 py-2 text-sm text-gray-500 dark:text-zinc-400">
+                                                No se encontraron opciones
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Mostrar selecciones actuales */}
+                        {currentValues.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {allSelected ? (
+                                    // Mostrar solo "Todas" cuando todas las opciones están seleccionadas
+                                    <span className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md">
+                                        Todas
+                                        <button
+                                            type="button"
+                                            onClick={() => handleMultiSelectChange(name, 'all', false)}
+                                            className="ml-1 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </span>
+                                ) : (
+                                    // Mostrar opciones individuales cuando no todas están seleccionadas
+                                    currentValues.map((value, index) => (
+                                        <span
+                                            key={index}
+                                            className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md"
+                                        >
+                                            {value}
+                                            <button
+                                                type="button"
+                                                onClick={() => handleMultiSelectChange(name, value, false)}
+                                                className="ml-1 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </span>
+                                    ))
+                                )}
+                            </div>
+                        )}
+
+                        {hasError && (
+                            <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <span className="font-medium">⚠</span>
+                                {hasError}
+                            </p>
+                        )}
+                    </div>
+                );
+
+            case 'number':
+                return (
+                    <div className="space-y-2">
+                        <label htmlFor={name} className={`block text-sm font-medium ${hasError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                            {label} {required && <span className="text-red-500">*</span>}
+                        </label>
+                        <div className="relative w-full">
+                            <input
+                                type='number'
+                                id={name}
+                                name={name}
+                                min="3" max="20" value={formValues[name] ?? 0}
+                                onChange={(e) => handleInputChange(name, Number(e.target.value))}
+                                required={required}
+                                className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${hasError
+                                    ? 'border-red-500 dark:border-red-400'
+                                    : 'border-gray-300 dark:border-zinc-700'
+                                    }`}
+                                style={{
+                                    WebkitAppearance: 'none',
+                                    MozAppearance: 'textfield'
+                                }}
+                            />
+
+                        </div>
+                        {hasError && (
+                            <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <span className="font-medium">⚠</span>
+                                {hasError}
+                            </p>
+                        )}
+                    </div>
+                );
+
+            case 'text':
+            default:
+                return (
+                    <div className="space-y-2">
+                        <label htmlFor={name} className={`block text-sm font-medium ${hasError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                            {label} {required && <span className="text-red-500">*</span>}
+                        </label>
+                        <input
+                            type="text"
+                            id={name}
+                            name={name}
+                            value={formValues[name] || ''}
+                            onChange={(e) => handleInputChange(name, e.target.value)}
+                            required={required}
+                            className={`w-full h-12 p-3 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 ${hasError
+                                ? 'border-red-500 dark:border-red-400'
+                                : 'border-gray-300 dark:border-zinc-700'
+                                }`}
+                            placeholder={`Ingresa ${label.toLowerCase()}`}
+                        />
+                        {hasError && (
+                            <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <span className="font-medium">⚠</span>
+                                {hasError}
+                            </p>
+                        )}
+                    </div>
+                );
+        }
+    };
 
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isOpenFAQ ? "opacity-100 visible backdrop-blur-sm" : "opacity-0 invisible"}`}
             style={{ backgroundColor: isOpenFAQ ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0)", }}>
             {/* Modal Container  */}
-            <div className={`bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-[90vw] max-h-[90vh] overflow-hidden transition-all duration-300 transform ${isOpenFAQ ? "scale-100 translate-y-0 opacity-100" : "scale-95 translate-y-4 opacity-0"}`}>
+            <div className={`bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-[95vw] xl:max-w-[90vw] max-h-[90vh] overflow-hidden transition-all duration-300 transform ${isOpenFAQ ? "scale-100 translate-y-0 opacity-100" : "scale-95 translate-y-4 opacity-0"}`}>
                 {/* Header del Modal */}
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-2 pr-6 pl-6">
                     <div className="flex items-center justify-between">
@@ -227,19 +768,34 @@ const ModalFaq = () => {
                                     <label htmlFor="question-select" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Selecciona una pregunta:
                                     </label>
-                                    <select id="question-select" value={selectedFAQ} onChange={handleQuestionChange} className="w-full h-12 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white " >
-                                        <option value="">-- Selecciona una opción --</option>
-                                        {questions.map((question) => (
-                                            <option key={question.id} value={question.id}>
-                                                {question.title}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="relative w-full">
+                                        <select
+                                            id="question-select"
+                                            value={selectedFAQ}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setSelectedFAQ(value ? parseInt(value) : null);
+                                                setSelectedQuestionOption(null);
+                                            }}
+                                            className="w-full h-12 p-3 pr-12 border border-gray-300 rounded-lg shadow-sm focus:outline-none appearance-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
+                                        >
+                                            <option value="">-- Selecciona una opción --</option>
+                                            {questions.map((question) => (
+                                                <option key={question.id} value={question.id}>
+                                                    {question.title}
+                                                </option>
+                                            ))}
+                                        </select>
 
+                                        {/* Ícono de flecha */}
+                                        <div className="absolute top-1/2 right-3 transform -translate-y-1/2 pointer-events-none text-gray-500 dark:text-gray-400">
+                                            <ChevronDown className="w-5 h-5" />
+                                        </div>
+                                    </div>
 
                                 </div>
 
-                                {selectedFAQ && (
+                                {selectedFAQ !== null && getSelectedQuestion() && (
                                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-zinc-800 dark:border-zinc-700 dark:text-white">
                                         <div className="">
                                             <div>
@@ -251,143 +807,50 @@ const ModalFaq = () => {
                                         </div>
                                     </div>
                                 )}
-                            </div>
 
-                            {/* Filtros */}
-                            <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border  border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-10 h-10 bg-indigo-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
-                                        <FunnelPlus className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                                {selectedQuestion && (
+                                    <div className="space-y-3 mt-3">
+                                        {selectedQuestion.questioOptions.map((option, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => setSelectedQuestionOption(index)}
+                                                className={`w-full p-4 rounded-md text-left transition-all duration-300 group ring-1 hover:transform hover:scale-[1.01] ${selectedQuestionOption === index
+                                                    ? 'bg-white dark:bg-zinc-900 text-gray-800 dark:text-white shadow-lg transform scale-[1.02] ring-blue-600'
+                                                    : ' bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-white hover:bg-white hover:dark:bg-zinc-900 ring-gray-200 dark:ring-zinc-700 shadow-sm hover:shadow-md'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center space-x-3">
+                                                    <div className={`p-2 rounded-xl transition-all duration-300 ${selectedQuestionOption === index
+                                                        ? 'bg-gray-200 dark:bg-zinc-700'
+                                                        : 'bg-gray-200 dark:bg-zinc-700 group-hover:bg-gray-200 group-hover:dark:bg-zinc-600'
+                                                        }`}>
+                                                        {React.cloneElement(selectedQuestion.icon, {
+                                                            className: `w-5 h-5 transition-colors duration-300 ${selectedQuestionOption === index
+                                                                ? 'text-gray-600 dark:text-zinc-300'
+                                                                : 'text-gray-500 dark:text-zinc-300 group-hover:text-gray-600 dark:group-hover:text-white'
+                                                                }`
+                                                        })}
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h3 className="font-semibold text-base">{option.titleQuestion}</h3>
+                                                        <p className={`text-sm transition-colors duration-300 ${selectedQuestionOption === index
+                                                            ? 'text-gray-500 dark:text-zinc-400'
+                                                            : 'text-gray-400 dark:text-zinc-400 group-hover:text-gray-500'
+                                                            }`}>
+                                                            {option.formFields.length} campos disponibles
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-1 rounded-lg transition-all duration-300">
+                                                        <ChevronRight className={`w-5 h-5 transition-all duration-300 ${selectedQuestionOption === index
+                                                            ? 'text-gray-500 dark:text-zinc-400 opacity-100'
+                                                            : 'text-gray-300 dark:text-zinc-500 opacity-60 group-hover:opacity-100 group-hover:text-gray-400'
+                                                            }`} />
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        ))}
                                     </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                                            Filtros de Consulta
-                                        </h3>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                                            Configure los parámetros de su análisis
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 ">
-                                    <div className="mt-6">
-                                        <div className="space-y-0">
-                                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Filtros</h2>
-                                            <p className="text-gray-600 dark:text-gray-400">Seleccione los parámetros con los cuales desea estructurar su consulta</p>
-                                        </div>
-                                        <hr className='text-gray-200 mt-2 mb-2 dark:text-gray-600'></hr>
-
-                                        {/* Punto de Interés Geográfico */}
-                                        <div className='mt-3'>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                                                Punto de interés geográfico
-                                            </label>
-                                            <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
-                                                <button
-                                                    onClick={() => handlePuntoInteresChange('ninguno')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteres === 'ninguno'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300 '
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500 '
-                                                        }`}
-                                                >
-                                                    Ninguno
-                                                </button>
-
-                                                <button
-                                                    onClick={() => handlePuntoInteresChange('zona')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteres === 'zona'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Zona
-                                                </button>
-
-                                                <button
-                                                    onClick={() => handlePuntoInteresChange('region')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteres === 'region'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Región
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Filtro Temporal */}
-                                        <div className='mt-3'>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300 ">
-                                                Filtro temporal
-                                            </label>
-                                            <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
-                                                <button
-                                                    onClick={() => setFiltroTemporal('ninguno')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${filtroTemporal === 'ninguno'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Ninguno
-                                                </button>
-                                                <button
-                                                    onClick={() => setFiltroTemporal('unico')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${filtroTemporal === 'unico'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Único
-                                                </button>
-
-                                                <button
-                                                    onClick={() => setFiltroTemporal('segmentacion')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${filtroTemporal === 'segmentacion'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Rango
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className='mt-3'>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-                                                Segmentación avanzada
-                                            </label>
-                                            <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
-                                                <button
-                                                    onClick={() => handleCheckboxChange('tipoOperacion')}
-                                                    className={`flex-1 px-4 py-2 text-xs md:text-sm rounded-md transition-all ${advanceChecks.tipoOperacion
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Tipo de operación
-                                                </button>
-                                                <button
-                                                    onClick={() => handleCheckboxChange('operacion')}
-                                                    className={`flex-1 px-4 py-2 text-xs md:text-sm rounded-md transition-all ${advanceChecks.operacion
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Operación
-                                                </button>
-                                                <button
-                                                    onClick={() => handleCheckboxChange('tipoVehiculo')}
-                                                    className={`flex-1 px-4 py-2 text-xs md:text-sm rounded-md transition-all ${advanceChecks.tipoVehiculo
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Tipo vehículo
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                )}
                             </div>
                         </div>
 
@@ -402,356 +865,32 @@ const ModalFaq = () => {
                                 </h3>
                             </div>
 
-                            {/* Contenido dinámico basado en puntoInteres */}
-                            <div className="space-y-4">
-                                {/* Caso: Ninguno */}
-                                {puntoInteres === 'ninguno' && (
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-                                            Punto de Interés Geográfico
-                                        </label>
-                                        <select
-                                            disabled
-                                            className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white cursor-not-allowed opacity-50"
-                                        >
-                                            <option>Punto de interés geográfico sin definir</option>
-                                        </select>
-                                    </div>
-                                )}
-
-                                {/* Caso: Zona */}
-                                {puntoInteres === 'zona' && (
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Seleccione una Zona
-                                        </label>
-                                        <select
-                                            value={zonaSeleccionada}
-                                            onChange={(e) => setZonaSeleccionada(e.target.value)}
-                                            className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white"
-                                        >
-                                            <option value="">Seleccione una zona</option>
-                                            {zonas.map((zona) => (
-                                                <option key={zona} value={zona}>
-                                                    {zona}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                )}
-
-                                {/* Caso: Región */}
-                                {puntoInteres === 'region' && (
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Tipo de Región
-                                            </label>
-                                            <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700 h-12">
-                                                <button
-                                                    onClick={() => setTipoRegion('clientes')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all h-full flex items-center justify-center ${tipoRegion === 'clientes'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Clientes
-                                                </button>
-                                                <button
-                                                    onClick={() => setTipoRegion('plantas')}
-                                                    className={`flex-1 px-4 py-2 text-sm rounded-md transition-all h-full flex items-center justify-center ${tipoRegion === 'plantas'
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                                                        : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                                                        }`}
-                                                >
-                                                    Plantas
-                                                </button>
-                                            </div>
+                            {/* Campos del formulario */}
+                            {selectedQuestion && selectedQuestionOption !== null && (
+                                <div className="space-y-4 mb-4">
+                                    {selectedQuestion.questioOptions[selectedQuestionOption].formFields.map(field => (
+                                        <div key={field.name} className="w-full">
+                                            {renderFormField(field)}
                                         </div>
+                                    ))}
+                                </div>
+                            )}
 
-                                        {/* Selector de Clientes */}
-                                        {tipoRegion === 'clientes' && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Seleccionar Clientes
-                                                </label>
-                                                <div className="relative">
-                                                    <div
-                                                        onClick={() => setMostrarDropdownClientes(!mostrarDropdownClientes)}
-                                                        className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
-                                                    >
-                                                        <span className="text-sm">
-                                                            {clientesSeleccionados.length > 0
-                                                                ? `${clientesSeleccionados.length} cliente(s) seleccionado(s)`
-                                                                : 'Seleccionar clientes'
-                                                            }
-                                                        </span>
-                                                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
-                                                    </div>
-
-                                                    {mostrarDropdownClientes && (
-                                                        <div className="absolute z-10 w-full mt-1 bg-gray-50 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg">
-                                                            <div className="p-3 border-b border-gray-300 dark:border-zinc-700">
-                                                                <div className="relative">
-                                                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                                                    <input
-                                                                        type="text"
-                                                                        placeholder="Buscar por nombre..."
-                                                                        value={busquedaCliente}
-                                                                        onChange={(e) => setBusquedaCliente(e.target.value)}
-                                                                        className="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-md focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="max-h-40 overflow-y-auto">
-                                                                {clientesFiltrados.map((cliente) => (
-                                                                    <label key={cliente} className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer min-h-10">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={clientesSeleccionados.includes(cliente)}
-                                                                            onChange={() => handleClienteChange(cliente)}
-                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 flex-shrink-0"
-                                                                        />
-                                                                        <span className="ml-2 text-sm text-zinc-600 dark:text-zinc-300">
-                                                                            {cliente}
-                                                                        </span>
-                                                                    </label>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Selector de Plantas */}
-                                        {tipoRegion === 'plantas' && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Seleccionar Plantas
-                                                </label>
-                                                <div className="relative">
-                                                    <div
-                                                        onClick={() => setMostrarDropdownPlantas(!mostrarDropdownPlantas)}
-                                                        className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white flex items-center justify-between"
-                                                    >
-                                                        <span className="text-sm">
-                                                            {plantasSeleccionadas.length > 0
-                                                                ? `${plantasSeleccionadas.length} planta(s) seleccionada(s)`
-                                                                : 'Seleccionar plantas'
-                                                            }
-                                                        </span>
-                                                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
-                                                    </div>
-
-                                                    {mostrarDropdownPlantas && (
-                                                        <div className="absolute z-10 w-full mt-1 bg-gray-50 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg">
-                                                            <div className="p-3 border-b border-gray-300 dark:border-zinc-700">
-                                                                <div className="relative">
-                                                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                                                    <input
-                                                                        type="text"
-                                                                        placeholder="Buscar por nombre..."
-                                                                        value={busquedaPlanta}
-                                                                        onChange={(e) => setBusquedaPlanta(e.target.value)}
-                                                                        className="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-md focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="max-h-40 overflow-y-auto">
-                                                                {plantasFiltradas.map((planta) => (
-                                                                    <label key={planta} className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer min-h-10">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={plantasSeleccionadas.includes(planta)}
-                                                                            onChange={() => handlePlantaChange(planta)}
-                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 flex-shrink-0"
-                                                                        />
-                                                                        <span className="ml-2 text-sm text-zinc-600 dark:text-zinc-300">
-                                                                            {planta}
-                                                                        </span>
-                                                                    </label>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Contenido dinámico basado en fechas */}
-
-                            <div className='mt-6'>
-                                {filtroTemporal === 'ninguno' ? (
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Fecha
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                disabled
-                                                value="Filtro deshabilitado"
-                                                className="w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm bg-gray-100 dark:bg-zinc-900 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed opacity-60 text-sm"
-                                            />
-                                            <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-zinc-500" />
-                                        </div>
-                                    </div>
-                                ) : filtroTemporal === 'unico' ? (
-                                    <div className='space-y-3'>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Fecha
-                                            </label>
-                                            <div className='relative'>
-                                                <input
-                                                    type="date"
-                                                    value={fechaUnica}
-                                                    onChange={(e) => setFechaUnica(e.target.value)}
-                                                    className='max-w-[100%] w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm'
-                                                />
-                                                <CalendarDays
-                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                    onClick={() => {
-                                                        const input = document.querySelector('input[type="date"]');
-                                                        input?.showPicker?.();
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Fecha Inicio
-                                            </label>
-                                            <div className="relative">
-                                                <input
-                                                    type="datetime-local"
-                                                    value={fechaInicio}
-                                                    onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className="max-w-[100%] w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
-                                                />
-                                                <CalendarDays
-                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                    onClick={() => {
-                                                        const input = document.querySelector('input[type="datetime-local"]');
-                                                        input?.showPicker?.();
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Fecha Fin
-                                            </label>
-                                            <div className="relative">
-                                                <input
-                                                    type="datetime-local"
-                                                    value={fechaFin}
-                                                    onChange={(e) => setFechaFin(e.target.value)}
-                                                    className="max-w-[100%] w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
-                                                />
-                                                <CalendarDays
-                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                    onClick={() => {
-                                                        const inputs = document.querySelectorAll('input[type="datetime-local"]');
-                                                        inputs[1]?.showPicker?.();
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className='mt-6'>
-                                {/* Segmentación Avanzada - Selects */}
-                                {(advanceChecks.tipoOperacion || advanceChecks.operacion || advanceChecks.tipoVehiculo) && (
-                                    <div className="space-y-4">
-
-                                        {/* Tipo de Operación Select */}
-                                        {advanceChecks.tipoOperacion && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Tipo de Operación
-                                                </label>
-                                                <select
-                                                    value={tipoOperacionSelect}
-                                                    onChange={(e) => setTipoOperacionSelect(e.target.value)}
-                                                    className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
-                                                >
-                                                    <option value="">Seleccione tipo de operación</option>
-                                                    <option value="1">Tipo de Operación 1</option>
-                                                    <option value="2">Tipo de Operación 2</option>
-                                                    <option value="3">Tipo de Operación 3</option>
-                                                    <option value="4">Tipo de Operación 4</option>
-                                                    <option value="5">Tipo de Operación 5</option>
-                                                </select>
-                                            </div>
-                                        )}
-
-                                        {/* Operación Select */}
-                                        {advanceChecks.operacion && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Operación
-                                                </label>
-                                                <select
-                                                    value={operacionSelect}
-                                                    onChange={(e) => setOperacionSelect(e.target.value)}
-                                                    className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
-                                                >
-                                                    <option value="">Seleccione operación</option>
-                                                    <option value="1">Operación 1</option>
-                                                    <option value="2">Operación 2</option>
-                                                    <option value="3">Operación 3</option>
-                                                    <option value="4">Operación 4</option>
-                                                    <option value="5">Operación 5</option>
-                                                </select>
-                                            </div>
-                                        )}
-
-                                        {/* Tipo de Vehículo Select */}
-                                        {advanceChecks.tipoVehiculo && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Tipo de Vehículo
-                                                </label>
-                                                <select
-                                                    value={tipoVehiculoSelect}
-                                                    onChange={(e) => setTipoVehiculoSelect(e.target.value)}
-                                                    className="w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
-                                                >
-                                                    <option value="">Seleccione tipo de vehículo</option>
-                                                    <option value="1">Tipo de Vehículo 1</option>
-                                                    <option value="2">Tipo de Vehículo 2</option>
-                                                    <option value="3">Tipo de Vehículo 3</option>
-                                                    <option value="4">Tipo de Vehículo 4</option>
-                                                    <option value="5">Tipo de Vehículo 5</option>
-                                                </select>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="mt-3 bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-24 w-full rounded-2xl flex flex-col flex-shrink-0">
+                            <div className="mt-3 bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-32 sm:h-24 w-full rounded-2xl flex flex-col flex-shrink-0">
                                 <div className="w-full flex-1 p-2">
                                     <textarea
                                         className="w-full h-full resize-none outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent text-sm"
                                         value={preguntaFormulada}
+                                        placeholder="Selecciona una pregunta y completa los filtros para ver la consulta generada..."
                                         readOnly
                                     ></textarea>
                                 </div>
                                 <div className="flex justify-end px-2 pb-2 flex-shrink-0">
                                     <button
-                                        type="submit"
-                                        className="bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-700 hover:to-blue-500 text-white rounded-lg p-1.5 transition-all duration-300 hover:scale-105 active:scale-95"
+                                        type="button"
+                                        onClick={handleSubmit}
+                                        disabled={!preguntaFormulada}
+                                        className="bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-700 hover:to-blue-500 disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed text-white rounded-lg p-1.5 transition-all duration-300 hover:scale-105 active:scale-95 disabled:hover:scale-100"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 512 512">
                                             <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
