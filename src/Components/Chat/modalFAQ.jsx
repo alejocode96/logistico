@@ -637,15 +637,9 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaInicio}
                                                     onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className="datetime-input w-full sm:max-w-[250px] min-w-0 p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-sm text-zinc-600 dark:text-white font-normal tracking-normal overflow-hidden whitespace-nowrap text-ellipsis"
+                                                    className=" w-full sm:max-w-[250px] min-w-0 p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-sm text-zinc-600 dark:text-white font-normal tracking-normal overflow-hidden whitespace-nowrap text-ellipsis"
                                                 />
-                                                <CalendarDays
-                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                    onClick={() => {
-                                                        const inputs = document.querySelectorAll('input[type="datetime-local"]');
-                                                        inputs[0]?.showPicker?.();
-                                                    }}
-                                                />
+                                                
                                             </div>
                                         </div>
 
