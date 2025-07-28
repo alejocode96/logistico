@@ -612,10 +612,6 @@ const ModalFaq = () => {
                                                 onChange={(e) => setFechaUnica(e.target.value)}
                                                 className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm"
                                             />
-                                            <Calendar
-                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                onClick={() => document.querySelector('input[type="date"]')?.showPicker?.()}
-                                            />
                                         </div>
                                     </div>
                                 ) : (
