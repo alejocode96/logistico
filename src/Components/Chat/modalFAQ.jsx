@@ -610,7 +610,7 @@ const ModalFaq = () => {
                                                     type="date"
                                                     value={fechaUnica}
                                                     onChange={(e) => setFechaUnica(e.target.value)}
-                                                    className='col-span-1 w-0 min-w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm'
+                                                    className='col-span-1 w-[100%] min-w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm'
                                                 />
                                             </div>
                                         </div>
@@ -627,7 +627,7 @@ const ModalFaq = () => {
                                                         type="datetime-local"
                                                         value={fechaInicio}
                                                         onChange={(e) => setFechaInicio(e.target.value)}
-                                                        className="w-0 min-w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                        className="w-[100%] min-w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                     />
                                                     <CalendarDays
                                                         className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -649,7 +649,7 @@ const ModalFaq = () => {
                                                         type="datetime-local"
                                                         value={fechaFin}
                                                         onChange={(e) => setFechaFin(e.target.value)}
-                                                        className="w-0 min-w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                        className="w-[100%] min-w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
                                                     />
                                                     <CalendarDays
                                                         className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
