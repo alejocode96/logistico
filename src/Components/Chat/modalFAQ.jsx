@@ -611,12 +611,7 @@ const ModalFaq = () => {
                                                     type="date"
                                                     value={fechaUnica}
                                                     onChange={(e) => setFechaUnica(e.target.value)}
-                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm"
-                                                    style={{
-                                                        minWidth: 0,
-                                                        maxWidth: '100%',
-                                                        textAlign: 'left'
-                                                    }}
+                                                    className=" w-full p-3 min-w-[100%] max-w-[100%] border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm"
                                                 />
                                                 <Calendar
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -627,7 +622,6 @@ const ModalFaq = () => {
                                     </div>
                                 ) : (
                                     <div className="space-y-3">
-                                        {/* Fecha Inicio */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Inicio
@@ -637,13 +631,22 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaInicio}
                                                     onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className=" w-full sm:max-w-[250px] min-w-0 p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-sm text-zinc-600 dark:text-white font-normal tracking-normal overflow-hidden whitespace-nowrap text-ellipsis"
+                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
+                                                    style={{
+                                                        minWidth: 0,
+                                                        maxWidth: '100%',
+                                                        textAlign: 'left'
+                                                    }}
                                                 />
-                                                
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const input = document.querySelector('input[type="datetime-local"]');
+                                                        input?.showPicker?.();
+                                                    }}
+                                                />
                                             </div>
                                         </div>
-
-                                        {/* Fecha Fin */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Fin
@@ -653,7 +656,12 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaFin}
                                                     onChange={(e) => setFechaFin(e.target.value)}
-                                                    className="datetime-input w-full sm:max-w-[250px] min-w-0 p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-sm text-zinc-600 dark:text-white font-normal tracking-normal overflow-hidden whitespace-nowrap text-ellipsis"
+                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
+                                                    style={{
+                                                        minWidth: 0,
+                                                        maxWidth: '100%',
+                                                        textAlign: 'left'
+                                                    }}
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -665,7 +673,6 @@ const ModalFaq = () => {
                                             </div>
                                         </div>
                                     </div>
-
                                 )}
                             </div>
 
