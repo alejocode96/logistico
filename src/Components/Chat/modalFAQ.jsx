@@ -611,7 +611,7 @@ const ModalFaq = () => {
                                                     type="date"
                                                     value={fechaUnica}
                                                     onChange={(e) => setFechaUnica(e.target.value)}
-                                                    className=" w-full p-3 min-w-[100%] max-w-[100%] border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm"
+                                                    className="datetime-input w-full p-3 min-w-[100%] max-w-[100%] border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white  text-sm"
                                                 />
                                                 <Calendar
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
@@ -631,12 +631,7 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaInicio}
                                                     onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className="datetime-input w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm font-mono tracking-tight overflow-hidden"
-                                                    style={{
-                                                        minWidth: 0,
-                                                        maxWidth: '100%',
-                                                        textAlign: 'left'
-                                                    }}
+                                                    className=" datetime-input  w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white  text-sm font-mono tracking-tight overflow-hidden"
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
