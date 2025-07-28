@@ -631,7 +631,7 @@ const ModalFaq = () => {
                                                     type="datetime-local"
                                                     value={fechaInicio}
                                                     onChange={(e) => setFechaInicio(e.target.value)}
-                                                    className=" datetime-input  w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white  text-sm font-mono tracking-tight overflow-hidden"
+                                                    className=" w-[100%] max-w[100%] p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white  text-sm overflow-hidden"
                                                 />
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
