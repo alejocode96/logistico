@@ -583,6 +583,7 @@ const ModalFaq = () => {
                             </div>
 
                             {/* Contenido dinámico basado en fechas */}
+
                             <div className='mt-6'>
                                 {filtroTemporal === 'ninguno' ? (
                                     <div>
@@ -605,12 +606,19 @@ const ModalFaq = () => {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha
                                             </label>
-                                            <div className="grid grid-cols-1 w-full">
+                                            <div className='relative'>
                                                 <input
                                                     type="date"
                                                     value={fechaUnica}
                                                     onChange={(e) => setFechaUnica(e.target.value)}
-                                                    className='col-span-1 w-[100%] min-w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm'
+                                                    className='max-w-[99.9%] md:max-w-[100%] w-full h-12 px-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm'
+                                                />
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const input = document.querySelector('input[type="datetime-local"]');
+                                                        input?.showPicker?.();
+                                                    }}
                                                 />
                                             </div>
                                         </div>
@@ -621,44 +629,40 @@ const ModalFaq = () => {
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Inicio
                                             </label>
-                                            <div className="grid grid-cols-1 w-full">
-                                                <div className="relative col-span-1">
-                                                    <input
-                                                        type="datetime-local"
-                                                        value={fechaInicio}
-                                                        onChange={(e) => setFechaInicio(e.target.value)}
-                                                        className="w-[100%] min-w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
-                                                    />
-                                                    <CalendarDays
-                                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                        onClick={() => {
-                                                            const input = document.querySelector('input[type="datetime-local"]');
-                                                            input?.showPicker?.();
-                                                        }}
-                                                    />
-                                                </div>
+                                            <div className="relative">
+                                                <input
+                                                    type="datetime-local"
+                                                    value={fechaInicio}
+                                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                                    className="max-w-[99%] md:max-w-[100%] w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                />
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const input = document.querySelector('input[type="datetime-local"]');
+                                                        input?.showPicker?.();
+                                                    }}
+                                                />
                                             </div>
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                 Fecha Fin
                                             </label>
-                                            <div className="grid grid-cols-1 w-full">
-                                                <div className="relative col-span-1">
-                                                    <input
-                                                        type="datetime-local"
-                                                        value={fechaFin}
-                                                        onChange={(e) => setFechaFin(e.target.value)}
-                                                        className="w-[100%] min-w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
-                                                    />
-                                                    <CalendarDays
-                                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
-                                                        onClick={() => {
-                                                            const inputs = document.querySelectorAll('input[type="datetime-local"]');
-                                                            inputs[1]?.showPicker?.();
-                                                        }}
-                                                    />
-                                                </div>
+                                            <div className="relative">
+                                                <input
+                                                    type="datetime-local"
+                                                    value={fechaFin}
+                                                    onChange={(e) => setFechaFin(e.target.value)}
+                                                    className="max-w-[99%] md:max-w-[100%] w-full h-12 px-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 text-zinc-600 dark:text-white text-sm [&::-webkit-calendar-picker-indicator]:opacity-0"
+                                                />
+                                                <CalendarDays
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
+                                                    onClick={() => {
+                                                        const inputs = document.querySelectorAll('input[type="datetime-local"]');
+                                                        inputs[1]?.showPicker?.();
+                                                    }}
+                                                />
                                             </div>
                                         </div>
                                     </div>
