@@ -29,6 +29,9 @@ const ModalFaq = () => {
     const [searchTerms, setSearchTerms] = useState({});
     const [dropdownOpen, setDropdownOpen] = useState({});
 
+    // Estado para el punto de interés temporal (fecha, semana, mes)
+    const [puntoInteresTemporal, setPuntoInteresTemporal] = useState('fecha');
+
     // Obtener la pregunta seleccionada
     const getSelectedQuestion = () => {
         return questions.find(q => q.id === selectedFAQ);
@@ -38,6 +41,18 @@ const ModalFaq = () => {
 
     // Estado para la pregunta formulada
     const [preguntaFormulada, setPreguntaFormulada] = useState('');
+
+    // Manejar cambios en el punto de interés temporal
+    const handlePuntoInteresTemporalChange = (tipo) => {
+        setPuntoInteresTemporal(tipo);
+        // Limpiar valores de fecha relacionados cuando cambie el tipo
+        const fieldsToClean = ['fecha_especifica', 'semana', 'mes'];
+        const newFormValues = { ...formValues };
+        fieldsToClean.forEach(field => {
+            delete newFormValues[field];
+        });
+        setFormValues(newFormValues);
+    };
 
     // Manejar cambios en los inputs del formulario
     const handleInputChange = (fieldName, value) => {
@@ -149,12 +164,21 @@ const ModalFaq = () => {
                 (typeof fieldValue === 'string' && fieldValue.trim() === '') ||
                 (Array.isArray(fieldValue) && fieldValue.length === 0 && field.required);
 
-
             if (isEmpty) {
                 newErrors[field.name] = `${field.label} es requerido`;
             }
         });
 
+        // Validación específica para pregunta id 3 con punto de interés temporal
+        if (selectedQuestion.id === 3) {
+            if (puntoInteresTemporal === 'fecha' && !formValues['fecha_especifica']) {
+                newErrors['fecha_especifica'] = 'La fecha específica es requerida';
+            } else if (puntoInteresTemporal === 'semana' && !formValues['semana']) {
+                newErrors['semana'] = 'La semana es requerida';
+            } else if (puntoInteresTemporal === 'mes' && !formValues['mes']) {
+                newErrors['mes'] = 'El mes es requerido';
+            }
+        }
 
         // Si hay errores, mostrarlos y no enviar
         if (Object.keys(newErrors).length > 0) {
@@ -172,6 +196,7 @@ const ModalFaq = () => {
             optionIndex: selectedQuestionOption,
             optionTitle: selectedOption.titleQuestion,
             formData: formValues,
+            puntoInteresTemporal: selectedQuestion.id === 3 ? puntoInteresTemporal : undefined,
             generatedQuery: preguntaFormulada
         };
 
@@ -194,6 +219,21 @@ const ModalFaq = () => {
         return fechaFormateada.replace(',', '');
     };
 
+    const formatearSemana = (semanaISO) => {
+        if (!semanaISO) return '';
+        const [year, week] = semanaISO.split('-W');
+        return `Semana ${week} del año ${year}`;
+    };
+
+    const formatearMes = (mesISO) => {
+        if (!mesISO) return '';
+        const [year, month] = mesISO.split('-');
+        const meses = [
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+        return `${meses[parseInt(month) - 1]} de ${year}`;
+    };
 
     const formularPregunta = () => {
         const preguntaSeleccionada = getSelectedQuestion();
@@ -297,20 +337,15 @@ const ModalFaq = () => {
             const campoZona = selectedOption.formFields.find(field => field.name === 'zona');
             const campoRegion = selectedOption.formFields.find(field => field.name === 'region');
 
-
             let pregunta = '¿Top  ';
             pregunta += formValues['Top'] || 0;
             if (selectedOption.id === 1) {
                 pregunta += ' de regiones con el mayor tiempo promedio de permanencia en '
-
             } else if (selectedOption.id === 2) {
                 pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en '
-
             } else {
                 pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en '
-
             }
-
 
             let campoPrincipal = null;
             let valorCampo = null;
@@ -376,13 +411,118 @@ const ModalFaq = () => {
 
             pregunta += '?';
             setPreguntaFormulada(pregunta);
+        } else if (preguntaSeleccionada.id === 3) {
+            let pregunta = '¿';
+
+            // Obtener valores de formulario para pregunta id 3
+            const campoZona = selectedOption.formFields.find(field => field.name === 'zona');
+            const campoRegion = selectedOption.formFields.find(field => field.name === 'region');
+            const campoVehiculo = selectedOption.formFields.find(field => field.name === 'vehiculo');
+            const campoCliente = selectedOption.formFields.find(field => field.name === 'cliente');
+            const campoPlanta = selectedOption.formFields.find(field => field.name === 'planta');
+
+            // Construir la pregunta base según la opción seleccionada
+            pregunta += selectedOption.titleQuestion || 'Consulta';
+
+            // Agregar filtros espaciales si existen
+            const filtrosEspaciales = [];
+
+            if (campoZona && formValues['zona']) {
+                const valorZona = formValues['zona'];
+                if (Array.isArray(valorZona)) {
+                    if (valorZona.length === zonas.length) {
+                        filtrosEspaciales.push('todas las zonas');
+                    } else if (valorZona.length > 1) {
+                        filtrosEspaciales.push(`las zonas ${valorZona.join(', ')}`);
+                    } else if (valorZona.length === 1) {
+                        filtrosEspaciales.push(`la zona ${valorZona[0]}`);
+                    }
+                } else {
+                    filtrosEspaciales.push(`la zona ${valorZona}`);
+                }
+            }
+
+            if (campoRegion && formValues['region']) {
+                const valorRegion = formValues['region'];
+                if (Array.isArray(valorRegion)) {
+                    if (valorRegion.length === regiones.length) {
+                        filtrosEspaciales.push('todas las regiones');
+                    } else if (valorRegion.length > 1) {
+                        filtrosEspaciales.push(`las regiones ${valorRegion.join(', ')}`);
+                    } else if (valorRegion.length === 1) {
+                        filtrosEspaciales.push(`la región ${valorRegion[0]}`);
+                    }
+                } else {
+                    filtrosEspaciales.push(`la región ${valorRegion}`);
+                }
+            }
+
+            if (campoVehiculo && formValues['vehiculo']) {
+                const valorVehiculo = formValues['vehiculo'];
+                if (Array.isArray(valorVehiculo)) {
+                    if (valorVehiculo.length === vehiculos.length) {
+                        filtrosEspaciales.push('todos los vehículos');
+                    } else if (valorVehiculo.length > 1) {
+                        filtrosEspaciales.push(`los vehículos ${valorVehiculo.join(', ')}`);
+                    } else if (valorVehiculo.length === 1) {
+                        filtrosEspaciales.push(`el vehículo ${valorVehiculo[0]}`);
+                    }
+                } else {
+                    filtrosEspaciales.push(`el vehículo ${valorVehiculo}`);
+                }
+            }
+
+            if (campoCliente && formValues['cliente']) {
+                const valorCliente = formValues['cliente'];
+                if (Array.isArray(valorCliente)) {
+                    if (valorCliente.length === clientes.length) {
+                        filtrosEspaciales.push('todos los clientes');
+                    } else if (valorCliente.length > 1) {
+                        filtrosEspaciales.push(`los clientes ${valorCliente.join(', ')}`);
+                    } else if (valorCliente.length === 1) {
+                        filtrosEspaciales.push(`el cliente ${valorCliente[0]}`);
+                    }
+                } else {
+                    filtrosEspaciales.push(`el cliente ${valorCliente}`);
+                }
+            }
+
+            if (campoPlanta && formValues['planta']) {
+                const valorPlanta = formValues['planta'];
+                if (Array.isArray(valorPlanta)) {
+                    if (valorPlanta.length === plantas.length) {
+                        filtrosEspaciales.push('todas las plantas');
+                    } else if (valorPlanta.length > 1) {
+                        filtrosEspaciales.push(`las plantas ${valorPlanta.join(', ')}`);
+                    } else if (valorPlanta.length === 1) {
+                        filtrosEspaciales.push(`la planta ${valorPlanta[0]}`);
+                    }
+                } else {
+                    filtrosEspaciales.push(`la planta ${valorPlanta}`);
+                }
+            }
+
+            if (filtrosEspaciales.length > 0) {
+                pregunta += ` en ${filtrosEspaciales.join(', ')}`;
+            }
+
+            // Agregar filtro temporal según el tipo seleccionado
+            if (puntoInteresTemporal === 'fecha' && formValues['fecha_especifica']) {
+                pregunta += ` el ${formatearFecha(formValues['fecha_especifica'])}`;
+            } else if (puntoInteresTemporal === 'semana' && formValues['semana']) {
+                pregunta += ` en la ${formatearSemana(formValues['semana'])}`;
+            } else if (puntoInteresTemporal === 'mes' && formValues['mes']) {
+                pregunta += ` en ${formatearMes(formValues['mes'])}`;
+            }
+
+            pregunta += '?';
+            setPreguntaFormulada(pregunta);
         }
     };
 
-
     useEffect(() => {
         formularPregunta();
-    }, [selectedFAQ, selectedQuestionOption, formValues]);
+    }, [selectedFAQ, selectedQuestionOption, formValues, puntoInteresTemporal]);
 
     // Limpiar valores del formulario cuando cambie la selección
     useEffect(() => {
@@ -395,10 +535,11 @@ const ModalFaq = () => {
             defaults['Top'] = 0;
         }
 
-        setFormValues({});
+        setFormValues(defaults);
         setErrors({});
         setSearchTerms({});
         setDropdownOpen({});
+        setPuntoInteresTemporal('fecha'); // Reset al valor por defecto
     }, [selectedFAQ, selectedQuestionOption]);
 
     // Auto-seleccionar la primera opción cuando se selecciona una pregunta
@@ -471,38 +612,107 @@ const ModalFaq = () => {
                 );
 
             case 'select':
-                // Select único (comportamiento normal)
+                // Select único con búsqueda
                 if (unique === true || unique === undefined) {
+                    const filteredOptions = filterOptions(fieldOptions, searchTerm);
+
                     return (
                         <div className="space-y-2">
                             <label htmlFor={name} className={`block text-sm font-medium ${hasError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
                                 {label} {required && <span className="text-red-500">*</span>}
                             </label>
-                            <div className="relative w-full">
-                                <select
-                                    id={name}
-                                    name={name}
-                                    value={formValues[name] || ''}
-                                    onChange={(e) => handleInputChange(name, e.target.value)}
-                                    required={required}
-                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white appearance-none transition-all duration-200 ${hasError
+
+                            <div className="relative dropdown-container">
+                                {/* Campo de selección única con búsqueda */}
+                                <div
+                                    onClick={() => toggleDropdown(name)}
+                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm cursor-pointer bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 flex items-center justify-between ${hasError
                                         ? 'border-red-500 dark:border-red-400'
                                         : 'border-gray-300 dark:border-zinc-700'
                                         }`}
                                 >
-                                    <option value="">-- Selecciona una opción --</option>
-                                    {fieldOptions.map((option, index) => (
-                                        <option key={index} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </select>
-                                <ChevronDown
-                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none ${hasError ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
-                                        }`}
-                                />
+                                    <span className="truncate">
+                                        {formValues[name] || "-- Selecciona una opción --"}
+                                    </span>
+                                    <ChevronDown
+                                        className={`w-5 h-5 pointer-events-none transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''
+                                            } ${hasError ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'}`}
+                                    />
+                                </div>
 
+                                {/* Dropdown con opciones */}
+                                {isDropdownOpen && (
+                                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg shadow-lg max-h-64 overflow-hidden">
+                                        {/* Buscador */}
+                                        <div className="p-3 border-b border-gray-200 dark:border-zinc-700">
+                                            <div className="relative">
+                                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-zinc-500" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Buscar opciones..."
+                                                    value={searchTerm}
+                                                    onChange={(e) => handleSearchChange(name, e.target.value)}
+                                                    className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md text-sm bg-gray-50 dark:bg-zinc-700 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    autoFocus
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Lista de opciones */}
+                                        <div className="max-h-48 overflow-y-auto">
+                                            {/* Opción para limpiar selección */}
+                                            {formValues[name] && (
+                                                <div
+                                                    className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer border-b border-gray-100 dark:border-zinc-700"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleInputChange(name, '');
+                                                        toggleDropdown(name);
+                                                    }}
+                                                >
+                                                    <X className="w-4 h-4 text-gray-400 dark:text-zinc-500 mr-3" />
+                                                    <span className="text-sm text-gray-500 dark:text-zinc-400 italic">
+                                                        Limpiar selección
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {/* Opciones filtradas */}
+                                            {filteredOptions.length > 0 ? (
+                                                filteredOptions.map((option, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer ${formValues[name] === option
+                                                                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                                                                : 'text-gray-700 dark:text-white'
+                                                            }`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleInputChange(name, option);
+                                                            toggleDropdown(name);
+                                                        }}
+                                                    >
+                                                        {formValues[name] === option && (
+                                                            <div className="w-4 h-4 mr-3 flex items-center justify-center">
+                                                                <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                                                            </div>
+                                                        )}
+                                                        <span className={`text-sm ${formValues[name] !== option ? 'ml-7' : ''}`}>
+                                                            {option}
+                                                        </span>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="px-3 py-2 text-sm text-gray-500 dark:text-zinc-400">
+                                                    No se encontraron opciones
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+
                             {hasError && (
                                 <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
                                     <span className="font-medium">⚠</span>
@@ -667,7 +877,6 @@ const ModalFaq = () => {
                         )}
                     </div>
                 );
-
             case 'number':
                 return (
                     <div className="space-y-2">
@@ -731,6 +940,152 @@ const ModalFaq = () => {
                     </div>
                 );
         }
+    };
+
+    // Renderizar selector de punto de interés temporal para pregunta id 3
+    const renderPuntoInteresTemporalSelector = () => {
+        if (selectedQuestion?.id !== 3) return null;
+
+        const hasTemporalError = errors['fecha_especifica'] || errors['semana'] || errors['mes'];
+
+        return (
+            <div className="mt-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                    Punto de interés temporal
+                </label>
+                <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
+                    <button
+                        type="button"
+                        onClick={() => handlePuntoInteresTemporalChange('fecha')}
+                        className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteresTemporal === 'fecha'
+                            ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
+                            : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
+                            }`}
+                    >
+                        Fecha
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handlePuntoInteresTemporalChange('semana')}
+                        className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteresTemporal === 'semana'
+                            ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
+                            : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
+                            }`}
+                    >
+                        Semana
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handlePuntoInteresTemporalChange('mes')}
+                        className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteresTemporal === 'mes'
+                            ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
+                            : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
+                            }`}
+                    >
+                        Mes
+                    </button>
+                </div>
+
+                {/* Input según el tipo seleccionado */}
+                <div className="mt-3">
+                    {puntoInteresTemporal === 'fecha' && (
+                        <div className="space-y-2">
+                            <label htmlFor="fecha_especifica" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                Fecha específica <span className="text-red-500">*</span>
+                            </label>
+                            <div className="relative w-full">
+                                <input
+                                    type="datetime-local"
+                                    id="fecha_especifica"
+                                    name="fecha_especifica"
+                                    value={formValues['fecha_especifica'] || ''}
+                                    onChange={(e) => handleInputChange('fecha_especifica', e.target.value)}
+                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 ${errors['fecha_especifica']
+                                        ? 'border-red-500 dark:border-red-400'
+                                        : 'border-gray-300 dark:border-zinc-700'
+                                        }`}
+                                />
+                                <Calendar
+                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['fecha_especifica'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                        }`}
+                                    onClick={() => document.getElementById('fecha_especifica').showPicker?.()}
+                                />
+                            </div>
+                            {errors['fecha_especifica'] && (
+                                <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                    <span className="font-medium">⚠</span>
+                                    {errors['fecha_especifica']}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {puntoInteresTemporal === 'semana' && (
+                        <div className="space-y-2">
+                            <label htmlFor="semana" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                Semana <span className="text-red-500">*</span>
+                            </label>
+                            <div className="relative w-full">
+                                <input
+                                    type="week"
+                                    id="semana"
+                                    name="semana"
+                                    value={formValues['semana'] || ''}
+                                    onChange={(e) => handleInputChange('semana', e.target.value)}
+                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 ${errors['semana']
+                                        ? 'border-red-500 dark:border-red-400'
+                                        : 'border-gray-300 dark:border-zinc-700'
+                                        }`}
+                                />
+                                <CalendarDays
+                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['semana'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                        }`}
+                                    onClick={() => document.getElementById('semana').showPicker?.()}
+                                />
+                            </div>
+                            {errors['semana'] && (
+                                <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                    <span className="font-medium">⚠</span>
+                                    {errors['semana']}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {puntoInteresTemporal === 'mes' && (
+                        <div className="space-y-2">
+                            <label htmlFor="mes" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                Mes <span className="text-red-500">*</span>
+                            </label>
+                            <div className="relative w-full">
+                                <input
+                                    type="month"
+                                    id="mes"
+                                    name="mes"
+                                    value={formValues['mes'] || ''}
+                                    onChange={(e) => handleInputChange('mes', e.target.value)}
+                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 ${errors['mes']
+                                        ? 'border-red-500 dark:border-red-400'
+                                        : 'border-gray-300 dark:border-zinc-700'
+                                        }`}
+                                />
+                                <Calendar
+                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['mes'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                        }`}
+                                    onClick={() => document.getElementById('mes').showPicker?.()}
+                                />
+                            </div>
+                            {errors['mes'] && (
+                                <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                    <span className="font-medium">⚠</span>
+                                    {errors['mes']}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
     };
 
     return (
@@ -873,6 +1228,9 @@ const ModalFaq = () => {
                                             {renderFormField(field)}
                                         </div>
                                     ))}
+
+                                    {/* Selector de punto de interés temporal para pregunta id 3 */}
+                                    {renderPuntoInteresTemporalSelector()}
                                 </div>
                             )}
 

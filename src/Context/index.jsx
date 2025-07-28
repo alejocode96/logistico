@@ -177,24 +177,24 @@ function LogisticoProvider({ children }) {
             detailedInfo: "Analiza la evolución temporal del comportamiento operativo y mide el cumplimiento de objetivos de tiempo. Identifica tendencias, patrones estacionales y áreas de mejora en el rendimiento operacional.",
             questioOptions: [
                 {
-                    id: 1, titleQuestion: 'Tiempo promedio de permanencia por zona', formFields: [
-                        { name: "fecha_inicio", label: "Fecha de Inicio", type: "date", required: false },
-                        { name: "fecha_fin", label: "Fecha de Fin", type: "date", required: false },
+                    id: 1, titleQuestion: 'Tendencia por zona', formFields: [
                         { name: "zona", label: "Zona", type: "select", options: ["Norte", "Centro", "Noroccidente", "Suroccidente"], required: true, unique: true },
+                      
+                        
                     ]
                 },
                 {
-                    id: 2, titleQuestion: 'Tiempo promedio de permanencia por Región', formFields: [
-                        { name: "fecha_inicio", label: "Fecha de Inicio", type: "date", required: false },
-                        { name: "fecha_fin", label: "Fecha de Fin", type: "date", required: false },
-                        { name: "region", label: "Región", type: "select", options: [], required: true, unique: false },
+                    id: 2, titleQuestion: 'Tendencia por Región', formFields: [
+                        { name: "region", label: "Región", type: "select", options: [], required: true, unique: true },
+                    
+                        
                     ]
                 },
                 {
-                    id: 3, titleQuestion: 'Tiempo promedio de permanencia por Vehículo', formFields: [
-                        { name: "fecha_inicio", label: "Fecha de Inicio", type: "date", required: false },
-                        { name: "fecha_fin", label: "Fecha de Fin", type: "date", required: false },
-                        { name: "vehiculo", label: "Vehículo", type: "select", options: [], required: true, unique: false },
+                    id: 3, titleQuestion: 'Tendencia por Vehículo', formFields: [
+                        { name: "vehiculo", label: "Vehículo", type: "select", options: [], required: true, unique: true },
+                       
+                        
                     ]
                 }
             ],
