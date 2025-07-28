@@ -616,7 +616,7 @@ const ModalFaq = () => {
                                                 <CalendarDays
                                                     className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-600 dark:text-white cursor-pointer"
                                                     onClick={() => {
-                                                        const input = document.querySelector('input[type="datetime-local"]');
+                                                        const input = document.querySelector('input[type="date"]');
                                                         input?.showPicker?.();
                                                     }}
                                                 />
