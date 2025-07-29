@@ -169,14 +169,140 @@ const ModalFaq = () => {
             }
         });
 
+        // Función auxiliar para comparar fechas con hora
+        const compareDatetimeLocal = (startValue, endValue) => {
+            if (!startValue || !endValue) return true; // Si alguna está vacía, no validar
+
+            const startDate = new Date(startValue);
+            const endDate = new Date(endValue);
+
+            return endDate > startDate;
+        };
+
+        // Función auxiliar para comparar semanas (diferentes, no necesariamente mayor)
+        const compareWeeks = (startWeek, endWeek) => {
+            if (!startWeek || !endWeek) return true; // Si alguna está vacía, no validar
+
+            // Formato: "2024-W15"
+            const [startYear, startWeekNum] = startWeek.split('-W').map(Number);
+            const [endYear, endWeekNum] = endWeek.split('-W').map(Number);
+
+            // Para pregunta 3, solo deben ser diferentes
+            return !(startYear === endYear && startWeekNum === endWeekNum);
+        };
+
+        // Función auxiliar para comparar meses (diferentes, no necesariamente mayor)
+        const compareMonths = (startMonth, endMonth) => {
+            if (!startMonth || !endMonth) return true; // Si alguna está vacía, no validar
+
+            // Formato: "2024-03"
+            const [startYear, startMonthNum] = startMonth.split('-').map(Number);
+            const [endYear, endMonthNum] = endMonth.split('-').map(Number);
+
+            // Para pregunta 3, solo deben ser diferentes
+            return !(startYear === endYear && startMonthNum === endMonthNum);
+        };
+
+        // Validaciones para preguntas id 1 o 2
+        if (selectedQuestion.id === 1 || selectedQuestion.id === 2) {
+            const fechaInicio = formValues['fecha_inicio'];
+            const fechaFin = formValues['fecha_fin'];
+
+            // Si no hay fecha inicio, no debe haber fecha fin
+            if (!fechaInicio && fechaFin) {
+                newErrors['fecha_fin'] = 'No puedes seleccionar fecha fin sin fecha inicio';
+            }
+
+            // Si ambas fechas están presentes, validar que fecha_fin sea mayor
+            if (fechaInicio && fechaFin) {
+                if (!compareDatetimeLocal(fechaInicio, fechaFin)) {
+                    newErrors['fecha_fin'] = 'La fecha fin debe ser mayor que la fecha inicio';
+                }
+            }
+        }
+
+        // Validación específica para pregunta id 2 - campo Top
+        if (selectedQuestion.id === 2) {
+            const topValue = formValues['Top'];
+            const topNumber = parseInt(topValue, 10);
+            console.log(topValue)
+            console.log(topNumber)
+            if (
+                topValue === undefined ||
+                topValue === null ||
+                topValue === '' ||
+                isNaN(topNumber) ||
+                topNumber < 3
+            ) {
+                newErrors['top'] = 'El campo Top debe ser un número mayor o igual a 3';
+            }
+        }
+
+
         // Validación específica para pregunta id 3 con punto de interés temporal
         if (selectedQuestion.id === 3) {
-            if (puntoInteresTemporal === 'fecha' && !formValues['fecha_especifica']) {
-                newErrors['fecha_especifica'] = 'La fecha específica es requerida';
-            } else if (puntoInteresTemporal === 'semana' && !formValues['semana']) {
-                newErrors['semana'] = 'La semana es requerida';
-            } else if (puntoInteresTemporal === 'mes' && !formValues['mes']) {
-                newErrors['mes'] = 'El mes es requerido';
+            if (puntoInteresTemporal === 'fecha') {
+
+
+                // Validar rango de fechas si ambas están presentes - DEBE SER MAYOR
+                const fechaInicio = formValues['fecha_inicio'];
+                const fechaFin = formValues['fecha_fin'];
+
+                // Campos obligatorios para fecha
+                if (!fechaInicio) {
+                    newErrors['fecha_inicio'] = 'La fecha inicio es requerida';
+                }
+                if (!fechaFin) {
+                    newErrors['fecha_fin'] = 'La fecha fin es requerida';
+                }
+
+                if (fechaInicio && fechaFin) {
+                    if (!compareDatetimeLocal(fechaInicio, fechaFin)) {
+                        newErrors['fecha_fin'] = 'La fecha fin debe ser mayor que la fecha inicio';
+                    }
+                }
+
+            } else if (puntoInteresTemporal === 'semana') {
+
+
+                // Validar rango de semanas si ambas están presentes - DEBEN SER DIFERENTES
+                const semanaInicio = formValues['semana_inicio'];
+                const semanaFin = formValues['semana_fin'];
+
+                // Campos obligatorios para semana
+                if (!semanaInicio) {
+                    newErrors['semana_inicio'] = 'La semana inicio es requerida';
+                }
+                if (!semanaFin) {
+                    newErrors['semana_fin'] = 'La semana fin es requerida';
+                }
+
+                if (semanaInicio && semanaFin) {
+                    if (!compareWeeks(semanaInicio, semanaFin)) {
+                        newErrors['semana_fin'] = 'La semana fin debe ser diferente a la semana inicio';
+                    }
+                }
+
+            } else if (puntoInteresTemporal === 'mes') {
+
+
+                // Validar rango de meses si ambos están presentes - DEBEN SER DIFERENTES
+                const mesInicio = formValues['mes_inicio'];
+                const mesFin = formValues['mes_fin'];
+
+                // Campos obligatorios para mes
+                if (!mesInicio) {
+                    newErrors['mes_inicio'] = 'El mes inicio es requerido';
+                }
+                if (!mesFin) {
+                    newErrors['mes_fin'] = 'El mes fin es requerido';
+                }
+
+                if (mesInicio && mesFin) {
+                    if (!compareMonths(mesInicio, mesFin)) {
+                        newErrors['mes_fin'] = 'El mes fin debe ser diferente al mes inicio';
+                    }
+                }
             }
         }
 
@@ -204,6 +330,171 @@ const ModalFaq = () => {
         console.log('Datos a enviar:', dataToSend);
         alert(`Consulta enviada:\n${preguntaFormulada}\n\nDatos: ${JSON.stringify(formValues, null, 2)}`);
     };
+
+    // Funciones auxiliares adicionales actualizadas
+
+    // Validar un rango de fechas específico
+    const validateDateRange = (startDate, endDate, startFieldName = 'fecha_inicio', endFieldName = 'fecha_fin') => {
+        if (!startDate || !endDate) return null;
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (end <= start) {
+            return `${endFieldName.replace('_', ' ')} debe ser mayor que ${startFieldName.replace('_', ' ')}`;
+        }
+
+        return null;
+    };
+
+    // Validar un rango de semanas específico (deben ser diferentes para pregunta 3)
+    const validateWeekRange = (startWeek, endWeek, startFieldName = 'semana_inicio', endFieldName = 'semana_fin', requireDifferent = false) => {
+        if (!startWeek || !endWeek) return null;
+
+        const [startYear, startWeekNum] = startWeek.split('-W').map(Number);
+        const [endYear, endWeekNum] = endWeek.split('-W').map(Number);
+
+        if (requireDifferent) {
+            // Para pregunta 3: solo deben ser diferentes
+            if (startYear === endYear && startWeekNum === endWeekNum) {
+                return `${endFieldName.replace('_', ' ')} debe ser diferente a ${startFieldName.replace('_', ' ')}`;
+            }
+        } else {
+            // Para otras preguntas: debe ser mayor
+            if (startYear > endYear || (startYear === endYear && startWeekNum >= endWeekNum)) {
+                return `${endFieldName.replace('_', ' ')} debe ser mayor que ${startFieldName.replace('_', ' ')}`;
+            }
+        }
+
+        return null;
+    };
+
+    // Validar un rango de meses específico (deben ser diferentes para pregunta 3)
+    const validateMonthRange = (startMonth, endMonth, startFieldName = 'mes_inicio', endFieldName = 'mes_fin', requireDifferent = false) => {
+        if (!startMonth || !endMonth) return null;
+
+        const [startYear, startMonthNum] = startMonth.split('-').map(Number);
+        const [endYear, endMonthNum] = endMonth.split('-').map(Number);
+
+        if (requireDifferent) {
+            // Para pregunta 3: solo deben ser diferentes
+            if (startYear === endYear && startMonthNum === endMonthNum) {
+                return `${endFieldName.replace('_', ' ')} debe ser diferente a ${startFieldName.replace('_', ' ')}`;
+            }
+        } else {
+            // Para otras preguntas: debe ser mayor
+            if (startYear > endYear || (startYear === endYear && startMonthNum >= endMonthNum)) {
+                return `${endFieldName.replace('_', ' ')} debe ser mayor que ${startFieldName.replace('_', ' ')}`;
+            }
+        }
+
+        return null;
+    };
+
+    // Validar campo Top para pregunta 2
+    const validateTopField = (topValue) => {
+        if (topValue === undefined || topValue === null || topValue === '') return null;
+
+        const topNumber = parseInt(topValue, 10);
+        if (isNaN(topNumber) || topNumber < 3) {
+            return 'El campo Top debe ser mayor o igual a 3';
+        }
+
+        return null;
+    };
+
+    // Ejemplo de uso actualizado de las funciones auxiliares en tiempo real (onChange)
+    const handleDateChange = (fieldName, value) => {
+        // Actualizar el valor del formulario
+        setFormValues(prev => ({
+            ...prev,
+            [fieldName]: value
+        }));
+
+        // Limpiar error existente
+        if (errors[fieldName]) {
+            setErrors(prev => ({
+                ...prev,
+                [fieldName]: null
+            }));
+        }
+
+        // Validación en tiempo real para rangos de fechas
+        if (fieldName === 'fecha_fin') {
+            // Si no hay fecha inicio, no permitir fecha fin (solo para preguntas 1 y 2)
+            if ((selectedQuestion.id === 1 || selectedQuestion.id === 2) && !formValues['fecha_inicio'] && value) {
+                setErrors(prev => ({
+                    ...prev,
+                    [fieldName]: 'No puedes seleccionar fecha fin sin fecha inicio'
+                }));
+            } else if (formValues['fecha_inicio'] && value) {
+                // Validar que fecha fin sea mayor que fecha inicio
+                const error = validateDateRange(formValues['fecha_inicio'], value);
+                if (error) {
+                    setErrors(prev => ({
+                        ...prev,
+                        [fieldName]: error
+                    }));
+                }
+            }
+        } else if (fieldName === 'fecha_inicio') {
+            // Si se borra fecha inicio y hay fecha fin, limpiar fecha fin (solo para preguntas 1 y 2)
+            if ((selectedQuestion.id === 1 || selectedQuestion.id === 2) && !value && formValues['fecha_fin']) {
+                setFormValues(prev => ({
+                    ...prev,
+                    'fecha_fin': ''
+                }));
+                setErrors(prev => ({
+                    ...prev,
+                    'fecha_fin': null
+                }));
+            } else if (value && formValues['fecha_fin']) {
+                // Validar rango si ambas están presentes
+                const error = validateDateRange(value, formValues['fecha_fin']);
+                if (error) {
+                    setErrors(prev => ({
+                        ...prev,
+                        'fecha_fin': error
+                    }));
+                } else {
+                    // Limpiar error de fecha_fin si ya no hay conflicto
+                    setErrors(prev => ({
+                        ...prev,
+                        'fecha_fin': null
+                    }));
+                }
+            }
+        }
+    };
+
+    const handleTopChange = (fieldName, value) => {
+        // Actualizar el valor del formulario
+        setFormValues(prev => ({
+            ...prev,
+            [fieldName]: value
+        }));
+
+        // Limpiar error existente
+        if (errors[fieldName]) {
+            setErrors(prev => ({
+                ...prev,
+                [fieldName]: null
+            }));
+        }
+
+        // Validación en tiempo real para campo Top (solo pregunta 2)
+        if (selectedQuestion.id === 2 && fieldName === 'Top') {
+            const error = validateTopField(value);
+            if (error) {
+                setErrors(prev => ({
+                    ...prev,
+                    [fieldName]: error
+                }));
+            }
+        }
+    };
+
+
 
     const formatearFecha = (fechaISO) => {
         if (!fechaISO) return '';
@@ -412,113 +703,84 @@ const ModalFaq = () => {
             pregunta += '?';
             setPreguntaFormulada(pregunta);
         } else if (preguntaSeleccionada.id === 3) {
-            let pregunta = '¿';
+            let pregunta = '¿Cómo variaron los tiempos de permanencia';
 
             // Obtener valores de formulario para pregunta id 3
             const campoZona = selectedOption.formFields.find(field => field.name === 'zona');
             const campoRegion = selectedOption.formFields.find(field => field.name === 'region');
             const campoVehiculo = selectedOption.formFields.find(field => field.name === 'vehiculo');
-            const campoCliente = selectedOption.formFields.find(field => field.name === 'cliente');
-            const campoPlanta = selectedOption.formFields.find(field => field.name === 'planta');
 
-            // Construir la pregunta base según la opción seleccionada
-            pregunta += selectedOption.titleQuestion || 'Consulta';
 
-            // Agregar filtros espaciales si existen
-            const filtrosEspaciales = [];
 
-            if (campoZona && formValues['zona']) {
-                const valorZona = formValues['zona'];
-                if (Array.isArray(valorZona)) {
-                    if (valorZona.length === zonas.length) {
-                        filtrosEspaciales.push('todas las zonas');
-                    } else if (valorZona.length > 1) {
-                        filtrosEspaciales.push(`las zonas ${valorZona.join(', ')}`);
-                    } else if (valorZona.length === 1) {
-                        filtrosEspaciales.push(`la zona ${valorZona[0]}`);
-                    }
-                } else {
-                    filtrosEspaciales.push(`la zona ${valorZona}`);
+            let campoPrincipal = null;
+            let valorCampo = null;
+
+            if (campoZona) {
+                campoPrincipal = 'zona';
+                valorCampo = formValues['zona'];
+            } else if (campoRegion) {
+                campoPrincipal = 'region';
+                valorCampo = formValues['region'];
+            } else if (campoVehiculo) {
+                campoPrincipal = 'vehiculo';
+                valorCampo = formValues['vehiculo'];
+            }
+
+            // Solo agregar si valorCampo tiene un valor definido y no es cadena vacía
+            if (valorCampo !== undefined && valorCampo !== '') {
+                if (campoPrincipal === 'zona') {
+                    pregunta += ` en la zona ${valorCampo}`;
+                } else if (campoPrincipal === 'region') {
+                    pregunta += ` en la región ${valorCampo}`;
+                } else if (campoPrincipal === 'vehiculo') {
+                    pregunta += ` para el vehículo ${valorCampo}`;
                 }
             }
 
-            if (campoRegion && formValues['region']) {
-                const valorRegion = formValues['region'];
-                if (Array.isArray(valorRegion)) {
-                    if (valorRegion.length === regiones.length) {
-                        filtrosEspaciales.push('todas las regiones');
-                    } else if (valorRegion.length > 1) {
-                        filtrosEspaciales.push(`las regiones ${valorRegion.join(', ')}`);
-                    } else if (valorRegion.length === 1) {
-                        filtrosEspaciales.push(`la región ${valorRegion[0]}`);
-                    }
-                } else {
-                    filtrosEspaciales.push(`la región ${valorRegion}`);
+
+
+
+            if (puntoInteresTemporal === 'fecha') {
+                const fechaInicio = formValues['fecha_inicio'];
+                const fechaFin = formValues['fecha_fin'];
+                if (fechaInicio && fechaFin) {
+                    pregunta += ` el día ${formatearFecha(fechaInicio)} frente a el día ${formatearFecha(fechaFin)}`;
                 }
-            }
 
-            if (campoVehiculo && formValues['vehiculo']) {
-                const valorVehiculo = formValues['vehiculo'];
-                if (Array.isArray(valorVehiculo)) {
-                    if (valorVehiculo.length === vehiculos.length) {
-                        filtrosEspaciales.push('todos los vehículos');
-                    } else if (valorVehiculo.length > 1) {
-                        filtrosEspaciales.push(`los vehículos ${valorVehiculo.join(', ')}`);
-                    } else if (valorVehiculo.length === 1) {
-                        filtrosEspaciales.push(`el vehículo ${valorVehiculo[0]}`);
-                    }
-                } else {
-                    filtrosEspaciales.push(`el vehículo ${valorVehiculo}`);
+            } else if (puntoInteresTemporal === 'semana') {
+                const semanaInicio = formValues['semana_inicio'];
+                const semanaFin = formValues['semana_fin'];
+                if (semanaInicio && semanaFin) {
+                    pregunta += ` la semana ${semanaInicio} frente a la semana ${semanaFin}`;
                 }
-            }
-
-            if (campoCliente && formValues['cliente']) {
-                const valorCliente = formValues['cliente'];
-                if (Array.isArray(valorCliente)) {
-                    if (valorCliente.length === clientes.length) {
-                        filtrosEspaciales.push('todos los clientes');
-                    } else if (valorCliente.length > 1) {
-                        filtrosEspaciales.push(`los clientes ${valorCliente.join(', ')}`);
-                    } else if (valorCliente.length === 1) {
-                        filtrosEspaciales.push(`el cliente ${valorCliente[0]}`);
-                    }
-                } else {
-                    filtrosEspaciales.push(`el cliente ${valorCliente}`);
+            } else {
+                const mesInicio = formValues['mes_inicio'];
+                const mesFin = formValues['mes_fin'];
+                if (mesInicio && mesFin) {
+                    pregunta += `  el mes ${mesInicio} frente a el mes ${mesFin}`;
                 }
-            }
 
-            if (campoPlanta && formValues['planta']) {
-                const valorPlanta = formValues['planta'];
-                if (Array.isArray(valorPlanta)) {
-                    if (valorPlanta.length === plantas.length) {
-                        filtrosEspaciales.push('todas las plantas');
-                    } else if (valorPlanta.length > 1) {
-                        filtrosEspaciales.push(`las plantas ${valorPlanta.join(', ')}`);
-                    } else if (valorPlanta.length === 1) {
-                        filtrosEspaciales.push(`la planta ${valorPlanta[0]}`);
-                    }
-                } else {
-                    filtrosEspaciales.push(`la planta ${valorPlanta}`);
-                }
-            }
-
-            if (filtrosEspaciales.length > 0) {
-                pregunta += ` en ${filtrosEspaciales.join(', ')}`;
-            }
-
-            // Agregar filtro temporal según el tipo seleccionado
-            if (puntoInteresTemporal === 'fecha' && formValues['fecha_especifica']) {
-                pregunta += ` el ${formatearFecha(formValues['fecha_especifica'])}`;
-            } else if (puntoInteresTemporal === 'semana' && formValues['semana']) {
-                pregunta += ` en la ${formatearSemana(formValues['semana'])}`;
-            } else if (puntoInteresTemporal === 'mes' && formValues['mes']) {
-                pregunta += ` en ${formatearMes(formValues['mes'])}`;
             }
 
             pregunta += '?';
             setPreguntaFormulada(pregunta);
         }
     };
+
+    useEffect(() => {
+        // Limpiar campos relacionados
+        setFormValues(prev => ({
+            ...prev,
+            fecha_inicio: '',
+            fecha_fin: '',
+            semana_inicio: '',
+            semana_fin: '',
+            mes_inicio: '',
+            mes_fin: ''
+        }));
+        setErrors({});
+    }, [puntoInteresTemporal]);
+
 
     useEffect(() => {
         formularPregunta();
@@ -532,7 +794,7 @@ const ModalFaq = () => {
         const selectedOption = selectedQuestion?.questioOptions?.[selectedQuestionOption];
         const topField = selectedOption?.formFields?.find(f => f.name === 'Top');
         if (topField) {
-            defaults['Top'] = 0;
+            defaults['Top'] = '';
         }
 
         setFormValues(defaults);
@@ -684,8 +946,8 @@ const ModalFaq = () => {
                                                     <div
                                                         key={index}
                                                         className={`flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer ${formValues[name] === option
-                                                                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                                                                : 'text-gray-700 dark:text-white'
+                                                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                                                            : 'text-gray-700 dark:text-white'
                                                             }`}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
@@ -889,7 +1151,7 @@ const ModalFaq = () => {
                                 id={name}
                                 name={name}
                                 min="3" max="20" value={formValues[name] ?? 0}
-                                onChange={(e) => handleInputChange(name, Number(e.target.value))}
+                                onChange={(e) => handleTopChange(name, Number(e.target.value))}
                                 required={required}
                                 className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${hasError
                                     ? 'border-red-500 dark:border-red-400'
@@ -946,7 +1208,9 @@ const ModalFaq = () => {
     const renderPuntoInteresTemporalSelector = () => {
         if (selectedQuestion?.id !== 3) return null;
 
-        const hasTemporalError = errors['fecha_especifica'] || errors['semana'] || errors['mes'];
+        const hasTemporalError = errors['fecha_inicio'] || errors['fecha_fin'] ||
+            errors['semana_inicio'] || errors['semana_fin'] ||
+            errors['mes_inicio'] || errors['mes_fin'];
 
         return (
             <div className="mt-3">
@@ -989,98 +1253,230 @@ const ModalFaq = () => {
                 {/* Input según el tipo seleccionado */}
                 <div className="mt-3">
                     {puntoInteresTemporal === 'fecha' && (
-                        <div className="space-y-2">
-                            <label htmlFor="fecha_especifica" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
-                                Fecha específica <span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative w-full">
-                                <input
-                                    type="datetime-local"
-                                    id="fecha_especifica"
-                                    name="fecha_especifica"
-                                    value={formValues['fecha_especifica'] || ''}
-                                    onChange={(e) => handleInputChange('fecha_especifica', e.target.value)}
-                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 ${errors['fecha_especifica']
-                                        ? 'border-red-500 dark:border-red-400'
-                                        : 'border-gray-300 dark:border-zinc-700'
-                                        }`}
-                                />
-                                <Calendar
-                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['fecha_especifica'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
-                                        }`}
-                                    onClick={() => document.getElementById('fecha_especifica').showPicker?.()}
-                                />
+                        <div className="space-y-4">
+                            {/* Fecha Inicio */}
+                            <div className="space-y-2">
+                                <label htmlFor="fecha_inicio" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                    Fecha inicio <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <input
+                                        type="datetime-local"
+                                        id="fecha_inicio"
+                                        name="fecha_inicio"
+                                        value={formValues['fecha_inicio'] || ''}
+                                        onChange={(e) => handleInputChange('fecha_inicio', e.target.value)}
+                                        required
+                                        className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${errors['fecha_inicio']
+                                            ? 'border-red-500 dark:border-red-400'
+                                            : 'border-gray-300 dark:border-zinc-700'
+                                            }`}
+                                        style={{
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'textfield'
+                                        }}
+                                    />
+                                    <Calendar
+                                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['fecha_inicio'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                            }`}
+                                        onClick={() => document.getElementById('fecha_inicio').showPicker?.()}
+                                    />
+                                </div>
+                                {errors['fecha_inicio'] && (
+                                    <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                        <span className="font-medium">⚠</span>
+                                        {errors['fecha_inicio']}
+                                    </p>
+                                )}
                             </div>
-                            {errors['fecha_especifica'] && (
-                                <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                                    <span className="font-medium">⚠</span>
-                                    {errors['fecha_especifica']}
-                                </p>
-                            )}
+
+                            {/* Fecha Fin */}
+                            <div className="space-y-2">
+                                <label htmlFor="fecha_fin" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                    Fecha fin <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <input
+                                        type="datetime-local"
+                                        id="fecha_fin"
+                                        name="fecha_fin"
+                                        value={formValues['fecha_fin'] || ''}
+                                        onChange={(e) => handleInputChange('fecha_fin', e.target.value)}
+                                        required
+                                        className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${errors['fecha_fin']
+                                            ? 'border-red-500 dark:border-red-400'
+                                            : 'border-gray-300 dark:border-zinc-700'
+                                            }`}
+                                        style={{
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'textfield'
+                                        }}
+                                    />
+                                    <Calendar
+                                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['fecha_fin'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                            }`}
+                                        onClick={() => document.getElementById('fecha_fin').showPicker?.()}
+                                    />
+                                </div>
+                                {errors['fecha_fin'] && (
+                                    <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                        <span className="font-medium">⚠</span>
+                                        {errors['fecha_fin']}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     )}
 
                     {puntoInteresTemporal === 'semana' && (
-                        <div className="space-y-2">
-                            <label htmlFor="semana" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
-                                Semana <span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative w-full">
-                                <input
-                                    type="week"
-                                    id="semana"
-                                    name="semana"
-                                    value={formValues['semana'] || ''}
-                                    onChange={(e) => handleInputChange('semana', e.target.value)}
-                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 ${errors['semana']
-                                        ? 'border-red-500 dark:border-red-400'
-                                        : 'border-gray-300 dark:border-zinc-700'
-                                        }`}
-                                />
-                                <CalendarDays
-                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['semana'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
-                                        }`}
-                                    onClick={() => document.getElementById('semana').showPicker?.()}
-                                />
+                        <div className="space-y-4">
+                            {/* Semana Inicio */}
+                            <div className="space-y-2">
+                                <label htmlFor="semana_inicio" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                    Semana inicio <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <input
+                                        type="week"
+                                        id="semana_inicio"
+                                        name="semana_inicio"
+                                        value={formValues['semana_inicio'] || ''}
+                                        onChange={(e) => handleInputChange('semana_inicio', e.target.value)}
+                                        required
+                                        className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${errors['semana_inicio']
+                                            ? 'border-red-500 dark:border-red-400'
+                                            : 'border-gray-300 dark:border-zinc-700'
+                                            }`}
+                                        style={{
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'textfield'
+                                        }}
+                                    />
+                                    <CalendarDays
+                                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['semana_inicio'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                            }`}
+                                        onClick={() => document.getElementById('semana_inicio').showPicker?.()}
+                                    />
+                                </div>
+                                {errors['semana_inicio'] && (
+                                    <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                        <span className="font-medium">⚠</span>
+                                        {errors['semana_inicio']}
+                                    </p>
+                                )}
                             </div>
-                            {errors['semana'] && (
-                                <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                                    <span className="font-medium">⚠</span>
-                                    {errors['semana']}
-                                </p>
-                            )}
+
+                            {/* Semana Fin */}
+                            <div className="space-y-2">
+                                <label htmlFor="semana_fin" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                    Semana fin <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <input
+                                        type="week"
+                                        id="semana_fin"
+                                        name="semana_fin"
+                                        value={formValues['semana_fin'] || ''}
+                                        onChange={(e) => handleInputChange('semana_fin', e.target.value)}
+                                        required
+                                        className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${errors['semana_fin']
+                                            ? 'border-red-500 dark:border-red-400'
+                                            : 'border-gray-300 dark:border-zinc-700'
+                                            }`}
+                                        style={{
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'textfield'
+                                        }}
+                                    />
+                                    <CalendarDays
+                                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['semana_fin'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                            }`}
+                                        onClick={() => document.getElementById('semana_fin').showPicker?.()}
+                                    />
+                                </div>
+                                {errors['semana_fin'] && (
+                                    <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                        <span className="font-medium">⚠</span>
+                                        {errors['semana_fin']}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     )}
 
                     {puntoInteresTemporal === 'mes' && (
-                        <div className="space-y-2">
-                            <label htmlFor="mes" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
-                                Mes <span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative w-full">
-                                <input
-                                    type="month"
-                                    id="mes"
-                                    name="mes"
-                                    value={formValues['mes'] || ''}
-                                    onChange={(e) => handleInputChange('mes', e.target.value)}
-                                    className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 ${errors['mes']
-                                        ? 'border-red-500 dark:border-red-400'
-                                        : 'border-gray-300 dark:border-zinc-700'
-                                        }`}
-                                />
-                                <Calendar
-                                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['mes'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
-                                        }`}
-                                    onClick={() => document.getElementById('mes').showPicker?.()}
-                                />
+                        <div className="space-y-4">
+                            {/* Mes Inicio */}
+                            <div className="space-y-2">
+                                <label htmlFor="mes_inicio" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                    Mes inicio <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <input
+                                        type="month"
+                                        id="mes_inicio"
+                                        name="mes_inicio"
+                                        value={formValues['mes_inicio'] || ''}
+                                        onChange={(e) => handleInputChange('mes_inicio', e.target.value)}
+                                        required
+                                        className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${errors['mes_inicio']
+                                            ? 'border-red-500 dark:border-red-400'
+                                            : 'border-gray-300 dark:border-zinc-700'
+                                            }`}
+                                        style={{
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'textfield'
+                                        }}
+                                    />
+                                    <Calendar
+                                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['mes_inicio'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                            }`}
+                                        onClick={() => document.getElementById('mes_inicio').showPicker?.()}
+                                    />
+                                </div>
+                                {errors['mes_inicio'] && (
+                                    <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                        <span className="font-medium">⚠</span>
+                                        {errors['mes_inicio']}
+                                    </p>
+                                )}
                             </div>
-                            {errors['mes'] && (
-                                <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                                    <span className="font-medium">⚠</span>
-                                    {errors['mes']}
-                                </p>
-                            )}
+
+                            {/* Mes Fin */}
+                            <div className="space-y-2">
+                                <label htmlFor="mes_fin" className={`block text-sm font-medium ${hasTemporalError ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                    Mes fin <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative w-full">
+                                    <input
+                                        type="month"
+                                        id="mes_fin"
+                                        name="mes_fin"
+                                        value={formValues['mes_fin'] || ''}
+                                        onChange={(e) => handleInputChange('mes_fin', e.target.value)}
+                                        required
+                                        className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${errors['mes_fin']
+                                            ? 'border-red-500 dark:border-red-400'
+                                            : 'border-gray-300 dark:border-zinc-700'
+                                            }`}
+                                        style={{
+                                            WebkitAppearance: 'none',
+                                            MozAppearance: 'textfield'
+                                        }}
+                                    />
+                                    <Calendar
+                                        className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer ${errors['mes_fin'] ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
+                                            }`}
+                                        onClick={() => document.getElementById('mes_fin').showPicker?.()}
+                                    />
+                                </div>
+                                {errors['mes_fin'] && (
+                                    <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                        <span className="font-medium">⚠</span>
+                                        {errors['mes_fin']}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>

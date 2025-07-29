@@ -195,3 +195,7 @@ input[type="datetime-local"].w-full {
   box-sizing: border-box !important;
   width: 100% !important;
 }
+
+input[type="week"] {
+    --week-start: 1; /* 1 = lunes, 0 = domingo */
+}
