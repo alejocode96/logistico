@@ -6,7 +6,36 @@ import { LogisticoContext } from '../../Context'
 
 function InitialChat() {
 
-    const { isDark, isOpenFAQ, setIsOpenFAQ } = React.useContext(LogisticoContext);
+    const { isDark, isOpenFAQ, setIsOpenFAQ, mensajeInput, setMensajeInput,chatHistoryCurrent,
+        setChatHistoryCurrent, } = React.useContext(LogisticoContext);
+
+
+    const handleSubmit = () => {
+
+        if (mensajeInput != '') {
+            // Preparar datos para envío
+            const dataToSend = {
+                idgrupo: '',
+                idquestionslect: '',
+                rol: "usuario",
+                formData: '',
+                puntoInteresTemporal: '',
+                fechaEnvio: new Date().toISOString(),
+                preguntaFormulada: mensajeInput
+            };
+
+            // Estructura JSON para el chatbot
+            const mensajeChatbot = {
+                pregunta: dataToSend,
+                respuesta: "esta es una respuesta improvisada generada automaticamente"
+            };
+
+            setChatHistoryCurrent(prevHistory => [...prevHistory, mensajeChatbot]);
+            setMensajeInput('')
+        }
+
+
+    };
 
     return (
         <div className="flex items-center justify-center p-4 overflow-hidden h-full ">
@@ -22,9 +51,13 @@ function InitialChat() {
                 </div>
 
                 {/* mensaje */}
-                <div className="bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-40 w-full rounded-2xl flex flex-col flex-shrink-0">
+                <div className="bg-zinc-50 shadow-md dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-40 w-full rounded-2xl flex flex-col flex-shrink-0">
                     <div className="w-full flex-1 p-4">
                         <textarea
+                            value={mensajeInput}
+                            onChange={(e) => {
+                                setMensajeInput(e.target.value);
+                            }}
                             className="w-full h-full resize-none outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent"
                             placeholder="¿Cómo puedo ayudarte hoy?"
                         ></textarea>
@@ -38,7 +71,7 @@ function InitialChat() {
                             </svg>
                             <span>Preguntas Frecuentes</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" onClick={() => handleSubmit()}
                             className="bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-700 hover:to-blue-500 text-white rounded-lg p-2 transition-all duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 512 512">
                                 <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
@@ -46,7 +79,7 @@ function InitialChat() {
                         </button>
                     </div>
                 </div>
-               
+
                 {/* slider */}
                 <div className="w-full flex-1 min-h-0">
                     <ActiveSlider />

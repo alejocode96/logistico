@@ -179,22 +179,22 @@ function LogisticoProvider({ children }) {
                 {
                     id: 1, titleQuestion: 'Tendencia por zona', formFields: [
                         { name: "zona", label: "Zona", type: "select", options: ["Norte", "Centro", "Noroccidente", "Suroccidente"], required: true, unique: true },
-                      
-                        
+
+
                     ]
                 },
                 {
                     id: 2, titleQuestion: 'Tendencia por Región', formFields: [
                         { name: "region", label: "Región", type: "select", options: [], required: true, unique: true },
-                    
-                        
+
+
                     ]
                 },
                 {
                     id: 3, titleQuestion: 'Tendencia por Vehículo', formFields: [
                         { name: "vehiculo", label: "Vehículo", type: "select", options: [], required: true, unique: true },
-                       
-                        
+
+
                     ]
                 }
             ],
@@ -211,6 +211,29 @@ function LogisticoProvider({ children }) {
     };
 
 
+    //estado para chat actual
+    const fakeDataToSend = {
+        idgrupo: 1,
+        idquestionslect: 2,
+        rol: "usuario",
+        formData: {
+            nombre: "Usuario de prueba",
+            email: "test@example.com",
+            mensaje: "Esta es una consulta de prueba"
+        },
+        puntoInteresTemporal: undefined,
+        fechaEnvio: new Date().toISOString(),
+        preguntaFormulada: "¿Cómo puedo realizar una consulta sobre logística?"
+    };
+
+    const fakeMensajeChatbot = {
+        pregunta: fakeDataToSend,
+        respuesta: ""
+    };
+
+    // Estado con datos fake para pruebas
+    const [chatHistoryCurrent, setChatHistoryCurrent] = useState([]);
+    const [mensajeInput, setMensajeInput] = useState('');
     return (
         <LogisticoContext.Provider value={{
 
@@ -229,7 +252,8 @@ function LogisticoProvider({ children }) {
 
             isModalSidebarOpen, setIsModalSidebarOpen, handleOverlayClick, handleToggleModalSidebar,
 
-            questions, isOpenFAQ, setIsOpenFAQ, selectedFAQ, setSelectedFAQ, handleSlideClick, selectedQuestionOption, setSelectedQuestionOption
+            questions, isOpenFAQ, setIsOpenFAQ, selectedFAQ, setSelectedFAQ, handleSlideClick, selectedQuestionOption, setSelectedQuestionOption,
+            chatHistoryCurrent, setChatHistoryCurrent,mensajeInput, setMensajeInput
         }}>
             {children}
         </LogisticoContext.Provider>

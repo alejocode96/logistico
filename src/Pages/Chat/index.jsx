@@ -7,14 +7,14 @@ import SideBarChart from '../../Components/Chat/sideBarChat'
 import NavBarChat from '../../Components/Chat/navBarChat'
 import InitialChat from '../../Components/Chat/initialChat'
 import ModalFaq from '../../Components/Chat/modalFAQ'
-
+import ChatCurrent from '../../Components/Chat/chatCurrent'
 //contexto
 import { LogisticoContext } from '../../Context'
 //navegacion
 import { NavLink } from 'react-router-dom'
 
 function Chat() {
-    const { isDark, isOpenFAQ, setIsOpenFAQ } = React.useContext(LogisticoContext);
+    const { isDark, chatHistoryCurrent, setChatHistoryCurrent } = React.useContext(LogisticoContext);
 
     return (
         <>
@@ -72,12 +72,19 @@ function Chat() {
                 </div>
 
                 {/* CONTENIDO */}
-                <div className="relative z-20 flex-1 w-[98%] mx-auto flex flex-col overflow-hidden">
+                <div className="relative z-20 flex-1 w-[98%] mx-auto flex flex-col h-screen">
+                    {/* NavBar fijo */}
                     <div className="flex-shrink-0">
                         <NavBarChat />
                     </div>
-                    <div className="flex-1 overflow-hidden">
-                        <InitialChat />
+                    
+                    {/* Contenido del chat con altura calculada */}
+                    <div className="flex-1 min-h-0">
+                        {chatHistoryCurrent.length === 0 ? (
+                            <InitialChat />
+                        ) : (
+                            <ChatCurrent />
+                        )}
                     </div>
                 </div>
             </main>

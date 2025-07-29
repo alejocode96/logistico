@@ -1,13 +1,12 @@
 // Importaciones de React
 import React from 'react';
 import { BrowserRouter, useRoutes } from 'react-router-dom'; // Asegúrate de importar useRoutes
-
+import { AosProvider } from '../../Hooks/useAos';
 // Pages
 import Home from '../Home';
 import Login from '../Login';
 import Chat from '../Chat';
-// Animaciones
-import { useAos } from '../../hooks/useAos';
+
 
 //contexto
 import { LogisticoProvider } from '../../Context';
@@ -26,14 +25,15 @@ const AppRoutes = () => {
 
 
 function App() {
-  // Inicialización de animaciones
-  useAos({ duration: 1500, once: false });
+ 
 
   return (
-    <LogisticoProvider>
-      <BrowserRouter basename="/logistico">
-        <AppRoutes />
-      </BrowserRouter>
+   <LogisticoProvider>
+      <AosProvider>
+        <BrowserRouter basename="/logistico">
+          <AppRoutes />
+        </BrowserRouter>
+      </AosProvider>
     </LogisticoProvider>
 
   );

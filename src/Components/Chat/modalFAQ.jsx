@@ -7,78 +7,105 @@ import {
 // Contexto
 import { LogisticoContext } from '../../Context';
 
+/**
+ * Modal FAQ - Componente principal para gestionar preguntas frecuentes
+ * 
+ * Este componente permite a los usuarios:
+ * - Seleccionar preguntas predefinidas
+ * - Completar formularios dinámicos según la pregunta seleccionada
+ * - Generar consultas automáticamente basadas en los datos ingresados
+ * - Validar campos requeridos y rangos de fechas/semanas/meses
+ * 
+ * @returns {JSX.Element} Modal con formulario dinámico
+ */
 const ModalFaq = () => {
+    // ============================================================================
+    // CONTEXT Y PROPS
+    // ============================================================================
     const {
-        isOpenFAQ, setIsOpenFAQ, selectedFAQ, setSelectedFAQ, handleSlideClick, questions, selectedQuestionOption, setSelectedQuestionOption
+        isOpenFAQ,
+        setIsOpenFAQ,
+        selectedFAQ,
+        setSelectedFAQ,
+        handleSlideClick,
+        questions,
+        selectedQuestionOption,
+        setSelectedQuestionOption, chatHistoryCurrent, setChatHistoryCurrent,
     } = React.useContext(LogisticoContext);
 
-    // Datos de ejemplo
+    // ============================================================================
+    // DATOS ESTÁTICOS DE EJEMPLO
+    // ============================================================================
     const zonas = ['Norte', 'Centro', 'Noroccidente', 'Suroccidente'];
     const clientes = ['Cliente 1', 'Cliente 2', 'Cliente 3', 'Cliente 4', 'Cliente 5'];
     const plantas = ['Planta 1', 'Planta 2', 'Planta 3', 'Planta 4', 'Planta 5'];
     const vehiculos = ['XXX111', 'XXX222', 'XXX333', 'XXX444', 'XXX555'];
     const regiones = ['Región 1', 'Región 2', 'Región 3', 'Región 4'];
 
-    // Estado para los valores del formulario
+    // ============================================================================
+    // ESTADOS DEL COMPONENTE
+    // ============================================================================
+
+    /** @type {Object} Valores del formulario dinámico */
     const [formValues, setFormValues] = useState({});
 
-    // Estado para errores de validación
+    /** @type {Object} Errores de validación por campo */
     const [errors, setErrors] = useState({});
 
-    // Estados adicionales para el select múltiple
+    /** @type {Object} Términos de búsqueda para selects múltiples */
     const [searchTerms, setSearchTerms] = useState({});
+
+    /** @type {Object} Estado de apertura de dropdowns */
     const [dropdownOpen, setDropdownOpen] = useState({});
 
-    // Estado para el punto de interés temporal (fecha, semana, mes)
+    /** @type {string} Tipo de punto de interés temporal para pregunta 3 */
     const [puntoInteresTemporal, setPuntoInteresTemporal] = useState('fecha');
 
-    // Obtener la pregunta seleccionada
+    /** @type {string} Pregunta formulada automáticamente */
+    const [preguntaFormulada, setPreguntaFormulada] = useState('');
+
+    // ============================================================================
+    // FUNCIONES AUXILIARES
+    // ============================================================================
+
+    /**
+     * Obtiene la pregunta seleccionada del array de preguntas
+     * @returns {Object|undefined} Pregunta seleccionada o undefined
+     */
     const getSelectedQuestion = () => {
         return questions.find(q => q.id === selectedFAQ);
     };
 
     const selectedQuestion = getSelectedQuestion();
 
-    // Estado para la pregunta formulada
-    const [preguntaFormulada, setPreguntaFormulada] = useState('');
-
-    // Manejar cambios en el punto de interés temporal
-    const handlePuntoInteresTemporalChange = (tipo) => {
-        setPuntoInteresTemporal(tipo);
-        // Limpiar valores de fecha relacionados cuando cambie el tipo
-        const fieldsToClean = ['fecha_especifica', 'semana', 'mes'];
-        const newFormValues = { ...formValues };
-        fieldsToClean.forEach(field => {
-            delete newFormValues[field];
-        });
-        setFormValues(newFormValues);
-    };
-
-    // Manejar cambios en los inputs del formulario
-    const handleInputChange = (fieldName, value) => {
-        setFormValues(prev => ({
-            ...prev,
-            [fieldName]: value
-        }));
-
-        // Limpiar error si el campo ahora tiene valor
-        if (value && errors[fieldName]) {
-            setErrors(prev => ({
-                ...prev,
-                [fieldName]: null
-            }));
+    /**
+     * Obtiene las opciones predefinidas para un campo select
+     * @param {string} fieldName - Nombre del campo
+     * @param {Array} predefinedOptions - Opciones predefinidas del campo
+     * @returns {Array} Array de opciones disponibles
+     */
+    const getFieldOptions = (fieldName, predefinedOptions) => {
+        if (predefinedOptions && predefinedOptions.length > 0) {
+            return predefinedOptions;
         }
+
+        const optionsMap = {
+            zona: zonas,
+            region: regiones,
+            vehiculo: vehiculos,
+            cliente: clientes,
+            planta: plantas
+        };
+
+        return optionsMap[fieldName] || [];
     };
 
-    // Función para manejar la búsqueda en selects múltiples
-    const handleSearchChange = (fieldName, searchTerm) => {
-        setSearchTerms(prev => ({
-            ...prev,
-            [fieldName]: searchTerm
-        }));
-    };
-
-    // Función para filtrar opciones basado en el término de búsqueda
+    /**
+     * Filtra opciones basado en el término de búsqueda
+     * @param {Array} options - Opciones a filtrar
+     * @param {string} searchTerm - Término de búsqueda
+     * @returns {Array} Opciones filtradas
+     */
     const filterOptions = (options, searchTerm) => {
         if (!searchTerm) return options;
         return options.filter(option =>
@@ -86,254 +113,67 @@ const ModalFaq = () => {
         );
     };
 
-    // Función para manejar selección múltiple
-    const handleMultiSelectChange = (fieldName, value, checked) => {
-        const currentValues = formValues[fieldName] || [];
+    // ============================================================================
+    // FUNCIONES DE FORMATEO
+    // ============================================================================
 
-        if (value === 'all') {
-            // Seleccionar/deseleccionar todas las opciones
-            const fieldOptions = getFieldOptions(fieldName,
-                selectedQuestion?.questioOptions[selectedQuestionOption]?.formFields
-                    .find(f => f.name === fieldName)?.options
-            );
-
-            if (checked) {
-                handleInputChange(fieldName, fieldOptions);
-            } else {
-                handleInputChange(fieldName, []);
-            }
-        } else {
-            // Seleccionar/deseleccionar opción individual
-            let newValues;
-            if (checked) {
-                newValues = [...currentValues, value];
-            } else {
-                newValues = currentValues.filter(v => v !== value);
-            }
-            handleInputChange(fieldName, newValues);
-        }
-    };
-
-    // Función para toggle del dropdown
-    const toggleDropdown = (fieldName) => {
-        setDropdownOpen(prev => ({
-            ...prev,
-            [fieldName]: !prev[fieldName]
-        }));
-    };
-
-    // Obtener opciones para campos select
-    const getFieldOptions = (fieldName, predefinedOptions) => {
-        if (predefinedOptions && predefinedOptions.length > 0) {
-            return predefinedOptions;
-        }
-
-        switch (fieldName) {
-            case 'zona':
-                return zonas;
-            case 'region':
-                return regiones;
-            case 'vehiculo':
-                return vehiculos;
-            case 'cliente':
-                return clientes;
-            case 'planta':
-                return plantas;
-            default:
-                return [];
-        }
-    };
-
-    // Validar formulario y enviar datos
-    const handleSubmit = () => {
-        if (!selectedQuestion || selectedQuestionOption === null) {
-            alert('Por favor selecciona una pregunta y opción');
-            return;
-        }
-
-        const selectedOption = selectedQuestion.questioOptions[selectedQuestionOption];
-        const requiredFields = selectedOption.formFields.filter(field => field.required);
-        const newErrors = {};
-
-        // Validar campos requeridos
-        requiredFields.forEach(field => {
-            const fieldValue = formValues[field.name];
-            const isEmpty =
-                fieldValue === undefined ||
-                fieldValue === null ||
-                (typeof fieldValue === 'string' && fieldValue.trim() === '') ||
-                (Array.isArray(fieldValue) && fieldValue.length === 0 && field.required);
-
-            if (isEmpty) {
-                newErrors[field.name] = `${field.label} es requerido`;
-            }
+    /**
+     * Formatea fecha ISO a formato legible en español
+     * @param {string} fechaISO - Fecha en formato ISO
+     * @returns {string} Fecha formateada
+     */
+    const formatearFecha = (fechaISO) => {
+        if (!fechaISO) return '';
+        const fecha = new Date(fechaISO);
+        const fechaFormateada = fecha.toLocaleString('es-CO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
         });
-
-        // Función auxiliar para comparar fechas con hora
-        const compareDatetimeLocal = (startValue, endValue) => {
-            if (!startValue || !endValue) return true; // Si alguna está vacía, no validar
-
-            const startDate = new Date(startValue);
-            const endDate = new Date(endValue);
-
-            return endDate > startDate;
-        };
-
-        // Función auxiliar para comparar semanas (diferentes, no necesariamente mayor)
-        const compareWeeks = (startWeek, endWeek) => {
-            if (!startWeek || !endWeek) return true; // Si alguna está vacía, no validar
-
-            // Formato: "2024-W15"
-            const [startYear, startWeekNum] = startWeek.split('-W').map(Number);
-            const [endYear, endWeekNum] = endWeek.split('-W').map(Number);
-
-            // Para pregunta 3, solo deben ser diferentes
-            return !(startYear === endYear && startWeekNum === endWeekNum);
-        };
-
-        // Función auxiliar para comparar meses (diferentes, no necesariamente mayor)
-        const compareMonths = (startMonth, endMonth) => {
-            if (!startMonth || !endMonth) return true; // Si alguna está vacía, no validar
-
-            // Formato: "2024-03"
-            const [startYear, startMonthNum] = startMonth.split('-').map(Number);
-            const [endYear, endMonthNum] = endMonth.split('-').map(Number);
-
-            // Para pregunta 3, solo deben ser diferentes
-            return !(startYear === endYear && startMonthNum === endMonthNum);
-        };
-
-        // Validaciones para preguntas id 1 o 2
-        if (selectedQuestion.id === 1 || selectedQuestion.id === 2) {
-            const fechaInicio = formValues['fecha_inicio'];
-            const fechaFin = formValues['fecha_fin'];
-
-            // Si no hay fecha inicio, no debe haber fecha fin
-            if (!fechaInicio && fechaFin) {
-                newErrors['fecha_fin'] = 'No puedes seleccionar fecha fin sin fecha inicio';
-            }
-
-            // Si ambas fechas están presentes, validar que fecha_fin sea mayor
-            if (fechaInicio && fechaFin) {
-                if (!compareDatetimeLocal(fechaInicio, fechaFin)) {
-                    newErrors['fecha_fin'] = 'La fecha fin debe ser mayor que la fecha inicio';
-                }
-            }
-        }
-
-        // Validación específica para pregunta id 2 - campo Top
-        if (selectedQuestion.id === 2) {
-            const topValue = formValues['Top'];
-            const topNumber = parseInt(topValue, 10);
-            console.log(topValue)
-            console.log(topNumber)
-            if (
-                topValue === undefined ||
-                topValue === null ||
-                topValue === '' ||
-                isNaN(topNumber) ||
-                topNumber < 3
-            ) {
-                newErrors['top'] = 'El campo Top debe ser un número mayor o igual a 3';
-            }
-        }
-
-
-        // Validación específica para pregunta id 3 con punto de interés temporal
-        if (selectedQuestion.id === 3) {
-            if (puntoInteresTemporal === 'fecha') {
-
-
-                // Validar rango de fechas si ambas están presentes - DEBE SER MAYOR
-                const fechaInicio = formValues['fecha_inicio'];
-                const fechaFin = formValues['fecha_fin'];
-
-                // Campos obligatorios para fecha
-                if (!fechaInicio) {
-                    newErrors['fecha_inicio'] = 'La fecha inicio es requerida';
-                }
-                if (!fechaFin) {
-                    newErrors['fecha_fin'] = 'La fecha fin es requerida';
-                }
-
-                if (fechaInicio && fechaFin) {
-                    if (!compareDatetimeLocal(fechaInicio, fechaFin)) {
-                        newErrors['fecha_fin'] = 'La fecha fin debe ser mayor que la fecha inicio';
-                    }
-                }
-
-            } else if (puntoInteresTemporal === 'semana') {
-
-
-                // Validar rango de semanas si ambas están presentes - DEBEN SER DIFERENTES
-                const semanaInicio = formValues['semana_inicio'];
-                const semanaFin = formValues['semana_fin'];
-
-                // Campos obligatorios para semana
-                if (!semanaInicio) {
-                    newErrors['semana_inicio'] = 'La semana inicio es requerida';
-                }
-                if (!semanaFin) {
-                    newErrors['semana_fin'] = 'La semana fin es requerida';
-                }
-
-                if (semanaInicio && semanaFin) {
-                    if (!compareWeeks(semanaInicio, semanaFin)) {
-                        newErrors['semana_fin'] = 'La semana fin debe ser diferente a la semana inicio';
-                    }
-                }
-
-            } else if (puntoInteresTemporal === 'mes') {
-
-
-                // Validar rango de meses si ambos están presentes - DEBEN SER DIFERENTES
-                const mesInicio = formValues['mes_inicio'];
-                const mesFin = formValues['mes_fin'];
-
-                // Campos obligatorios para mes
-                if (!mesInicio) {
-                    newErrors['mes_inicio'] = 'El mes inicio es requerido';
-                }
-                if (!mesFin) {
-                    newErrors['mes_fin'] = 'El mes fin es requerido';
-                }
-
-                if (mesInicio && mesFin) {
-                    if (!compareMonths(mesInicio, mesFin)) {
-                        newErrors['mes_fin'] = 'El mes fin debe ser diferente al mes inicio';
-                    }
-                }
-            }
-        }
-
-        // Si hay errores, mostrarlos y no enviar
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
-
-        // Limpiar errores si todo está bien
-        setErrors({});
-
-        // Preparar datos para envío
-        const dataToSend = {
-            questionId: selectedFAQ,
-            questionTitle: selectedQuestion.title,
-            optionIndex: selectedQuestionOption,
-            optionTitle: selectedOption.titleQuestion,
-            formData: formValues,
-            puntoInteresTemporal: selectedQuestion.id === 3 ? puntoInteresTemporal : undefined,
-            generatedQuery: preguntaFormulada
-        };
-
-        // Por el momento mostrar en consola y alert
-        console.log('Datos a enviar:', dataToSend);
-        alert(`Consulta enviada:\n${preguntaFormulada}\n\nDatos: ${JSON.stringify(formValues, null, 2)}`);
+        return fechaFormateada.replace(',', '');
     };
 
-    // Funciones auxiliares adicionales actualizadas
+    /**
+     * Formatea semana ISO a formato legible
+     * @param {string} semanaISO - Semana en formato ISO (2024-W15)
+     * @returns {string} Semana formateada
+     */
+    const formatearSemana = (semanaISO) => {
+        if (!semanaISO) return '';
+        const [year, week] = semanaISO.split('-W');
+        return `Semana ${week} del año ${year}`;
+    };
 
-    // Validar un rango de fechas específico
+    /**
+     * Formatea mes ISO a formato legible en español
+     * @param {string} mesISO - Mes en formato ISO (2024-03)
+     * @returns {string} Mes formateado
+     */
+    const formatearMes = (mesISO) => {
+        if (!mesISO) return '';
+        const [year, month] = mesISO.split('-');
+        const meses = [
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+        return `${meses[parseInt(month) - 1]} de ${year}`;
+    };
+
+    // ============================================================================
+    // FUNCIONES DE VALIDACIÓN
+    // ============================================================================
+
+    /**
+     * Valida un rango de fechas específico
+     * @param {string} startDate - Fecha de inicio
+     * @param {string} endDate - Fecha de fin
+     * @param {string} startFieldName - Nombre del campo de inicio
+     * @param {string} endFieldName - Nombre del campo de fin
+     * @returns {string|null} Mensaje de error o null si es válido
+     */
     const validateDateRange = (startDate, endDate, startFieldName = 'fecha_inicio', endFieldName = 'fecha_fin') => {
         if (!startDate || !endDate) return null;
 
@@ -347,7 +187,15 @@ const ModalFaq = () => {
         return null;
     };
 
-    // Validar un rango de semanas específico (deben ser diferentes para pregunta 3)
+    /**
+     * Valida un rango de semanas específico
+     * @param {string} startWeek - Semana de inicio
+     * @param {string} endWeek - Semana de fin
+     * @param {string} startFieldName - Nombre del campo de inicio
+     * @param {string} endFieldName - Nombre del campo de fin
+     * @param {boolean} requireDifferent - Si requiere que sean diferentes (pregunta 3)
+     * @returns {string|null} Mensaje de error o null si es válido
+     */
     const validateWeekRange = (startWeek, endWeek, startFieldName = 'semana_inicio', endFieldName = 'semana_fin', requireDifferent = false) => {
         if (!startWeek || !endWeek) return null;
 
@@ -369,7 +217,15 @@ const ModalFaq = () => {
         return null;
     };
 
-    // Validar un rango de meses específico (deben ser diferentes para pregunta 3)
+    /**
+     * Valida un rango de meses específico
+     * @param {string} startMonth - Mes de inicio
+     * @param {string} endMonth - Mes de fin
+     * @param {string} startFieldName - Nombre del campo de inicio
+     * @param {string} endFieldName - Nombre del campo de fin
+     * @param {boolean} requireDifferent - Si requiere que sean diferentes (pregunta 3)
+     * @returns {string|null} Mensaje de error o null si es válido
+     */
     const validateMonthRange = (startMonth, endMonth, startFieldName = 'mes_inicio', endFieldName = 'mes_fin', requireDifferent = false) => {
         if (!startMonth || !endMonth) return null;
 
@@ -391,7 +247,11 @@ const ModalFaq = () => {
         return null;
     };
 
-    // Validar campo Top para pregunta 2
+    /**
+     * Valida el campo Top para pregunta 2
+     * @param {number|string} topValue - Valor del campo Top
+     * @returns {string|null} Mensaje de error o null si es válido
+     */
     const validateTopField = (topValue) => {
         if (topValue === undefined || topValue === null || topValue === '') return null;
 
@@ -403,7 +263,50 @@ const ModalFaq = () => {
         return null;
     };
 
-    // Ejemplo de uso actualizado de las funciones auxiliares en tiempo real (onChange)
+    // ============================================================================
+    // HANDLERS DE EVENTOS
+    // ============================================================================
+
+    /**
+     * Maneja cambios en el punto de interés temporal (fecha, semana, mes)
+     * @param {string} tipo - Tipo de punto de interés temporal
+     */
+    const handlePuntoInteresTemporalChange = (tipo) => {
+        setPuntoInteresTemporal(tipo);
+        // Limpiar valores de fecha relacionados cuando cambie el tipo
+        const fieldsToClean = ['fecha_especifica', 'semana', 'mes'];
+        const newFormValues = { ...formValues };
+        fieldsToClean.forEach(field => {
+            delete newFormValues[field];
+        });
+        setFormValues(newFormValues);
+    };
+
+    /**
+     * Maneja cambios generales en los inputs del formulario
+     * @param {string} fieldName - Nombre del campo
+     * @param {any} value - Valor del campo
+     */
+    const handleInputChange = (fieldName, value) => {
+        setFormValues(prev => ({
+            ...prev,
+            [fieldName]: value
+        }));
+
+        // Limpiar error si el campo ahora tiene valor
+        if (value && errors[fieldName]) {
+            setErrors(prev => ({
+                ...prev,
+                [fieldName]: null
+            }));
+        }
+    };
+
+    /**
+     * Maneja cambios en campos de fecha con validación en tiempo real
+     * @param {string} fieldName - Nombre del campo de fecha
+     * @param {string} value - Valor de la fecha
+     */
     const handleDateChange = (fieldName, value) => {
         // Actualizar el valor del formulario
         setFormValues(prev => ({
@@ -467,6 +370,11 @@ const ModalFaq = () => {
         }
     };
 
+    /**
+     * Maneja cambios en el campo Top con validación en tiempo real
+     * @param {string} fieldName - Nombre del campo
+     * @param {number} value - Valor numérico
+     */
     const handleTopChange = (fieldName, value) => {
         // Actualizar el valor del formulario
         setFormValues(prev => ({
@@ -494,38 +402,243 @@ const ModalFaq = () => {
         }
     };
 
+    /**
+     * Maneja la búsqueda en selects múltiples
+     * @param {string} fieldName - Nombre del campo
+     * @param {string} searchTerm - Término de búsqueda
+     */
+    const handleSearchChange = (fieldName, searchTerm) => {
+        setSearchTerms(prev => ({
+            ...prev,
+            [fieldName]: searchTerm
+        }));
+    };
 
+    /**
+     * Maneja selección múltiple en dropdowns
+     * @param {string} fieldName - Nombre del campo
+     * @param {string} value - Valor seleccionado
+     * @param {boolean} checked - Si está marcado o no
+     */
+    const handleMultiSelectChange = (fieldName, value, checked) => {
+        const currentValues = formValues[fieldName] || [];
 
-    const formatearFecha = (fechaISO) => {
-        if (!fechaISO) return '';
-        const fecha = new Date(fechaISO);
-        const fechaFormateada = fecha.toLocaleString('es-CO', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
+        if (value === 'all') {
+            // Seleccionar/deseleccionar todas las opciones
+            const fieldOptions = getFieldOptions(fieldName,
+                selectedQuestion?.questioOptions[selectedQuestionOption]?.formFields
+                    .find(f => f.name === fieldName)?.options
+            );
+
+            if (checked) {
+                handleInputChange(fieldName, fieldOptions);
+            } else {
+                handleInputChange(fieldName, []);
+            }
+        } else {
+            // Seleccionar/deseleccionar opción individual
+            let newValues;
+            if (checked) {
+                newValues = [...currentValues, value];
+            } else {
+                newValues = currentValues.filter(v => v !== value);
+            }
+            handleInputChange(fieldName, newValues);
+        }
+    };
+
+    /**
+     * Toggle del estado de apertura de dropdowns
+     * @param {string} fieldName - Nombre del campo
+     */
+    const toggleDropdown = (fieldName) => {
+        setDropdownOpen(prev => ({
+            ...prev,
+            [fieldName]: !prev[fieldName]
+        }));
+    };
+
+    // ============================================================================
+    // FUNCIÓN DE ENVÍO DEL FORMULARIO
+    // ============================================================================
+
+    /**
+     * Valida el formulario y procesa el envío de datos
+     * Realiza validaciones específicas según el tipo de pregunta
+     */
+    const handleSubmit = () => {
+        if (!selectedQuestion || selectedQuestionOption === null) {
+            alert('Por favor selecciona una pregunta y opción');
+            return;
+        }
+
+        const selectedOption = selectedQuestion.questioOptions[selectedQuestionOption];
+        const requiredFields = selectedOption.formFields.filter(field => field.required);
+        const newErrors = {};
+
+        // Validar campos requeridos
+        requiredFields.forEach(field => {
+            const fieldValue = formValues[field.name];
+            const isEmpty =
+                fieldValue === undefined ||
+                fieldValue === null ||
+                (typeof fieldValue === 'string' && fieldValue.trim() === '') ||
+                (Array.isArray(fieldValue) && fieldValue.length === 0 && field.required);
+
+            if (isEmpty) {
+                newErrors[field.name] = `${field.label} es requerido`;
+            }
         });
-        return fechaFormateada.replace(',', '');
+
+        // Funciones auxiliares para comparar fechas, semanas y meses
+        const compareDatetimeLocal = (startValue, endValue) => {
+            if (!startValue || !endValue) return true;
+            const startDate = new Date(startValue);
+            const endDate = new Date(endValue);
+            return endDate > startDate;
+        };
+
+        const compareWeeks = (startWeek, endWeek) => {
+            if (!startWeek || !endWeek) return true;
+            const [startYear, startWeekNum] = startWeek.split('-W').map(Number);
+            const [endYear, endWeekNum] = endWeek.split('-W').map(Number);
+            return !(startYear === endYear && startWeekNum === endWeekNum);
+        };
+
+        const compareMonths = (startMonth, endMonth) => {
+            if (!startMonth || !endMonth) return true;
+            const [startYear, startMonthNum] = startMonth.split('-').map(Number);
+            const [endYear, endMonthNum] = endMonth.split('-').map(Number);
+            return !(startYear === endYear && startMonthNum === endMonthNum);
+        };
+
+        // Validaciones específicas por tipo de pregunta
+        if (selectedQuestion.id === 1 || selectedQuestion.id === 2) {
+            const fechaInicio = formValues['fecha_inicio'];
+            const fechaFin = formValues['fecha_fin'];
+
+            // Validación de dependencia: no fecha fin sin fecha inicio
+            if (!fechaInicio && fechaFin) {
+                newErrors['fecha_fin'] = 'No puedes seleccionar fecha fin sin fecha inicio';
+            }
+
+            // Validación de rango: fecha fin debe ser mayor
+            if (fechaInicio && fechaFin) {
+                if (!compareDatetimeLocal(fechaInicio, fechaFin)) {
+                    newErrors['fecha_fin'] = 'La fecha fin debe ser mayor que la fecha inicio';
+                }
+            }
+        }
+
+        // Validación específica para campo Top en pregunta 2
+        if (selectedQuestion.id === 2) {
+            const topValue = formValues['Top'];
+            const topNumber = parseInt(topValue, 10);
+
+            if (
+                topValue === undefined ||
+                topValue === null ||
+                topValue === '' ||
+                isNaN(topNumber) ||
+                topNumber < 3
+            ) {
+                newErrors['top'] = 'El campo Top debe ser un número mayor o igual a 3';
+            }
+        }
+
+        // Validaciones específicas para pregunta 3 con punto de interés temporal
+        if (selectedQuestion.id === 3) {
+            if (puntoInteresTemporal === 'fecha') {
+                const fechaInicio = formValues['fecha_inicio'];
+                const fechaFin = formValues['fecha_fin'];
+
+                if (!fechaInicio) {
+                    newErrors['fecha_inicio'] = 'La fecha inicio es requerida';
+                }
+                if (!fechaFin) {
+                    newErrors['fecha_fin'] = 'La fecha fin es requerida';
+                }
+
+                if (fechaInicio && fechaFin) {
+                    if (!compareDatetimeLocal(fechaInicio, fechaFin)) {
+                        newErrors['fecha_fin'] = 'La fecha fin debe ser mayor que la fecha inicio';
+                    }
+                }
+
+            } else if (puntoInteresTemporal === 'semana') {
+                const semanaInicio = formValues['semana_inicio'];
+                const semanaFin = formValues['semana_fin'];
+
+                if (!semanaInicio) {
+                    newErrors['semana_inicio'] = 'La semana inicio es requerida';
+                }
+                if (!semanaFin) {
+                    newErrors['semana_fin'] = 'La semana fin es requerida';
+                }
+
+                if (semanaInicio && semanaFin) {
+                    if (!compareWeeks(semanaInicio, semanaFin)) {
+                        newErrors['semana_fin'] = 'La semana fin debe ser diferente a la semana inicio';
+                    }
+                }
+
+            } else if (puntoInteresTemporal === 'mes') {
+                const mesInicio = formValues['mes_inicio'];
+                const mesFin = formValues['mes_fin'];
+
+                if (!mesInicio) {
+                    newErrors['mes_inicio'] = 'El mes inicio es requerido';
+                }
+                if (!mesFin) {
+                    newErrors['mes_fin'] = 'El mes fin es requerido';
+                }
+
+                if (mesInicio && mesFin) {
+                    if (!compareMonths(mesInicio, mesFin)) {
+                        newErrors['mes_fin'] = 'El mes fin debe ser diferente al mes inicio';
+                    }
+                }
+            }
+        }
+
+        // Si hay errores, mostrarlos y no enviar
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        // Limpiar errores si todo está bien
+        setErrors({});
+
+        // Preparar datos para envío
+        const dataToSend = {
+            idgrupo: selectedQuestion.id,
+            idquestionslect: selectedQuestionOption +1,
+            rol: "usuario",
+            formData: formValues,
+            puntoInteresTemporal: selectedQuestion.id === 3 ? puntoInteresTemporal : undefined,
+            fechaEnvio: new Date().toISOString(),
+            preguntaFormulada: preguntaFormulada
+        };
+
+        // Estructura JSON para el chatbot
+        const mensajeChatbot = {
+            pregunta: dataToSend,
+            respuesta: "esta es una respuesta improvisada generada automaticamente"
+        };
+
+         setChatHistoryCurrent(prevHistory => [...prevHistory, mensajeChatbot]);
+         setIsOpenFAQ(false)
     };
 
-    const formatearSemana = (semanaISO) => {
-        if (!semanaISO) return '';
-        const [year, week] = semanaISO.split('-W');
-        return `Semana ${week} del año ${year}`;
-    };
+    // ============================================================================
+    // FUNCIÓN DE FORMULACIÓN DE PREGUNTA
+    // ============================================================================
 
-    const formatearMes = (mesISO) => {
-        if (!mesISO) return '';
-        const [year, month] = mesISO.split('-');
-        const meses = [
-            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-        ];
-        return `${meses[parseInt(month) - 1]} de ${year}`;
-    };
-
+    /**
+     * Genera automáticamente la pregunta basada en la selección y valores del formulario
+     * Maneja diferentes tipos de preguntas y formatos de salida
+     */
     const formularPregunta = () => {
         const preguntaSeleccionada = getSelectedQuestion();
 
@@ -540,6 +653,7 @@ const ModalFaq = () => {
             return;
         }
 
+        // Formulación para pregunta tipo 1 (tiempo promedio)
         if (preguntaSeleccionada.id === 1) {
             let pregunta = '¿Cuál es el tiempo promedio de permanencia de ';
 
@@ -563,49 +677,45 @@ const ModalFaq = () => {
             }
 
             if (campoPrincipal && valorCampo) {
+                // Manejo de arrays (selección múltiple) vs strings (selección única)
                 if (Array.isArray(valorCampo)) {
-                    // Si es un array (selección múltiple)
                     const fieldOptions = getFieldOptions(campoPrincipal,
                         selectedOption.formFields.find(f => f.name === campoPrincipal)?.options
                     );
 
                     if (valorCampo.length === fieldOptions.length) {
                         // Todas las opciones seleccionadas
-                        if (campoPrincipal === 'zona') {
-                            pregunta += 'todas las zonas';
-                        } else if (campoPrincipal === 'region') {
-                            pregunta += 'todas las regiones';
-                        } else if (campoPrincipal === 'vehiculo') {
-                            pregunta += 'todos los vehículos';
-                        }
+                        const labelMap = {
+                            'zona': 'todas las zonas',
+                            'region': 'todas las regiones',
+                            'vehiculo': 'todos los vehículos'
+                        };
+                        pregunta += labelMap[campoPrincipal];
                     } else if (valorCampo.length > 1) {
                         // Múltiples opciones pero no todas
-                        if (campoPrincipal === 'zona') {
-                            pregunta += `las zonas ${valorCampo.join(', ')}`;
-                        } else if (campoPrincipal === 'region') {
-                            pregunta += `las regiones ${valorCampo.join(', ')}`;
-                        } else if (campoPrincipal === 'vehiculo') {
-                            pregunta += `los vehículos ${valorCampo.join(', ')}`;
-                        }
+                        const labelMap = {
+                            'zona': `las zonas ${valorCampo.join(', ')}`,
+                            'region': `las regiones ${valorCampo.join(', ')}`,
+                            'vehiculo': `los vehículos ${valorCampo.join(', ')}`
+                        };
+                        pregunta += labelMap[campoPrincipal];
                     } else if (valorCampo.length === 1) {
                         // Una sola opción
-                        if (campoPrincipal === 'zona') {
-                            pregunta += `la zona ${valorCampo[0]}`;
-                        } else if (campoPrincipal === 'region') {
-                            pregunta += `la región ${valorCampo[0]}`;
-                        } else if (campoPrincipal === 'vehiculo') {
-                            pregunta += `el vehículo ${valorCampo[0]}`;
-                        }
+                        const labelMap = {
+                            'zona': `la zona ${valorCampo[0]}`,
+                            'region': `la región ${valorCampo[0]}`,
+                            'vehiculo': `el vehículo ${valorCampo[0]}`
+                        };
+                        pregunta += labelMap[campoPrincipal];
                     }
                 } else {
-                    // Si es un string (selección única)
-                    if (campoPrincipal === 'zona') {
-                        pregunta += `la zona ${valorCampo}`;
-                    } else if (campoPrincipal === 'region') {
-                        pregunta += `la región ${valorCampo}`;
-                    } else if (campoPrincipal === 'vehiculo') {
-                        pregunta += `el vehículo ${valorCampo}`;
-                    }
+                    // Selección única
+                    const labelMap = {
+                        'zona': `la zona ${valorCampo}`,
+                        'region': `la región ${valorCampo}`,
+                        'vehiculo': `el vehículo ${valorCampo}`
+                    };
+                    pregunta += labelMap[campoPrincipal];
                 }
 
                 // Agregar filtros de fecha si existen
@@ -623,19 +733,22 @@ const ModalFaq = () => {
 
             pregunta += '?';
             setPreguntaFormulada(pregunta);
+
+            // Formulación para pregunta tipo 2 (top ranking)
         } else if (preguntaSeleccionada.id === 2) {
-            // Buscar el campo principal (zona, región o vehículo)
             const campoZona = selectedOption.formFields.find(field => field.name === 'zona');
             const campoRegion = selectedOption.formFields.find(field => field.name === 'region');
 
-            let pregunta = '¿Top  ';
+            let pregunta = '¿Top ';
             pregunta += formValues['Top'] || 0;
+
+            // Determinar el tipo de ranking según la opción seleccionada
             if (selectedOption.id === 1) {
-                pregunta += ' de regiones con el mayor tiempo promedio de permanencia en '
+                pregunta += ' de regiones con el mayor tiempo promedio de permanencia en ';
             } else if (selectedOption.id === 2) {
-                pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en '
+                pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en ';
             } else {
-                pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en '
+                pregunta += ' de vehículos con el mayor tiempo promedio de permanencia en ';
             }
 
             let campoPrincipal = null;
@@ -650,41 +763,41 @@ const ModalFaq = () => {
             }
 
             if (campoPrincipal && valorCampo) {
+                // Similar lógica que pregunta 1 para manejar arrays vs strings
                 if (Array.isArray(valorCampo)) {
-                    // Si es un array (selección múltiple)
                     const fieldOptions = getFieldOptions(campoPrincipal,
                         selectedOption.formFields.find(f => f.name === campoPrincipal)?.options
                     );
 
                     if (valorCampo.length === fieldOptions.length) {
                         // Todas las opciones seleccionadas
-                        if (campoPrincipal === 'zona') {
-                            pregunta += 'todas las zonas';
-                        } else if (campoPrincipal === 'region') {
-                            pregunta += 'todas las regiones';
-                        }
+                        const labelMap = {
+                            'zona': 'todas las zonas',
+                            'region': 'todas las regiones'
+                        };
+                        pregunta += labelMap[campoPrincipal];
                     } else if (valorCampo.length > 1) {
                         // Múltiples opciones pero no todas
-                        if (campoPrincipal === 'zona') {
-                            pregunta += `las zonas ${valorCampo.join(', ')}`;
-                        } else if (campoPrincipal === 'region') {
-                            pregunta += `las regiones ${valorCampo.join(', ')}`;
-                        }
+                        const labelMap = {
+                            'zona': `las zonas ${valorCampo.join(', ')}`,
+                            'region': `las regiones ${valorCampo.join(', ')}`
+                        };
+                        pregunta += labelMap[campoPrincipal];
                     } else if (valorCampo.length === 1) {
                         // Una sola opción
-                        if (campoPrincipal === 'zona') {
-                            pregunta += `la zona ${valorCampo[0]}`;
-                        } else if (campoPrincipal === 'region') {
-                            pregunta += `la región ${valorCampo[0]}`;
-                        }
+                        const labelMap = {
+                            'zona': `la zona ${valorCampo[0]}`,
+                            'region': `la región ${valorCampo[0]}`
+                        };
+                        pregunta += labelMap[campoPrincipal];
                     }
                 } else {
-                    // Si es un string (selección única)
-                    if (campoPrincipal === 'zona') {
-                        pregunta += ` zona ${valorCampo}`;
-                    } else if (campoPrincipal === 'region') {
-                        pregunta += `la región ${valorCampo}`;
-                    }
+                    // Selección única
+                    const labelMap = {
+                        'zona': `zona ${valorCampo}`,
+                        'region': `la región ${valorCampo}`
+                    };
+                    pregunta += labelMap[campoPrincipal];
                 }
 
                 // Agregar filtros de fecha si existen
@@ -702,6 +815,8 @@ const ModalFaq = () => {
 
             pregunta += '?';
             setPreguntaFormulada(pregunta);
+
+            // Formulación para pregunta tipo 3 (variación temporal)
         } else if (preguntaSeleccionada.id === 3) {
             let pregunta = '¿Cómo variaron los tiempos de permanencia';
 
@@ -709,8 +824,6 @@ const ModalFaq = () => {
             const campoZona = selectedOption.formFields.find(field => field.name === 'zona');
             const campoRegion = selectedOption.formFields.find(field => field.name === 'region');
             const campoVehiculo = selectedOption.formFields.find(field => field.name === 'vehiculo');
-
-
 
             let campoPrincipal = null;
             let valorCampo = null;
@@ -728,18 +841,15 @@ const ModalFaq = () => {
 
             // Solo agregar si valorCampo tiene un valor definido y no es cadena vacía
             if (valorCampo !== undefined && valorCampo !== '') {
-                if (campoPrincipal === 'zona') {
-                    pregunta += ` en la zona ${valorCampo}`;
-                } else if (campoPrincipal === 'region') {
-                    pregunta += ` en la región ${valorCampo}`;
-                } else if (campoPrincipal === 'vehiculo') {
-                    pregunta += ` para el vehículo ${valorCampo}`;
-                }
+                const labelMap = {
+                    'zona': ` en la zona ${valorCampo}`,
+                    'region': ` en la región ${valorCampo}`,
+                    'vehiculo': ` para el vehículo ${valorCampo}`
+                };
+                pregunta += labelMap[campoPrincipal];
             }
 
-
-
-
+            // Agregar comparación temporal según el tipo seleccionado
             if (puntoInteresTemporal === 'fecha') {
                 const fechaInicio = formValues['fecha_inicio'];
                 const fechaFin = formValues['fecha_fin'];
@@ -757,9 +867,8 @@ const ModalFaq = () => {
                 const mesInicio = formValues['mes_inicio'];
                 const mesFin = formValues['mes_fin'];
                 if (mesInicio && mesFin) {
-                    pregunta += `  el mes ${mesInicio} frente a el mes ${mesFin}`;
+                    pregunta += ` el mes ${mesInicio} frente a el mes ${mesFin}`;
                 }
-
             }
 
             pregunta += '?';
@@ -767,66 +876,15 @@ const ModalFaq = () => {
         }
     };
 
-    useEffect(() => {
-        // Limpiar campos relacionados
-        setFormValues(prev => ({
-            ...prev,
-            fecha_inicio: '',
-            fecha_fin: '',
-            semana_inicio: '',
-            semana_fin: '',
-            mes_inicio: '',
-            mes_fin: ''
-        }));
-        setErrors({});
-    }, [puntoInteresTemporal]);
+    // ============================================================================
+    // FUNCIONES DE RENDERIZADO
+    // ============================================================================
 
-
-    useEffect(() => {
-        formularPregunta();
-    }, [selectedFAQ, selectedQuestionOption, formValues, puntoInteresTemporal]);
-
-    // Limpiar valores del formulario cuando cambie la selección
-    useEffect(() => {
-        const defaults = {};
-
-        // Si la opción seleccionada requiere un campo 'Top', le ponemos un valor por defecto (ej. 3)
-        const selectedOption = selectedQuestion?.questioOptions?.[selectedQuestionOption];
-        const topField = selectedOption?.formFields?.find(f => f.name === 'Top');
-        if (topField) {
-            defaults['Top'] = '';
-        }
-
-        setFormValues(defaults);
-        setErrors({});
-        setSearchTerms({});
-        setDropdownOpen({});
-        setPuntoInteresTemporal('fecha'); // Reset al valor por defecto
-    }, [selectedFAQ, selectedQuestionOption]);
-
-    // Auto-seleccionar la primera opción cuando se selecciona una pregunta
-    useEffect(() => {
-        if (selectedFAQ && selectedQuestion && selectedQuestion.questioOptions.length > 0 && selectedQuestionOption === null) {
-            setSelectedQuestionOption(0);
-        }
-    }, [selectedFAQ, selectedQuestion, selectedQuestionOption, setSelectedQuestionOption]);
-
-    // Cerrar dropdowns cuando se hace clic fuera
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            // Cerrar todos los dropdowns si se hace clic fuera
-            if (!event.target.closest('.dropdown-container')) {
-                setDropdownOpen({});
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    // Renderizar campo del formulario
+    /**
+     * Renderiza un campo del formulario según su tipo
+     * @param {Object} field - Configuración del campo
+     * @returns {JSX.Element} Campo renderizado
+     */
     const renderFormField = (field) => {
         const { name, label, type, required, options, unique } = field;
         const fieldOptions = getFieldOptions(name, options);
@@ -1016,7 +1074,6 @@ const ModalFaq = () => {
                                     className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none ${hasError ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-zinc-500'
                                         }`}
                                 />
-
                             </div>
 
                             {/* Dropdown con opciones */}
@@ -1139,6 +1196,7 @@ const ModalFaq = () => {
                         )}
                     </div>
                 );
+
             case 'number':
                 return (
                     <div className="space-y-2">
@@ -1150,7 +1208,9 @@ const ModalFaq = () => {
                                 type='number'
                                 id={name}
                                 name={name}
-                                min="3" max="20" value={formValues[name] ?? 0}
+                                min="3"
+                                max="20"
+                                value={formValues[name] ?? 0}
                                 onChange={(e) => handleTopChange(name, Number(e.target.value))}
                                 required={required}
                                 className={`w-full h-12 p-3 pr-10 border rounded-lg shadow-sm focus:outline-none bg-gray-50 dark:bg-zinc-800 text-zinc-600 dark:text-white transition-all duration-200 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${hasError
@@ -1162,7 +1222,6 @@ const ModalFaq = () => {
                                     MozAppearance: 'textfield'
                                 }}
                             />
-
                         </div>
                         {hasError && (
                             <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
@@ -1204,7 +1263,11 @@ const ModalFaq = () => {
         }
     };
 
-    // Renderizar selector de punto de interés temporal para pregunta id 3
+    /**
+     * Renderiza el selector de punto de interés temporal para pregunta id 3
+     * Permite seleccionar entre fecha, semana o mes con sus respectivos campos
+     * @returns {JSX.Element|null} Selector temporal o null si no es pregunta 3
+     */
     const renderPuntoInteresTemporalSelector = () => {
         if (selectedQuestion?.id !== 3) return null;
 
@@ -1217,40 +1280,25 @@ const ModalFaq = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                     Punto de interés temporal
                 </label>
+
+                {/* Selector de tipo temporal */}
                 <div className="flex gap-1 bg-gray-100 border border-gray-200 p-1 rounded-lg shadow-sm dark:bg-zinc-800 dark:border-zinc-700">
-                    <button
-                        type="button"
-                        onClick={() => handlePuntoInteresTemporalChange('fecha')}
-                        className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteresTemporal === 'fecha'
-                            ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                            : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                            }`}
-                    >
-                        Fecha
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => handlePuntoInteresTemporalChange('semana')}
-                        className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteresTemporal === 'semana'
-                            ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                            : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                            }`}
-                    >
-                        Semana
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => handlePuntoInteresTemporalChange('mes')}
-                        className={`flex-1 px-4 py-2 text-sm rounded-md transition-all ${puntoInteresTemporal === 'mes'
-                            ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
-                            : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
-                            }`}
-                    >
-                        Mes
-                    </button>
+                    {['fecha', 'semana', 'mes'].map(tipo => (
+                        <button
+                            key={tipo}
+                            type="button"
+                            onClick={() => handlePuntoInteresTemporalChange(tipo)}
+                            className={`flex-1 px-4 py-2 text-sm rounded-md transition-all capitalize ${puntoInteresTemporal === tipo
+                                ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-300'
+                                : 'text-gray-600 hover:text-gray-900 hover:dark:text-zinc-300 dark:text-zinc-500'
+                                }`}
+                        >
+                            {tipo}
+                        </button>
+                    ))}
                 </div>
 
-                {/* Input según el tipo seleccionado */}
+                {/* Campos según el tipo seleccionado */}
                 <div className="mt-3">
                     {puntoInteresTemporal === 'fecha' && (
                         <div className="space-y-4">
@@ -1484,19 +1532,107 @@ const ModalFaq = () => {
         );
     };
 
+    // ============================================================================
+    // EFFECTS (EFECTOS)
+    // ============================================================================
+
+    /**
+     * Effect: Limpia campos relacionados cuando cambia el punto de interés temporal
+     */
+    useEffect(() => {
+        setFormValues(prev => ({
+            ...prev,
+            fecha_inicio: '',
+            fecha_fin: '',
+            semana_inicio: '',
+            semana_fin: '',
+            mes_inicio: '',
+            mes_fin: ''
+        }));
+        setErrors({});
+    }, [puntoInteresTemporal]);
+
+    /**
+     * Effect: Actualiza la pregunta formulada cuando cambian los valores relevantes
+     */
+    useEffect(() => {
+        formularPregunta();
+    }, [selectedFAQ, selectedQuestionOption, formValues, puntoInteresTemporal]);
+
+    /**
+     * Effect: Limpia valores del formulario cuando cambia la selección de pregunta/opción
+     */
+    useEffect(() => {
+        const defaults = {};
+
+        // Si la opción seleccionada requiere un campo 'Top', le ponemos un valor por defecto
+        const selectedOption = selectedQuestion?.questioOptions?.[selectedQuestionOption];
+        const topField = selectedOption?.formFields?.find(f => f.name === 'Top');
+        if (topField) {
+            defaults['Top'] = '';
+        }
+
+        setFormValues(defaults);
+        setErrors({});
+        setSearchTerms({});
+        setDropdownOpen({});
+        setPuntoInteresTemporal('fecha'); // Reset al valor por defecto
+    }, [selectedFAQ, selectedQuestionOption]);
+
+    /**
+     * Effect: Auto-selecciona la primera opción cuando se selecciona una pregunta
+     */
+    useEffect(() => {
+        if (selectedFAQ && selectedQuestion && selectedQuestion.questioOptions.length > 0 && selectedQuestionOption === null) {
+            setSelectedQuestionOption(0);
+        }
+    }, [selectedFAQ, selectedQuestion, selectedQuestionOption, setSelectedQuestionOption]);
+
+    /**
+     * Effect: Cierra dropdowns cuando se hace clic fuera del componente
+     */
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Cerrar todos los dropdowns si se hace clic fuera
+            if (!event.target.closest('.dropdown-container')) {
+                setDropdownOpen({});
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // ============================================================================
+    // RENDER PRINCIPAL
+    // ============================================================================
+
     return (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isOpenFAQ ? "opacity-100 visible backdrop-blur-sm" : "opacity-0 invisible"}`}
-            style={{ backgroundColor: isOpenFAQ ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0)", }}>
-            {/* Modal Container  */}
-            <div className={`bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-[95vw] xl:max-w-[90vw] max-h-[90vh] overflow-hidden transition-all duration-300 transform ${isOpenFAQ ? "scale-100 translate-y-0 opacity-100" : "scale-95 translate-y-4 opacity-0"}`}>
+        <div
+            className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isOpenFAQ ? "opacity-100 visible backdrop-blur-sm" : "opacity-0 invisible"
+                }`}
+            style={{
+                backgroundColor: isOpenFAQ ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0)"
+            }}
+        >
+            {/* Modal Container */}
+            <div
+                className={`bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-[95vw] xl:max-w-[90vw] max-h-[90vh] overflow-hidden transition-all duration-300 transform ${isOpenFAQ ? "scale-100 translate-y-0 opacity-100" : "scale-95 translate-y-4 opacity-0"
+                    }`}
+            >
                 {/* Header del Modal */}
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-2 pr-6 pl-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-xl sm:text-2xl font-bold">
                             Preguntas Frecuentes
                         </h2>
-                        <button onClick={() => setIsOpenFAQ(false)} className="p-2 hover:bg-white hover:bg-opacity-20 hover:text-zinc-500 rounded-full transition-colors duration-200">
-                            <X></X>
+                        <button
+                            onClick={() => setIsOpenFAQ(false)}
+                            className="p-2 hover:bg-white hover:bg-opacity-20 hover:text-zinc-500 rounded-full transition-colors duration-200"
+                        >
+                            <X />
                         </button>
                     </div>
                 </div>
@@ -1504,8 +1640,9 @@ const ModalFaq = () => {
                 {/* Contenido del Modal */}
                 <div className="p-4 sm:p-6 overflow-y-auto max-h-[75vh]">
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+                        {/* Sección de Selección de Pregunta */}
                         <div className="space-y-6">
-                            {/* Seleccionar pregunta */}
                             <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-600/30 rounded-lg flex items-center justify-center">
@@ -1515,6 +1652,8 @@ const ModalFaq = () => {
                                         Selección de Consulta
                                     </h3>
                                 </div>
+
+                                {/* Selector de Pregunta Principal */}
                                 <div className="mb-6">
                                     <label htmlFor="question-select" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                                         Selecciona una pregunta:
@@ -1543,22 +1682,23 @@ const ModalFaq = () => {
                                             <ChevronDown className="w-5 h-5" />
                                         </div>
                                     </div>
-
                                 </div>
 
+                                {/* Descripción de la Pregunta Seleccionada */}
                                 {selectedFAQ !== null && getSelectedQuestion() && (
                                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-zinc-800 dark:border-zinc-700 dark:text-white">
-                                        <div className="">
-                                            <div>
-                                                <h4 className="text-md font-medium text-gray-700 dark:text-zinc-300 mb-0 leading-tight">Descripción:</h4>
-                                                <p className="text-sm text-gray-600 dark:text-zinc-300 leading-tight">
-                                                    {getSelectedQuestion()?.description}
-                                                </p>
-                                            </div>
+                                        <div>
+                                            <h4 className="text-md font-medium text-gray-700 dark:text-zinc-300 mb-0 leading-tight">
+                                                Descripción:
+                                            </h4>
+                                            <p className="text-sm text-gray-600 dark:text-zinc-300 leading-tight">
+                                                {getSelectedQuestion()?.description}
+                                            </p>
                                         </div>
                                     </div>
                                 )}
 
+                                {/* Opciones de la Pregunta Seleccionada */}
                                 {selectedQuestion && (
                                     <div className="space-y-3 mt-3">
                                         {selectedQuestion.questioOptions.map((option, index) => (
@@ -1566,35 +1706,35 @@ const ModalFaq = () => {
                                                 key={index}
                                                 onClick={() => setSelectedQuestionOption(index)}
                                                 className={`w-full p-4 rounded-md text-left transition-all duration-300 group ring-1 hover:transform hover:scale-[1.01] ${selectedQuestionOption === index
-                                                    ? 'bg-white dark:bg-zinc-900 text-gray-800 dark:text-white shadow-lg transform scale-[1.02] ring-blue-600'
-                                                    : ' bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-white hover:bg-white hover:dark:bg-zinc-900 ring-gray-200 dark:ring-zinc-700 shadow-sm hover:shadow-md'
+                                                        ? 'bg-white dark:bg-zinc-900 text-gray-800 dark:text-white shadow-lg transform scale-[1.02] ring-blue-600'
+                                                        : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-white hover:bg-white hover:dark:bg-zinc-900 ring-gray-200 dark:ring-zinc-700 shadow-sm hover:shadow-md'
                                                     }`}
                                             >
                                                 <div className="flex items-center space-x-3">
                                                     <div className={`p-2 rounded-xl transition-all duration-300 ${selectedQuestionOption === index
-                                                        ? 'bg-gray-200 dark:bg-zinc-700'
-                                                        : 'bg-gray-200 dark:bg-zinc-700 group-hover:bg-gray-200 group-hover:dark:bg-zinc-600'
+                                                            ? 'bg-gray-200 dark:bg-zinc-700'
+                                                            : 'bg-gray-200 dark:bg-zinc-700 group-hover:bg-gray-200 group-hover:dark:bg-zinc-600'
                                                         }`}>
                                                         {React.cloneElement(selectedQuestion.icon, {
                                                             className: `w-5 h-5 transition-colors duration-300 ${selectedQuestionOption === index
-                                                                ? 'text-gray-600 dark:text-zinc-300'
-                                                                : 'text-gray-500 dark:text-zinc-300 group-hover:text-gray-600 dark:group-hover:text-white'
+                                                                    ? 'text-gray-600 dark:text-zinc-300'
+                                                                    : 'text-gray-500 dark:text-zinc-300 group-hover:text-gray-600 dark:group-hover:text-white'
                                                                 }`
                                                         })}
                                                     </div>
                                                     <div className="flex-1">
                                                         <h3 className="font-semibold text-base">{option.titleQuestion}</h3>
                                                         <p className={`text-sm transition-colors duration-300 ${selectedQuestionOption === index
-                                                            ? 'text-gray-500 dark:text-zinc-400'
-                                                            : 'text-gray-400 dark:text-zinc-400 group-hover:text-gray-500'
+                                                                ? 'text-gray-500 dark:text-zinc-400'
+                                                                : 'text-gray-400 dark:text-zinc-400 group-hover:text-gray-500'
                                                             }`}>
                                                             {option.formFields.length} campos disponibles
                                                         </p>
                                                     </div>
                                                     <div className="p-1 rounded-lg transition-all duration-300">
                                                         <ChevronRight className={`w-5 h-5 transition-all duration-300 ${selectedQuestionOption === index
-                                                            ? 'text-gray-500 dark:text-zinc-400 opacity-100'
-                                                            : 'text-gray-300 dark:text-zinc-500 opacity-60 group-hover:opacity-100 group-hover:text-gray-400'
+                                                                ? 'text-gray-500 dark:text-zinc-400 opacity-100'
+                                                                : 'text-gray-300 dark:text-zinc-500 opacity-60 group-hover:opacity-100 group-hover:text-gray-400'
                                                             }`} />
                                                     </div>
                                                 </div>
@@ -1616,7 +1756,7 @@ const ModalFaq = () => {
                                 </h3>
                             </div>
 
-                            {/* Campos del formulario */}
+                            {/* Campos del formulario dinámico */}
                             {selectedQuestion && selectedQuestionOption !== null && (
                                 <div className="space-y-4 mb-4">
                                     {selectedQuestion.questioOptions[selectedQuestionOption].formFields.map(field => (
@@ -1630,6 +1770,7 @@ const ModalFaq = () => {
                                 </div>
                             )}
 
+                            {/* Área de texto con pregunta generada y botón de envío */}
                             <div className="mt-3 bg-zinc-50 dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-32 sm:h-24 w-full rounded-2xl flex flex-col flex-shrink-0">
                                 <div className="w-full flex-1 p-2">
                                     <textarea
@@ -1637,7 +1778,7 @@ const ModalFaq = () => {
                                         value={preguntaFormulada}
                                         placeholder="Selecciona una pregunta y completa los filtros para ver la consulta generada..."
                                         readOnly
-                                    ></textarea>
+                                    />
                                 </div>
                                 <div className="flex justify-end px-2 pb-2 flex-shrink-0">
                                     <button
@@ -1645,6 +1786,7 @@ const ModalFaq = () => {
                                         onClick={handleSubmit}
                                         disabled={!preguntaFormulada}
                                         className="bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-700 hover:to-blue-500 disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed text-white rounded-lg p-1.5 transition-all duration-300 hover:scale-105 active:scale-95 disabled:hover:scale-100"
+                                        title="Enviar consulta"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 512 512">
                                             <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480V396.4c0-4 1.5-7.8 4.2-10.7L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z" />
