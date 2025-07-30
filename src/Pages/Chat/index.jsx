@@ -71,7 +71,7 @@ function Chat() {
                 </div>
 
                 {/* CONTENIDO - Altura fija para evitar scroll en toda la página */}
-                <div className="relative z-20 flex-1 flex flex-col h-screen overflow-hidden">
+                <div className="relative z-20 flex-1 flex flex-col overflow-hidden">
                     {/* NavBar fijo */}
                     <div className="flex-shrink-0">
                         <NavBarChat />
