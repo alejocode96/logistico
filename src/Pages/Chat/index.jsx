@@ -18,7 +18,7 @@ function Chat() {
 
     return (
         <>
-            <main className="relative bg-white dark:bg-[#09090B] w-full h-screen flex overflow-hidden">
+            <main className="relative bg-white dark:bg-[#09090B] w-full h-screen max-h-screen flex overflow-hidden">
                 {/* BACKGROUND DENTRO DEL MAIN */}
                 {isDark ?
                     <div
