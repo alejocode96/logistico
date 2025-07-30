@@ -1,4 +1,3 @@
-//React
 import { useState } from 'react'
 import React from 'react'
 
@@ -18,7 +17,7 @@ function Chat() {
 
     return (
         <>
-            <main className="relative bg-white dark:bg-[#09090B] w-full h-screen max-h-screen flex overflow-hidden">
+            <main className="relative bg-white dark:bg-[#09090B] w-full h-screen flex overflow-hidden">
                 {/* BACKGROUND DENTRO DEL MAIN */}
                 {isDark ?
                     <div
@@ -67,19 +66,19 @@ function Chat() {
                   }
 
                 {/* SIDEBAR */}
-                <div className="relative z-30 flex flex-shrink-0">
+                <div className="relative z-30 flex-shrink-0">
                     <SideBarChart />
                 </div>
 
-                {/* CONTENIDO */}
-                <div className="relative z-20 flex-1 flex flex-col h-screen max-h-screen overflow-hidden">
+                {/* CONTENIDO - Altura fija para evitar scroll en toda la página */}
+                <div className="relative z-20 flex-1 flex flex-col h-screen overflow-hidden">
                     {/* NavBar fijo */}
                     <div className="flex-shrink-0">
                         <NavBarChat />
                     </div>
                     
-                    {/* Contenido del chat con altura calculada - OCUPA EXACTAMENTE EL ESPACIO DISPONIBLE */}
-                    <div className="flex-1 min-h-0 max-h-full overflow-hidden">
+                    {/* Contenido del chat - Ocupa exactamente el espacio restante */}
+                    <div className="flex-1 overflow-hidden">
                         {chatHistoryCurrent.length === 0 ? (
                             <InitialChat />
                         ) : (
