@@ -113,7 +113,7 @@ function ChatCurrent() {
             {/* input mensaje - CAMBIO: altura fija más compacta */}
             <div className="flex-shrink-0 p-4">
                 <div className="w-full max-w-4xl mx-auto">
-                    <div className="bg-zinc-50 dark:bg-[#131315] shadow-md ring-1 ring-zinc-200 dark:ring-zinc-800 h-[100px] w-full rounded-2xl flex flex-col">
+                    <div className="bg-zinc-50 dark:bg-[#131315] shadow-md ring-1 ring-zinc-200 dark:ring-zinc-800 h-[120px] w-full rounded-2xl flex flex-col">
                         <div className="w-full flex-1 p-3">
                             <textarea
                                 value={mensajeInput}
