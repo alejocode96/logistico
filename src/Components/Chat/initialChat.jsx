@@ -38,7 +38,7 @@ function InitialChat() {
     };
 
     return (
-        <div className="h-full max-h-full flex flex-col justify-center p-4 overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden justify-center p-4">
             <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-4 max-h-full">
                 {/* titulo */}
                 <div className="flex flex-col w-full flex-shrink-0">
