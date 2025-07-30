@@ -66,10 +66,10 @@ function ChatCurrent() {
 
 
     return (
-        <div className="h-full flex flex-col pt-4">
-            {/* chat messages */}
-            <div className="flex-1 overflow-y-auto px-4 pb-4">
-                <div className="w-full max-w-4xl mx-auto space-y-4">
+        <div className="h-full flex flex-col overflow-hidden">
+            {/* chat messages - CAMBIO CLAVE: altura controlada y overflow específico */}
+            <div className="flex-1 min-h-0 overflow-y-auto px-4">
+                <div className="w-full max-w-4xl mx-auto space-y-4 py-4">
                     {chatHistoryCurrent.map((mensaje, index) => (
                         <div key={index} className="space-y-3">
                             {/* Pregunta del usuario */}
@@ -110,10 +110,10 @@ function ChatCurrent() {
                 </div>
             </div>
 
-            {/* input mensaje */}
-            <div className="flex-shrink-0 p-4 pt-0">
+            {/* input mensaje - CAMBIO: altura fija más compacta */}
+            <div className="flex-shrink-0 p-4">
                 <div className="w-full max-w-4xl mx-auto">
-                    <div className="bg-zinc-50 dark:bg-[#131315] shadow-md ring-1 ring-zinc-200 dark:ring-zinc-800 h-[120px] w-full rounded-2xl flex flex-col">
+                    <div className="bg-zinc-50 dark:bg-[#131315] shadow-md ring-1 ring-zinc-200 dark:ring-zinc-800 h-[100px] w-full rounded-2xl flex flex-col">
                         <div className="w-full flex-1 p-3">
                             <textarea
                                 value={mensajeInput}
@@ -128,7 +128,7 @@ function ChatCurrent() {
                             <button onClick={() => setIsOpenFAQ(true)} className="cursor-pointer flex mr-2 text-sm text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 p-2 rounded-md transition-all duration-500 hover:bg-zinc-200 hover:text-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-question-mark-icon lucide-shield-question-mark">
                                     <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
-                                    <path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3" />
+                                    <path d="M9.1 9a3 3 ots 0 1 5.82 1c0 2-3 3-3 3" />
                                     <path d="M12 17h.01" />
                                 </svg>
                                 <span>Preguntas Frecuentes</span>

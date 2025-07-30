@@ -38,8 +38,8 @@ function InitialChat() {
     };
 
     return (
-        <div className="flex items-center justify-center p-4 overflow-hidden h-full ">
-            <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-6">
+        <div className="h-full flex items-center justify-center p-4 overflow-hidden">
+            <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-6 h-full">
                 {/* titulo */}
                 <div className="flex flex-col w-full flex-shrink-0">
                     <p className="m-0 text-zinc-400 text-3xl font-extralight leading-none p-0 text-left -mb-4">
@@ -80,9 +80,11 @@ function InitialChat() {
                     </div>
                 </div>
 
-                {/* slider */}
-                <div className="w-full flex-1 min-h-0">
-                    <ActiveSlider />
+                {/* slider - CAMBIO CLAVE: minHeight específico y overflow controlado */}
+                <div className="w-full flex-1 min-h-0 overflow-hidden">
+                    <div className="h-full max-h-[300px] overflow-hidden">
+                        <ActiveSlider />
+                    </div>
                 </div>
             </div>
         </div>

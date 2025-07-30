@@ -72,14 +72,14 @@ function Chat() {
                 </div>
 
                 {/* CONTENIDO */}
-                <div className="relative z-20 flex-1 w-[98%] mx-auto flex flex-col h-screen">
+                <div className="relative z-20 flex-1 flex flex-col h-screen overflow-hidden">
                     {/* NavBar fijo */}
                     <div className="flex-shrink-0">
                         <NavBarChat />
                     </div>
                     
-                    {/* Contenido del chat con altura calculada */}
-                    <div className="flex-1 min-h-0">
+                    {/* Contenido del chat con altura calculada - CAMBIO CLAVE AQUÍ */}
+                    <div className="flex-1 min-h-0 overflow-hidden">
                         {chatHistoryCurrent.length === 0 ? (
                             <InitialChat />
                         ) : (
