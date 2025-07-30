@@ -120,7 +120,7 @@ function ChatCurrent() {
             </div>
 
             {/* Input area fija en la parte inferior */}
-            <div className="flex-shrink-0 p-4 ">
+            <div className="flex-shrink-0 p-4 bg-blue-300">
                 <div className="w-full max-w-4xl mx-auto">
                     <div className="bg-zinc-50 shadow-md dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 min-h-[6rem] sm:min-h-[8rem] w-full rounded-2xl flex flex-col">
                         <div className="flex-1 p-2 sm:p-3 md:p-4">
