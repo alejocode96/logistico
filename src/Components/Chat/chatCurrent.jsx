@@ -61,11 +61,10 @@ function ChatCurrent() {
     }, [chatHistoryCurrent.length]);
 
     return (
-        <div className="h-full flex flex-col overflow-hidden">
-            {/* chat messages - CAMBIO: usar calc para restar altura del input */}
+        <div className="h-screen flex flex-col overflow-hidden">
+            {/* chat messages - altura ajustada para que todo quepa en pantalla */}
             <div 
-                className="overflow-y-auto px-4" 
-                style={{ height: 'calc(100vh - 180px)' }}
+                className="flex-1 min-h-0 overflow-y-auto px-4"
             >
                 <div className="w-full max-w-4xl mx-auto space-y-4 py-4">
                     {chatHistoryCurrent.map((mensaje, index) => (
@@ -111,7 +110,7 @@ function ChatCurrent() {
             {/* input mensaje - diseño mejorado y responsive */}
             <div className="flex-shrink-0 p-4">
                 <div className="w-full max-w-4xl mx-auto">
-                    <div className="bg-zinc-50 shadow-md dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-24 sm:h-32 w-full rounded-2xl flex flex-col flex-shrink-0">
+                    <div className="bg-zinc-50 shadow-md dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 h-20 sm:h-32 w-full rounded-2xl flex flex-col flex-shrink-0">
                         <div className="w-full flex-1 p-2 sm:p-3 md:p-4">
                             <textarea
                                 value={mensajeInput}
