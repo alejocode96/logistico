@@ -74,10 +74,10 @@ function ChatCurrent() {
     };
 
     return (
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex flex-col h-full overflow-hidden">
             {/* Contenedor de mensajes con scroll - Ocupa todo el espacio disponible */}
             <div ref={messagesContainerRef}
-                className=" flex-1 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-600 scrollbar-track-transparent">
+                className=" flex-1 overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-600">
                 <div className="w-full max-w-4xl mx-auto space-y-4 pb-4">
                     {chatHistoryCurrent.map((mensaje, index) => (
                         <div key={index} className="space-y-3">
@@ -120,7 +120,7 @@ function ChatCurrent() {
             </div>
 
             {/* Input area fija en la parte inferior */}
-            <div className="flex-shrink-0 p-4 bg-red-100">
+            <div className="flex-shrink-0 p-4 ">
                 <div className="w-full max-w-4xl mx-auto">
                     <div className="bg-zinc-50 shadow-md dark:bg-[#131315] ring-1 ring-zinc-200 dark:ring-zinc-800 min-h-[6rem] sm:min-h-[8rem] w-full rounded-2xl flex flex-col">
                         <div className="flex-1 p-2 sm:p-3 md:p-4">
@@ -128,7 +128,7 @@ function ChatCurrent() {
                                 value={mensajeInput}
                                 onChange={(e) => setMensajeInput(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                className="w-full h-full min-h-[3rem] resize-none outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent text-sm"
+                                className="w-full min-h-[3rem] max-h-[12rem] resize-none overflow-y-auto p-2  rounded  h-full  outline-none ring-0 focus:ring-0 focus:outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 text-zinc-500 placeholder:text-zinc-400 dark:placeholder:text-zinc-700 dark:text-zinc-400 bg-transparent text-sm"
                                 placeholder="¿Cómo puedo ayudarte hoy?"
                                 rows={2}
                             />
